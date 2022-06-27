@@ -20,5 +20,9 @@
     "tslib": "^2.4.0",
     "typescript": "^4.7.4",
     "vite": "^2.9.9"
+  },
+  "dependencies": {
+    "@ngneat/elf": "^2.1.0",
+    "tsyringe": "^4.7.0"
   }
 }
