@@ -8,7 +8,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "check": "svelte-check --tsconfig ./tsconfig.json"
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "update-core": "npm i https://github.com/JacobDeuchert/audako-core"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^1.0.0-next.30",
@@ -23,6 +24,16 @@
   },
   "dependencies": {
     "@ngneat/elf": "^2.1.0",
+    "@ngneat/elf-persist-state": "^1.1.2",
+    "@smui/checkbox": "^6.0.0-beta.16",
+    "@smui/data-table": "^6.0.0-beta.16",
+    "@smui/form-field": "^6.0.0-beta.16",
+    "@smui/icon-button": "^6.0.0-beta.16",
+    "@smui/linear-progress": "^6.0.0-beta.16",
+    "@smui/select": "^6.0.0-beta.16",
+    "@smui/textfield": "^6.0.0-beta.16",
+    "@smui/tooltip": "^6.0.0-beta.16",
+    "audako-core": "github:JacobDeuchert/audako-core",
     "tsyringe": "^4.7.0"
   }
 }

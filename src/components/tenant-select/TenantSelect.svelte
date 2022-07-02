@@ -1,0 +1,98 @@
+<script lang="ts">
+  import IconButton from '@smui/icon-button/src/IconButton.svelte';
+  import {TenantHttpService, TenantView} from 'audako-core';
+  import {resolveService} from '../../utils/service-functions';
+  import {createEventDispatcher} from 'svelte';
+
+  let enttiyTenantSelect = resolveService(TenantHttpService);
+
+  export let allowBack = false;
+
+  let tenantPath: TenantView[] = [];
+  let tenants: TenantView[] = [];
+  const eventDispatcher = createEventDispatcher();
+
+  async function setupBrowser(): Promise<void> {
+    const topTenants = await enttiyTenantSelect.getTopTenants();
+
+    if (topTenants.length === 1) {
+      const rootTenant = topTenants[0];
+      if (rootTenant.Root == null) {
+        browseTenant(rootTenant);
+        return;
+      }
+    }
+
+    tenantPath = [
+      new TenantView({
+        Id: 'start',
+        Name: 'Start',
+      }),
+    ];
+
+    tenants = topTenants;
+  }
+
+  async function loadChildren(tenant: TenantView): Promise<void> {
+    const children = await enttiyTenantSelect.getNextTenants(tenant.Id);
+    tenants = children;
+  }
+
+  async function browseTenant(tenant: TenantView): Promise<void> {
+    tenantPath = [...tenantPath, tenant];
+    loadChildren(tenant);
+  }
+
+  async function selectTenantInPath(tenant: TenantView): Promise<void> {
+    if (tenant.Id == 'start') {
+      setupBrowser();
+      return;
+    }
+
+    const index = tenantPath.findIndex((t) => t.Id === tenant.Id);
+    tenantPath = tenantPath.slice(0, index + 1);
+    loadChildren(tenant);
+  }
+
+  function selectTenant(event: Event, tenant: TenantView): void {
+    console.log(event, tenant);
+    event.stopPropagation();
+    eventDispatcher('tenantSelected', {tenant: tenant});
+  }
+
+  setupBrowser();
+</script>
+
+<div class="w-full">
+  <div class="flex items-center">
+    {#if allowBack}
+      <IconButton class="material-icons" size="button" on:click={() => eventDispatcher('back')}>arrow_back</IconButton>
+    {/if}
+    <div class="font-bold text-gray-600 text-lg">Mandant auswählen</div>
+  </div>
+
+  <div class="flex mb-1">
+    {#each tenantPath as tenant, i}
+      <div class="cursor-pointer hover:bg-slate-100 p-1" on:click={() => selectTenantInPath(tenant)}>
+        {tenant.Name}{i == tenantPath.length - 1 ? '' : ' /'}
+      </div>
+    {/each}
+  </div>
+  <div style="grid-auto-rows: 60px" class="grid grid-cols-2 gap-2">
+    {#each tenants as tenant}
+      <div
+        class="flex justify-between bg-slate-200 hover:bg-slate-300 shadow-sm rounded-sm cursor-pointer"
+        on:click={() => browseTenant(tenant)}
+      >
+        <div class="mt-2 ml-2 ">
+          {tenant?.Name}
+        </div>
+        {#if tenant.Root}
+          <div>
+            <IconButton class="material-icons" on:click={(event) => selectTenant(event, tenant)}>done</IconButton>
+          </div>
+        {/if}
+      </div>
+    {/each}
+  </div>
+</div>
