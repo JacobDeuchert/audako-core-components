@@ -7050,6 +7050,9 @@ class BaseHttpService {
   getStructureUrl() {
     return `${this.httpConfig.Services.BaseUri}${this.httpConfig.Services.Structure}`;
   }
+  static requestHttpConfig(systemUrl) {
+    return axios.get(`${systemUrl}/assets/conf/application.config`).then((response) => response.data);
+  }
 }
 var __awaiter$3 = globalThis && globalThis.__awaiter || function(thisArg, _arguments, P, generator) {
   function adopt(value) {
@@ -8531,7 +8534,7 @@ function instance$k($$self, $$props, $$invalidate) {
     click_handler_3
   ];
 }
-class TenantSelect extends SvelteElement {
+class TenantSelect$1 extends SvelteElement {
   constructor(options) {
     super();
     init(this, {
@@ -8560,10 +8563,6 @@ class TenantSelect extends SvelteElement {
     flush();
   }
 }
-var TenantSelect$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  "default": TenantSelect
-}, Symbol.toStringTag, { value: "Module" }));
 function createState(...propsFactories) {
   const result = {
     config: {},
@@ -31711,7 +31710,7 @@ function create_else_block(ctx) {
 function create_if_block(ctx) {
   let tenantselect;
   let current;
-  tenantselect = new TenantSelect({
+  tenantselect = new TenantSelect$1({
     props: { allowBack: !!ctx[1] }
   });
   tenantselect.$on("back", ctx[6]);
@@ -31865,7 +31864,7 @@ function instance($$self, $$props, $$invalidate) {
     entitySelected_handler_1
   ];
 }
-class EntitySelect extends SvelteElement {
+class EntitySelect$1 extends SvelteElement {
   constructor(options) {
     super();
     init(this, {
@@ -31894,8 +31893,6 @@ class EntitySelect extends SvelteElement {
     flush();
   }
 }
-var EntitySelect$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  "default": EntitySelect
-}, Symbol.toStringTag, { value: "Module" }));
-export { EntitySelect$1 as EntitySelect, TenantSelect$1 as TenantSelect };
+const TenantSelect = TenantSelect$1;
+const EntitySelect = EntitySelect$1;
+export { EntitySelect, TenantSelect };

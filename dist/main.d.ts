@@ -1,2 +1,3 @@
-export * as TenantSelect from "./components/tenant-select/TenantSelect.svelte";
-export * as EntitySelect from "./components/entity-select/EntitySelect.svelte";
+import TenantSelectSvelte from "./components/tenant-select/TenantSelect.svelte";
+export declare const TenantSelect: typeof TenantSelectSvelte;
+export declare const EntitySelect: typeof TenantSelectSvelte;
