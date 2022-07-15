@@ -63,6 +63,8 @@
   setupBrowser();
 </script>
 
+<svelte:options tag="tenant-select" />
+
 <div class="w-full">
   <div class="flex items-center">
     {#if allowBack}
