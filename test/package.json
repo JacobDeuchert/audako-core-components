@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "audako-core-components": "file:.."
+    "audako-core": "github:JacobDeuchert/audako-core",
+    "audako-core-components": "file:..",
+    "reflect-metadata": "^0.1.13"
   }
 }

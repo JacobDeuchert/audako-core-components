@@ -63,7 +63,7 @@
   setupBrowser();
 </script>
 
-<svelte:options tag="tenant-select" />
+<svelte:options tag="" />
 
 <div class="w-full">
   <div class="flex items-center">

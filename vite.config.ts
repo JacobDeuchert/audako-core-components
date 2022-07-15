@@ -14,7 +14,7 @@ export default defineConfig({
   plugins: [
     svelte({
       compilerOptions: {
-        customElement: true,
+        customElement: true
       },
     }),
     typescript2({

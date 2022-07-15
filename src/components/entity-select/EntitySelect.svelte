@@ -48,7 +48,7 @@
   }
 </script>
 
-<svelte:options tag="entity-select" />
+<svelte:options tag="" />
 
 
 <div class="p-4 flex w-full h-full">
