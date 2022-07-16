@@ -1,5 +1,6 @@
 import { Store } from "@ngneat/elf";
-export declare const entitySelectEntityType: import("svelte/store").Writable<any>;
+import { EntityType } from "audako-core";
+export declare const entitySelectEntityType: import("svelte/store").Writable<EntityType>;
 export declare const EntitySelectGlobalStore: Store<{
     state: {
         queryWithSubGroups: boolean;

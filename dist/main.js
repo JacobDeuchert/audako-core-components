@@ -8040,14 +8040,27 @@ var instance$l = new InternalDependencyContainer();
 if (typeof Reflect === "undefined" || !Reflect.getMetadata) {
   throw new Error(`tsyringe requires a reflect polyfill. Please add 'import "reflect-metadata"' to the top of your entry point.`);
 }
+const SERVICE_TOKEN_LOOKUP = {
+  [TenantHttpService.toString()]: "TenantHttpService",
+  [EntityHttpService.toString()]: "EntityHttpService",
+  [EntityNameService.toString()]: "EntityNameService",
+  [BaseHttpService.toString()]: "BaseHttpService"
+};
 function resolveService(service) {
+  var _a2;
+  let windowContainer = window["dependencyContainer"];
+  let token = (_a2 = SERVICE_TOKEN_LOOKUP[service.toString()]) != null ? _a2 : service;
   try {
-    return instance$l.resolve(service);
-  } catch {
-    if (window[service == null ? void 0 : service.toString()]) {
-      return window[service == null ? void 0 : service.toString()];
+    if (windowContainer) {
+      return windowContainer.resolve(token);
+    } else {
+      return instance$l.resolve(token);
     }
-    throw new Error(`Service ${service.toString()} not found`);
+  } catch {
+    if (window[token == null ? void 0 : token.toString()]) {
+      return window[token == null ? void 0 : token.toString()];
+    }
+    throw new Error(`Service ${token == null ? void 0 : token.toString()} not found`);
   }
 }
 function get_each_context$3(ctx, list, i) {

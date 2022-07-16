@@ -1,1 +1,1 @@
-export declare function resolveService(service: any): unknown;
+export declare function resolveService(service: any): any;
