@@ -1,14 +1,19 @@
-import { container, InjectionToken } from 'tsyringe';
+import {container, DependencyContainer, InjectionToken} from 'tsyringe';
 
 export function resolveService<T>(service: InjectionToken<T>): T {
-    try {
-        return container.resolve(service);
-    } catch {
-        if (window[service?.toString()]) {
-            return window[service?.toString()] as T;
-        }
+  let windowContainer = window['dependencyContainer'] as DependencyContainer;
 
-        throw new Error(`Service ${service.toString()} not found`);
+  try {
+    if (windowContainer) {
+      return windowContainer.resolve(service);
+    } else {
+      return container.resolve(service);
     }
-  
+  } catch {
+    if (window[service?.toString()]) {
+      return window[service?.toString()] as T;
+    }
+
+    throw new Error(`Service ${service.toString()} not found`);
+  }
 }
