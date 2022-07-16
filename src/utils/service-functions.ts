@@ -1,19 +1,28 @@
 import {container, DependencyContainer, InjectionToken} from 'tsyringe';
+import { BaseHttpService, EntityHttpService, EntityNameService, TenantHttpService } from 'audako-core';
+
+const SERVICE_TOKEN_LOOKUP = {
+    [TenantHttpService.toString()]:  'TenantHttpService',
+    [EntityHttpService.toString()]:  'EntityHttpService',
+    [EntityNameService.toString()]:  'EntityNameService',
+    [BaseHttpService.toString()]:  'BaseHttpService',
+}
 
 export function resolveService<T>(service: InjectionToken<T>): T {
   let windowContainer = window['dependencyContainer'] as DependencyContainer;
+  let token: InjectionToken<T> = SERVICE_TOKEN_LOOKUP[service.toString()] ?? service;
 
   try {
     if (windowContainer) {
-      return windowContainer.resolve(service);
+      return windowContainer.resolve(token);
     } else {
-      return container.resolve(service);
+      return container.resolve(token);
     }
   } catch {
-    if (window[service?.toString()]) {
-      return window[service?.toString()] as T;
+    if (window[token?.toString()]) {
+      return window[token?.toString()] as T;
     }
 
-    throw new Error(`Service ${service.toString()} not found`);
+    throw new Error(`Service ${token?.toString()} not found`);
   }
 }
