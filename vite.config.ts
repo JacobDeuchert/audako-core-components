@@ -8,19 +8,17 @@ export default defineConfig({
       entry: './src/main.ts',
       name: 'audako-core-components',
       fileName: () => 'main.js',
-      formats: ['es']
+      formats: ['es'],
     },
   },
   plugins: [
     svelte({
-      compilerOptions: {
-        customElement: true
-      },
+      emitCss: false
     }),
     typescript2({
       tsconfigOverride: {
         declaration: true
       }
     }),
-  ],
+  ]
 });

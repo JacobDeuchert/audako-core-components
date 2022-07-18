@@ -48,9 +48,8 @@
   }
 </script>
 
-<svelte:options tag="" />
-
-
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
 <div class="p-4 flex w-full h-full">
   {#if inTenantSelect}
     <TenantSelect
@@ -82,3 +81,9 @@
     </div>
   {/if}
 </div>
+
+<style lang="postcss">
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+</style>

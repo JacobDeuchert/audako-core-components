@@ -12,6 +12,8 @@ export function resolveService<T>(service: InjectionToken<T>): T {
   let windowContainer = window['dependencyContainer'] as DependencyContainer;
   let token: InjectionToken<T> = SERVICE_TOKEN_LOOKUP[service.toString()] ?? service;
 
+  console.log(window, windowContainer, token, token.toString());
+
   try {
     if (windowContainer) {
       return windowContainer.resolve(token);

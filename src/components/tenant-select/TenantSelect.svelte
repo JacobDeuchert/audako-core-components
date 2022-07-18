@@ -1,8 +1,8 @@
 <script lang="ts">
-  import IconButton from '@smui/icon-button/src/IconButton.svelte';
   import {TenantHttpService, TenantView} from 'audako-core';
   import {resolveService} from '../../utils/service-functions';
   import {createEventDispatcher} from 'svelte';
+import IconButton from '../../shared/components/IconButton.svelte';
 
   let enttiyTenantSelect = resolveService(TenantHttpService);
 
@@ -54,21 +54,21 @@
     loadChildren(tenant);
   }
 
-  function selectTenant(event: Event, tenant: TenantView): void {
+  function selectTenant(event: CustomEvent, tenant: TenantView): void {
     console.log(event, tenant);
-    event.stopPropagation();
+    event.detail.stopPropagation();
     eventDispatcher('tenantSelected', {tenant: tenant});
   }
 
   setupBrowser();
 </script>
 
-<svelte:options tag="" />
-
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
 <div class="w-full">
   <div class="flex items-center">
     {#if allowBack}
-      <IconButton class="material-icons" size="button" on:click={() => eventDispatcher('back')}>arrow_back</IconButton>
+      <IconButton size="small" on:click={() => eventDispatcher('back')}>arrow_back</IconButton>
     {/if}
     <div class="font-bold text-gray-600 text-lg">Mandant auswählen</div>
   </div>
@@ -91,10 +91,16 @@
         </div>
         {#if tenant.Root}
           <div>
-            <IconButton class="material-icons" on:click={(event) => selectTenant(event, tenant)}>done</IconButton>
+            <IconButton on:click={(event) => selectTenant(event, tenant)}>done</IconButton>
           </div>
         {/if}
       </div>
     {/each}
   </div>
 </div>
+
+<style lang="postcss">
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+</style>

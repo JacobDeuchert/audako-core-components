@@ -1,3 +1,5 @@
-import TenantSelectSvelte from "./components/tenant-select/TenantSelect.svelte";
-export declare const TenantSelect: typeof TenantSelectSvelte;
-export declare const EntitySelect: typeof TenantSelectSvelte;
+import { EntitySelectWebComponent } from "./components/entity-select/entity-select-web-component";
+import { TenantSelectWebComponent } from "./components/tenant-select/tenant-select-web-component";
+export declare const EntitySelect: typeof EntitySelectWebComponent;
+export declare const TenantSelect: typeof TenantSelectWebComponent;
+export declare function registerCustomElements(): void;
