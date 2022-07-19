@@ -1,11 +1,6 @@
 <script lang="ts">
   import type { InputComponentDev } from '@smui/textfield';
-
-  import { Icon } from '@smui/icon-button';
-  import TextField from '@smui/textfield';
-  import Checkbox from '@smui/checkbox';
-  import FormField from '@smui/form-field';
-
+  import Checkbox from '../../shared/components/Checkbox/Checkbox.svelte';
   import { Subject, takeUntil } from 'rxjs';
   import { onDestroy, onMount } from 'svelte';
   import {
@@ -46,6 +41,7 @@ import type { EntityType } from 'audako-core';
   $: onSubGroupsToggled(withSubGroups);
 
   function onSubGroupsToggled(withSubGroups: boolean): void {
+    console.log('onSubGroupsToggled', withSubGroups);
     if (withSubGroups != EntitySelectGlobalStore.value.queryWithSubGroups) {
       EntitySelectGlobalStore.update((state) => ({ ...state, queryWithSubGroups: withSubGroups }));
     }
@@ -66,22 +62,13 @@ import type { EntityType } from 'audako-core';
 </script>
 
 <div class="flex flex-col">
-  <TextField
-    bind:input={filterInput}
-    bind:value={filter}
-    on:input={(e) => onInputFilter(e)}
-    class="w-full"
-    variant="filled"
-    input$placeholder="Search"
-  >
-    <Icon class="material-icons self-center pl-2 pr-2" slot="leadingIcon">search</Icon>
-  </TextField>
+
+  <div class="flex items-center w-full focus-within:border-blue-300 border-gray-200  border-2 rounded-md p-2">
+    <span class="material-symbols-rounded mr-2">search</span>
+    <input placeholder="Search" class="w-full outline-none">
+  </div>
 
   <div class="flex justify-end mt-2">
-    <FormField>
-      <Checkbox bind:checked={withSubGroups} />
-
-      <span slot="label"> Mit Untergruppen </span>
-    </FormField>
+    <Checkbox label="Mit Untergruppen" bind:checked={withSubGroups}></Checkbox>
   </div>
 </div>

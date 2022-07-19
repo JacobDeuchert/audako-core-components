@@ -1,4 +1,4 @@
-import IconButton from '../../shared/components/IconButton.svelte';
+import IconButton from '../../shared/components/IconButton/IconButton.svelte';
 import '../../index.css';
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 // More on argTypes: https://storybook.js.org/docs/svelte/api/argtypes

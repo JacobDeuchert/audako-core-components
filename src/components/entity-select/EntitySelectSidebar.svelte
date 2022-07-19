@@ -9,7 +9,7 @@ import { resolveService } from '../../utils/service-functions';
   import EntitySelectTreeNode from './EntitySelectTreeNode.svelte';
 
   let httpService: EntityHttpService = resolveService(EntityHttpService);
-  let nameService: EntityNameService = container.resolve(EntityNameService);
+  let nameService: EntityNameService = resolveService(EntityNameService);
 
   export let entityType: EntityType;
   export let selectedTenant: TenantView;
@@ -59,7 +59,6 @@ import { resolveService } from '../../utils/service-functions';
 <div class="flex flex-col w-full h-full overflow-hidden">
   <div class="font-bold text-lg flex items-center cursor-pointer group" on:click={() => dispatcher('changeTenant')}>
     {selectedTenant?.Name}
-
     <IconButton class="material-icons group-hover:visible invisible" size="button">edit</IconButton>
   </div>
 

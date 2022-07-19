@@ -2,7 +2,7 @@
   import {TenantHttpService, TenantView} from 'audako-core';
   import {resolveService} from '../../utils/service-functions';
   import {createEventDispatcher} from 'svelte';
-import IconButton from '../../shared/components/IconButton.svelte';
+import IconButton from '../../shared/components/IconButton/IconButton.svelte';
 
   let enttiyTenantSelect = resolveService(TenantHttpService);
 

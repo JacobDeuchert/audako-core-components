@@ -48,8 +48,7 @@
   }
 </script>
 
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 <div class="p-4 flex w-full h-full">
   {#if inTenantSelect}
     <TenantSelect
@@ -71,18 +70,18 @@
       <div class="flex flex-col h-full overflow-hidden">
         <EntitySelectFilter {entityType} />
 
-        <div class="flex-1 overflow-hidden">
+        <!-- <div class="flex-1 overflow-hidden">
           <EntitySelectTable
             {entityType}
             on:entitySelected={(e) => dispatcher('entitySelected', {selectedEntity: e.detail.selectedEntity})}
           />
-        </div>
+        </div> -->
       </div>
     </div>
   {/if}
 </div>
 
-<style lang="postcss">
+<style lang="postcss" global>
   @tailwind base;
   @tailwind components;
   @tailwind utilities;

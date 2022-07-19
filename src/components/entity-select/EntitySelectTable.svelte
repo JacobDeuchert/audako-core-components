@@ -1,5 +1,4 @@
 <script lang="ts">
-  import DataTable, {Head, Row, Cell, Label, Body, Pagination, SortValue} from '@smui/data-table';
   import {container} from 'tsyringe';
   import IconButton from '@smui/icon-button/src/IconButton.svelte';
   import LinearProgress from '@smui/linear-progress';
@@ -171,8 +170,26 @@ import type { PaginationResponse } from 'audako-core/dist/services/entity-http.s
 </script>
 
 <div class="flex flex-col h-full">
-  <div class="flex-1 overflow-auto">
-    <DataTable
+
+  <div class="table-header-grid">
+    <div></div>
+
+  </div>
+
+  <div class="">
+
+  </div>
+
+  <div>
+
+  </div>
+
+
+
+
+  <!-- <div class="flex-1 overflow-auto"> -->
+
+    <!-- <DataTable
       sortable
       bind:sort
       bind:sortDirection
@@ -274,5 +291,19 @@ import type { PaginationResponse } from 'audako-core/dist/services/entity-http.s
       on:click={() => (pageIndex = lastPageIndex)}
       disabled={pageIndex === lastPageIndex}>last_page</IconButton
     >
-  </Pagination>
+  </Pagination> -->
 </div>
+
+<style>
+
+  .table-header-grid {
+    display: grid;
+    grid-template-rows: 50px;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .table-body-grid {
+
+  }
+
+</style>
