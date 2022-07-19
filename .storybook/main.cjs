@@ -17,7 +17,8 @@ module.exports = {
           implementation: require("postcss"),
         }
       }
-    }
+    },
+    "@storybook/addon-svelte-csf"
     
   ],
   "framework": "@storybook/svelte",
@@ -31,6 +32,6 @@ module.exports = {
     }
   },
   "features": {
-    "storyStoreV7": true
+    
   }
 }

@@ -1,12 +1,11 @@
 <script lang="ts">
-  import IconButton from '@smui/icon-button/src/IconButton.svelte';
 import { EntityHttpService, EntityNameService, EntityType, Group, TenantView } from 'audako-core';
   import { Subject, takeUntil } from 'rxjs';
 import { resolveService } from '../../utils/service-functions';
   import { afterUpdate, createEventDispatcher } from 'svelte';
-  import { container } from 'tsyringe';
   import { EntitySelectTypeStore } from './entity-select-stores';
   import EntitySelectTreeNode from './EntitySelectTreeNode.svelte';
+import IconButton from '../../shared/components/IconButton/IconButton.svelte';
 
   let httpService: EntityHttpService = resolveService(EntityHttpService);
   let nameService: EntityNameService = resolveService(EntityNameService);
@@ -59,7 +58,7 @@ import { resolveService } from '../../utils/service-functions';
 <div class="flex flex-col w-full h-full overflow-hidden">
   <div class="font-bold text-lg flex items-center cursor-pointer group" on:click={() => dispatcher('changeTenant')}>
     {selectedTenant?.Name}
-    <IconButton class="material-icons group-hover:visible invisible" size="button">edit</IconButton>
+    <IconButton size="small">edit</IconButton>
   </div>
 
   {#if rootGroup}
