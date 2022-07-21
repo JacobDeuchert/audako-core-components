@@ -53,6 +53,7 @@
     "@smui/tooltip": "^6.0.0-beta.16",
     "audako-core": "github:JacobDeuchert/audako-core",
     "reflect-metadata": "^0.1.13",
+    "rxjs": "^7.5.6",
     "svelte-material-ui": "^6.0.0-beta.16",
     "tsyringe": "^4.7.0"
   },

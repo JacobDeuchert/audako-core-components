@@ -5,12 +5,15 @@
   export let icon: string = null;
   export let size: 'small' | 'medium' | 'large' = 'medium';
   export let className: string = '';
+  export let disabled: boolean = false;
 
   let absoluteSize: number;
   let iconFontSize: number;
 
   let active: boolean;
   let activeTimestamp: number;
+
+
 
   $: {
     switch (size) {
@@ -32,6 +35,9 @@
   let eventDispatcher = createEventDispatcher();
 
   function onMouseDown(event: MouseEvent): void {
+    if (disabled) {
+      return;
+    }
     active = true;
     activeTimestamp = event.timeStamp;
   }
@@ -48,18 +54,24 @@
     }
   }
 
+  function onClickButton(mouseEvent: MouseEvent): void {
+    if (disabled) {
+      return;
+    }
+
+    eventDispatcher('click', event);
+  }
+
 
 </script>
 
 <div
   class="container group {className}"
-  style="height: {absoluteSize}px; width: {absoluteSize}px"
+  style="height: {absoluteSize}px; width: {absoluteSize}px; {disabled ? 'cursor: default !important; opacity: 0.4;' : ''}"
   on:mousedown={(event) => onMouseDown(event)}
   on:mouseup={(event) => onMouseUp(event)}
   on:mouseout={(event) => onMouseUp(event)}
-  on:click={(event) => {
-    eventDispatcher('click', event);
-  }}
+  on:click={(event) => onClickButton(event)}
   on:blur={(event) => {}}
 >
   <div class="ripple bg-gray-200 bg-opacity-50" style="{active ? 'width: 100% !important; height: 100% !important' : ''}"/>

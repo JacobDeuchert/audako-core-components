@@ -1,5 +1,4 @@
 <script lang="ts">
-  import type { InputComponentDev } from '@smui/textfield';
   import Checkbox from '../../shared/components/Checkbox/Checkbox.svelte';
   import { Subject, takeUntil } from 'rxjs';
   import { onDestroy, onMount } from 'svelte';
@@ -17,7 +16,7 @@ import type { EntityType } from 'audako-core';
   let withSubGroups = false;
   let filter: string = '';
 
-  let filterInput: InputComponentDev;
+  let filterInput: HTMLInputElement;
 
   let unsub = new Subject<void>();
 
@@ -49,9 +48,8 @@ import type { EntityType } from 'audako-core';
 
   onMount(() => {
     if (filterInput) {
-      const inputElement = filterInput.getElement() as HTMLInputElement;
-      inputElement.focus();
-      inputElement.select();
+      filterInput.focus();
+      filterInput.select();
     }
   });
 
@@ -65,7 +63,7 @@ import type { EntityType } from 'audako-core';
 
   <div class="flex items-center w-full focus-within:border-blue-300 border-gray-200  border-2 rounded-md p-2">
     <span class="material-symbols-rounded mr-2">search</span>
-    <input placeholder="Search" class="w-full outline-none">
+    <input placeholder="Search" class="w-full outline-none" bind:this={filterInput}>
   </div>
 
   <div class="flex justify-end mt-2">

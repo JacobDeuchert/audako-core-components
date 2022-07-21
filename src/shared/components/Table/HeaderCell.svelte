@@ -1,43 +1,66 @@
 <script lang="ts">
-import { createEventDispatcher } from 'svelte';
+  import {createEventDispatcher, getContext, onDestroy} from 'svelte';
+  import type {Writable} from 'svelte/store';
+  import type {Sort} from './table.types';
 
-    let eventDispatcher = createEventDispatcher();
+  export let sortable: boolean = false;
+  export let id: string;
 
-    let sortDirection: 'asc' | 'desc' | null = 'asc';
+  export let container$class: string = '';
 
-    function toggleSort(): void {
+  let sortDirection: 'asc' | 'desc' | null = 'asc';
 
-        if (sortDirection === 'asc') {
-            sortDirection = 'desc';
-        } else if (sortDirection === 'desc') {
-            sortDirection = null;
-        } else {
-            sortDirection = 'asc';
-        }
+  let activeTableSort = getContext<Writable<Sort>>('audako:table:sort');
+  
+  
+  console.log(activeTableSort);
+
+
+  let sortUnsubscribe = activeTableSort.subscribe((sort) => {
+    if (id && sort?.active === id) {
+      sortDirection = sort.direction;
+    } else {
+      sortDirection = null;
+    }
+  });
+
+  function toggleSort(): void {
+    if (sortDirection === 'asc') {
+      sortDirection = 'desc';
+    } else if (sortDirection === 'desc') {
+      sortDirection = null;
+    } else {
+      sortDirection = 'asc';
     }
 
+    activeTableSort.set(
+      sortDirection
+        ? {
+            active: id,
+            direction: sortDirection,
+          }
+        : null
+    );
+  }
+
+  onDestroy(() => {
+    sortUnsubscribe();
+  });
 </script>
 
-<div class="flex w-full h-full cursor-pointer" on:click="{() => toggleSort()}">
-    <div>
-        <slot>
+<div class="flex w-full h-full {sortable ? 'cursor-pointer' : ''} " on:click={() => toggleSort()}>
+  <div class={container$class}>
+    <slot />
+  </div>
 
-        </slot>
-    </div>
-
-    {#if sortDirection == 'asc'} 
-        <span class="material-symbols-rounded text-xs">
-            north
-        </span>
-    {:else if sortDirection == 'desc'} 
-        <span class="material-symbols-rounded text-xs">
-            south
-        </span>
-    {:else} 
-        <span class="material-symbols-rounded text-xs">
-        
-        </span>
-    {/if}
-
-    
+  {#if sortable}
+    <span
+      class="material-symbols-rounded text-xs transition-all"
+      style="{sortDirection == 'asc' ? 'transform: rotateX(0);' : 'transform: rotateX(-180deg);'}{sortDirection == null
+        ? 'opacity: 0;'
+        : 'opacity: 1;'}"
+    >
+      north
+    </span>
+  {/if}
 </div>

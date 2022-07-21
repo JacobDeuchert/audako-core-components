@@ -1,7 +1,4 @@
 <script lang="ts">
-  import {container} from 'tsyringe';
-  import IconButton from '@smui/icon-button/src/IconButton.svelte';
-  import LinearProgress from '@smui/linear-progress';
   import {
     combineLatest,
     debounceTime,
@@ -16,12 +13,11 @@
     throttleTime,
   } from 'rxjs';
   import {createEventDispatcher, onDestroy} from 'svelte';
-  import Select, {Option} from '@smui/select';
-  import Tooltip, {Wrapper} from '@smui/tooltip';
   import {EntitySelectGlobalStore, EntitySelectTypeStore} from './entity-select-stores';
   import {ConfigurationEntity, EntityHttpService, EntityNameService, EntityType, Group} from 'audako-core';
   import {resolveService} from '../../utils/service-functions';
-import type { PaginationResponse } from 'audako-core/dist/services/entity-http.service';
+  import type { PaginationResponse } from 'audako-core';
+import Table from '../../shared/components/Table/Table.svelte';
 
   let httpService: EntityHttpService = resolveService(EntityHttpService);
   let nameService: EntityNameService = resolveService(EntityNameService);
@@ -171,18 +167,9 @@ import type { PaginationResponse } from 'audako-core/dist/services/entity-http.s
 
 <div class="flex flex-col h-full">
 
-  <div class="table-header-grid">
-    <div></div>
+  <Table>
 
-  </div>
-
-  <div class="">
-
-  </div>
-
-  <div>
-
-  </div>
+  </Table>
 
 
 

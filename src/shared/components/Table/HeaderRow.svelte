@@ -13,6 +13,9 @@
     .audako-tableheader-flexrow{
         display: flex;
         height: 40px;
+        position: sticky;
+        top:0;
+        background: white
     }
 
     :global(.audako-tableheader-flexrow > *) {

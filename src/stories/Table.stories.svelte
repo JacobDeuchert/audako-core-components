@@ -5,6 +5,11 @@
     import HeaderRow from '../shared/components/Table/HeaderRow.svelte';
     import DataRow from '../shared/components/Table/DataRow.svelte';
     import HeaderCell from '../shared/components/Table/HeaderCell.svelte';
+    import DataCell from '../shared/components/Table/DataCell.svelte';
+    import Paginator from '../shared/components/Table/Paginator.svelte';
+
+    let data = new Array(100).fill(0).map(x => ({Name: 'abc', Age: Math.random() * 100}));
+    console.log(data);
 
 </script>
 
@@ -13,12 +18,22 @@
 
 <Story name="Default">
 
-    <Table>
+    <Table on:sort={(sort)=> console.log('table - sort', sort)}>
         <HeaderRow>
-            <HeaderCell>
+            <HeaderCell id="Name" sortable>
                 <div class="bg-red-500">Test</div>
             </HeaderCell>
-            <div class="bg-green-500">Test</div>
+            <HeaderCell id="Age" sortable>
+                <div class="bg-green-500 w-full">Test</div>
+            </HeaderCell>
         </HeaderRow>
+        {#each data as row}
+        <DataRow>
+            <DataCell>{row.Name}</DataCell>
+            <DataCell>{row.Age}</DataCell>
+        </DataRow>
+        {/each}
+
+        <Paginator on:changePage={event => console.log(event?.detail)} slot="pagination" pageIndex={0} pageSize={10} totalCount={100} />
     </Table>
 </Story>

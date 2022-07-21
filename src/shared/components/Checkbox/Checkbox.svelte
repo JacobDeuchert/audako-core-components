@@ -1,6 +1,6 @@
 <script lang="ts">
 
-    export let label: string;
+    export let label: string = '';
     export let checked: boolean = false;
 
     function onClick(event: MouseEvent): void {
