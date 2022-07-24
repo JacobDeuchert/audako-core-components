@@ -4,14 +4,14 @@ export const EntitySelect = EntitySelectWebComponent;
 export const TenantSelect = TenantSelectWebComponent;
 
 export function registerCustomElements() {
-    _defineCustomElement('audako-entity-select', EntitySelect);
-    _defineCustomElement('audako-tenant-select', TenantSelect);
+  _defineCustomElement('audako-entity-select', EntitySelect);
+  _defineCustomElement('audako-tenant-select', TenantSelect);
 }
 
 function _defineCustomElement(tagName: string, component: any) {
-    if (customElements.get(tagName)) {
-        return;
-    }
+  if (customElements.get(tagName)) {
+    return;
+  }
 
-    customElements.define(tagName, component);
+  customElements.define(tagName, component);
 }

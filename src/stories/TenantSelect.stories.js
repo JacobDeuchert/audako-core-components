@@ -1,7 +1,5 @@
-
 import TenantSelect from '../components/tenant-select/TenantSelect.svelte';
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
-
 
 console.log(process.env.STORYBOOK_THEME);
 
@@ -9,8 +7,7 @@ console.log(process.env.STORYBOOK_THEME);
 export default {
   title: 'Tenant Select',
   component: TenantSelect,
-  argTypes: {
-  },
+  argTypes: {},
 };
 
 // More on component templates: https://storybook.js.org/docs/svelte/writing-stories/introduction#using-args
@@ -21,6 +18,5 @@ const Template = (args) => ({
     click: args.onClick,
   },
 });
-
 
 export const Small = Template.bind({});

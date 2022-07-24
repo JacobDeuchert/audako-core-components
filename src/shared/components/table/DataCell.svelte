@@ -1,7 +1,6 @@
 <script lang="ts">
 </script>
 
-<div>
-    <slot>
-    </slot>
+<div class="border-t">
+  <slot />
 </div>

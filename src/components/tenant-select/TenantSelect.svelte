@@ -1,70 +1,69 @@
 <script lang="ts">
-  import {TenantHttpService, TenantView} from 'audako-core';
-  import {resolveService} from '../../utils/service-functions';
-  import {createEventDispatcher} from 'svelte';
-import IconButton from '../../shared/components/IconButton/IconButton.svelte';
+import { TenantHttpService, TenantView } from 'audako-core';
+import { resolveService } from '../../utils/service-functions';
+import { createEventDispatcher } from 'svelte';
+import IconButton from '../../shared/components/icon-button/IconButton.svelte';
 
-  let enttiyTenantSelect = resolveService(TenantHttpService);
+let enttiyTenantSelect = resolveService(TenantHttpService);
 
-  export let allowBack = false;
+export let allowBack = false;
 
-  let tenantPath: TenantView[] = [];
-  let tenants: TenantView[] = [];
-  const eventDispatcher = createEventDispatcher();
+let tenantPath: TenantView[] = [];
+let tenants: TenantView[] = [];
+const eventDispatcher = createEventDispatcher();
 
-  async function setupBrowser(): Promise<void> {
-    const topTenants = await enttiyTenantSelect.getTopTenants();
+async function setupBrowser(): Promise<void> {
+  const topTenants = await enttiyTenantSelect.getTopTenants();
 
-    if (topTenants.length === 1) {
-      const rootTenant = topTenants[0];
-      if (rootTenant.Root == null) {
-        browseTenant(rootTenant);
-        return;
-      }
-    }
-
-    tenantPath = [
-      new TenantView({
-        Id: 'start',
-        Name: 'Start',
-      }),
-    ];
-
-    tenants = topTenants;
-  }
-
-  async function loadChildren(tenant: TenantView): Promise<void> {
-    const children = await enttiyTenantSelect.getNextTenants(tenant.Id);
-    tenants = children;
-  }
-
-  async function browseTenant(tenant: TenantView): Promise<void> {
-    tenantPath = [...tenantPath, tenant];
-    loadChildren(tenant);
-  }
-
-  async function selectTenantInPath(tenant: TenantView): Promise<void> {
-    if (tenant.Id == 'start') {
-      setupBrowser();
+  if (topTenants.length === 1) {
+    const rootTenant = topTenants[0];
+    if (rootTenant.Root == null) {
+      browseTenant(rootTenant);
       return;
     }
-
-    const index = tenantPath.findIndex((t) => t.Id === tenant.Id);
-    tenantPath = tenantPath.slice(0, index + 1);
-    loadChildren(tenant);
   }
 
-  function selectTenant(event: CustomEvent, tenant: TenantView): void {
-    console.log(event, tenant);
-    event.detail.stopPropagation();
-    eventDispatcher('tenantSelected', {tenant: tenant});
+  tenantPath = [
+    new TenantView({
+      Id: 'start',
+      Name: 'Start',
+    }),
+  ];
+
+  tenants = topTenants;
+}
+
+async function loadChildren(tenant: TenantView): Promise<void> {
+  const children = await enttiyTenantSelect.getNextTenants(tenant.Id);
+  tenants = children;
+}
+
+async function browseTenant(tenant: TenantView): Promise<void> {
+  tenantPath = [...tenantPath, tenant];
+  loadChildren(tenant);
+}
+
+async function selectTenantInPath(tenant: TenantView): Promise<void> {
+  if (tenant.Id == 'start') {
+    setupBrowser();
+    return;
   }
 
-  setupBrowser();
+  const index = tenantPath.findIndex((t) => t.Id === tenant.Id);
+  tenantPath = tenantPath.slice(0, index + 1);
+  loadChildren(tenant);
+}
+
+function selectTenant(event: CustomEvent, tenant: TenantView): void {
+  console.log(event, tenant);
+  event.detail.stopPropagation();
+  eventDispatcher('tenantSelected', { tenant: tenant });
+}
+
+setupBrowser();
 </script>
 
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 <div class="w-full">
   <div class="flex items-center">
     {#if allowBack}
@@ -100,7 +99,7 @@ import IconButton from '../../shared/components/IconButton/IconButton.svelte';
 </div>
 
 <style lang="postcss">
-  @tailwind base;
-  @tailwind components;
-  @tailwind utilities;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 </style>

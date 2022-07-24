@@ -1,0 +1,64 @@
+<script lang="ts">
+import { createEventDispatcher, getContext, onDestroy } from 'svelte';
+import type { Writable } from 'svelte/store';
+import type { Sort } from './table.types';
+
+export let sortable: boolean = false;
+export let id: string;
+
+export let container$class: string = '';
+
+let sortDirection: 'asc' | 'desc' | null = 'asc';
+
+let activeTableSort = getContext<Writable<Sort>>('audako:table:sort');
+
+console.log(activeTableSort);
+
+let sortUnsubscribe = activeTableSort.subscribe((sort) => {
+  if (id && sort?.active === id) {
+    sortDirection = sort.direction;
+  } else {
+    sortDirection = null;
+  }
+});
+
+function toggleSort(): void {
+  if (sortDirection === 'asc') {
+    sortDirection = 'desc';
+  } else if (sortDirection === 'desc') {
+    sortDirection = null;
+  } else {
+    sortDirection = 'asc';
+  }
+
+  activeTableSort.set(
+    sortDirection
+      ? {
+          active: id,
+          direction: sortDirection,
+        }
+      : null
+  );
+}
+
+onDestroy(() => {
+  sortUnsubscribe();
+});
+</script>
+
+<div class="flex w-full h-full {sortable ? 'cursor-pointer' : ''} " on:click={() => toggleSort()}>
+  <div class={container$class}>
+    <slot />
+  </div>
+
+  {#if sortable}
+    <span
+      class="material-symbols-rounded text-xs transition-all"
+      style="{sortDirection == 'asc' ? 'transform: rotateX(0);' : 'transform: rotateX(-180deg);'}{sortDirection == null
+        ? 'opacity: 0;'
+        : 'opacity: 1;'}"
+    >
+      north
+    </span>
+  {/if}
+</div>

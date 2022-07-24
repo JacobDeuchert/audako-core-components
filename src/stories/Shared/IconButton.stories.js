@@ -1,4 +1,4 @@
-import IconButton from '../../shared/components/IconButton/IconButton.svelte';
+import IconButton from '../../shared/components/icon-button/IconButton.svelte';
 import '../../index.css';
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 // More on argTypes: https://storybook.js.org/docs/svelte/api/argtypes
@@ -6,7 +6,7 @@ export default {
   title: 'Shared Components/Button',
   component: IconButton,
   argTypes: {
-    icon: {control: 'text'},
+    icon: { control: 'text' },
     size: {
       control: { type: 'select' },
       options: ['small', 'medium', 'large'],
@@ -29,7 +29,7 @@ Primary.args = {
   icon: 'add',
   onClick: (event) => {
     console.log('clicked', event);
-  }
+  },
 };
 
 export const Secondary = Template.bind({});
@@ -37,7 +37,7 @@ Secondary.args = {
   label: 'Button',
   onClick: (event) => {
     console.log('clicked', event);
-  }
+  },
 };
 
 export const Large = Template.bind({});
@@ -46,7 +46,7 @@ Large.args = {
   label: 'Button',
   onClick: (event) => {
     console.log('clicked', event);
-  }
+  },
 };
 
 export const Small = Template.bind({});
@@ -55,5 +55,5 @@ Small.args = {
   label: 'Button',
   onClick: (event) => {
     console.log('clicked', event);
-  }
+  },
 };
