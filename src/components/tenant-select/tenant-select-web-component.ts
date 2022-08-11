@@ -1,5 +1,5 @@
 import TenantSelect from './TenantSelect.svelte';
-import css from 'svelte-material-ui/bare.css';
+import css from '../../index.css';
 
 export class TenantSelectWebComponent extends HTMLElement {
   private _element: TenantSelect;

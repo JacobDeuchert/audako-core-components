@@ -1,7 +1,7 @@
 <script lang="ts">
 import { combineLatest, debounceTime, filter, finalize, from, Observable, Subject, switchMap, takeUntil, tap, throttleTime } from 'rxjs';
 import { createEventDispatcher, onDestroy } from 'svelte';
-import { EntitySelectGlobalStore, EntitySelectTypeStore } from './entity-select-stores';
+import { EntitySelectGlobalStore, EntitySelectSelectionStore, EntitySelectTypeStore } from './entity-select-stores';
 import { ConfigurationEntity, EntityHttpService, EntityNameService, EntityType, Group } from 'audako-core';
 import { resolveService } from '../../utils/service-functions';
 import type { PaginationResponse } from 'audako-core';
@@ -12,14 +12,20 @@ import HeaderCell from '../../shared/components/table/HeaderCell.svelte';
 import DataRow from '../../shared/components/table/DataRow.svelte';
 import DataCell from '../../shared/components/table/DataCell.svelte';
 import Paginator from '../../shared/components/table/Paginator.svelte';
+import Checkbox from '../../shared/components/checkbox/Checkbox.svelte';
 
 let httpService: EntityHttpService = resolveService(EntityHttpService);
 let nameService: EntityNameService = resolveService(EntityNameService);
 
 export let entityType: EntityType;
+export let selectMultiple: boolean = false;
 
-let entitites: Partial<ConfigurationEntity>[] = [];
+let entities: Partial<ConfigurationEntity>[] = [];
 let entitiesRequested: Subject<void> = new Subject();
+
+let selectedEntities: Partial<ConfigurationEntity>[] = [];
+let selectedEntitiesInPageLookup: Record<string, boolean> = {};
+let masterToggleState: 'checked' | 'indeterminate' | 'unchecked' = 'unchecked';
 
 let filterString: string;
 let selectedGroupId: string;
@@ -42,6 +48,15 @@ let loading: boolean = true;
 
 let unsub = new Subject<void>();
 let dispatcher = createEventDispatcher();
+
+
+EntitySelectSelectionStore.pipe(takeUntil(unsub)).subscribe(state => {
+  selectedEntities = state.selectedEntities;
+
+  setupSelectedPageLookup();
+  updateMasterToggleState();
+});
+
 
 combineLatest([globalStore.asObservable(), typeStore.asObservable()])
   .pipe(takeUntil(unsub))
@@ -101,22 +116,46 @@ function queryEntities(): Observable<PaginationResponse<Partial<ConfigurationEnt
   return from(httpService.queryConfiguration(entityType, query, paging));
 }
 
-async function onSortTable() {
-  console.log(sort, sortDirection);
+function onEntitySelected(entity: Partial<ConfigurationEntity>) {
+  if (selectMultiple) {
+    if (selectedEntities.find((e) => e.Id === entity.Id)) {
+      selectedEntities = selectedEntities.filter((e) => e.Id !== entity.Id);
+      selectedEntitiesInPageLookup[entity.Id] = false;
+    } else {
+      selectedEntities.push(entity);
+      selectedEntitiesInPageLookup[entity.Id] = true;
+    }
+    updateMasterToggleState();
+  } else {
+    selectedEntities = [entity];
+  }
+
+  EntitySelectSelectionStore.update((state) => ({ ...state, selectedEntities: selectedEntities }));
 }
 
-function onEntitySelected(entity: Partial<ConfigurationEntity>) {
-  const entityTypeStore = EntitySelectTypeStore(entityType);
-  const lastSelected = entityTypeStore.value.lastSelectedEntities;
+function toggleMasterSelect(checked: boolean): void {
+  
+  
+  if (checked) {
+    selectedEntities = [...selectedEntities, ...entities.filter((e) => !selectedEntitiesInPageLookup[e.Id])];
+  } else {
+    selectedEntities = selectedEntities.filter((e) => !entities.find((x) => x.Id === e.Id));
+  }
 
-  lastSelected.unshift(entity.Id);
-  lastSelected.splice(5);
-  entityTypeStore.update((state) => ({
-    ...state,
-    lastSelectedEntities: lastSelected,
-  }));
+  setupSelectedPageLookup();
+  updateMasterToggleState();
+  EntitySelectSelectionStore.update((state) => ({ ...state, selectedEntities: selectedEntities }));
+}
 
-  dispatcher('entitySelected', { selectedEntity: entity });
+function updateMasterToggleState(): void {
+  let selectedOnPage = Object.keys(selectedEntitiesInPageLookup).filter((id) => selectedEntitiesInPageLookup[id]);
+  if (selectedOnPage.length === 0) {
+    masterToggleState = 'unchecked';
+  } else if (selectedOnPage.length === entities.length) {
+    masterToggleState = 'checked';
+  } else {
+    masterToggleState = 'indeterminate';
+  }
 }
 
 function onPageChanged(event: CustomEvent<PageEvent>): void {
@@ -127,6 +166,13 @@ function onPageChanged(event: CustomEvent<PageEvent>): void {
   } else {
     pageIndex = pageEvent.pageIndex;
   }
+}
+
+function setupSelectedPageLookup(): void {
+  selectedEntitiesInPageLookup = {};
+  entities.forEach((entity) => {
+    selectedEntitiesInPageLookup[entity.Id] = selectedEntities.find((e) => e.Id === entity.Id) != null;
+  } );
 }
 
 $: {
@@ -155,34 +201,64 @@ entitiesRequested
   )
   .subscribe((response) => {
     loading = false;
-    entitites = response.data;
+    entities = response.data;
+
+    console.log('selectedEntities', selectedEntities);
+
+    setupSelectedPageLookup();
+    updateMasterToggleState();
+
+    console.log('selectedEntitiesInPageLookup', selectedEntitiesInPageLookup);
 
     // add own group to entities to be able to select the top most group
     if (entityType === EntityType.Group) {
-      entitites.unshift(selectedGroup);
+      entities.unshift(selectedGroup);
     }
 
     totalCount = response.total;
   });
 </script>
 
-<div class="flex flex-col h-full">
+<div class="flex flex-col h-full overflow-hidden mt-[-10px]">
   <Table>
     <HeaderRow>
-      <HeaderCell id="Name">Name</HeaderCell>
-      <HeaderCell id="Name">Group</HeaderCell>
+      {#if selectMultiple}
+        <HeaderCell container$class="basis-[50px] flex-[0] cursor-default" id="Name">
+          <Checkbox
+            checked={masterToggleState === 'checked'}
+            indeterminate={masterToggleState === 'indeterminate'}
+            on:change={(e) => toggleMasterSelect(e.detail?.checked)}
+          />
+        </HeaderCell>
+      {/if}
+      <HeaderCell container$class="flex-[2] cursor-default" id="Name">Name</HeaderCell>
+      <HeaderCell container$class="flex-1 curstor-default" id="Name">Group</HeaderCell>
     </HeaderRow>
 
-    {#each entitites as entity}
-      <DataRow flexrow$class="cursor-pointer hover:bg-gray-100" on:click={()=> onEntitySelected(entity)}>
-        <DataCell>
-          <div class="leading-4 clam text-ellipsis" style="line-clamp: 2;">
+    {#if loading}
+      <div class="w-full h-[3px] overflow-hidden bg-blue-200">
+        <div class="progress-bar-value-animation wfull h-full bg-blue-600 "></div>
+      </div>
+    {:else} 
+    
+      <div class="w-full h-[3px]"></div>
+    {/if}
+
+    {#each entities as entity}
+      <DataRow flexrow$class="cursor-pointer hover:bg-gray-100" on:click={() => onEntitySelected(entity)}>
+        {#if selectMultiple}
+          <DataCell container$class="basis-[50px] flex-[0]">
+            <Checkbox checked={selectedEntitiesInPageLookup[entity.Id]} />
+          </DataCell>
+        {/if}
+
+        <DataCell container$class="flex-[2]">
+          <div class="text-sm overflow-hidden whitespace-nowrap text-ellipsis">
             {entity.Name?.Value}
           </div>
-          
         </DataCell>
-        <DataCell>
-          <span>
+        <DataCell container$class="flex-1">
+          <span class=" text-sm overflow-hidden whitespace-nowrap text-ellipsis">
             {#await nameService.resolveName(EntityType.Group, entity.GroupId) then name}
               {name}
             {/await}
@@ -191,75 +267,27 @@ entitiesRequested
       </DataRow>
     {/each}
 
-    <Paginator {pageIndex} {pageSize} {totalCount} on:changePage={onPageChanged}/>
+    <Paginator slot="pagination" {pageIndex} {pageSize} {totalCount} on:changePage={onPageChanged} />
   </Table>
-
-  <!-- <div class="flex-1 overflow-auto"> -->
-
-  <!-- <DataTable
-      sortable
-      bind:sort
-      bind:sortDirection
-      on:SMUIDataTable:sorted={onSortTable}
-      stickyHeader
-      class="w-full border-none"
-    >
-      <Head>
-        <Row>
-          <Cell columnId="Name">
-            <Label class="font-bold text-gray-600">Name</Label>
-            <IconButton class="material-icons !text-[20px]" size="mini">arrow_upward</IconButton>
-          </Cell>
-          <Cell columnId="Group">
-            <Label class="font-bold text-gray-600">Group</Label>
-            <IconButton class="material-icons !text-[20px]" size="mini">arrow_upward</IconButton>
-          </Cell>
-          <Cell columnId="Type">
-            <Label class="font-bold text-gray-600">Type</Label>
-            <IconButton class="material-icons !text-[20px]" size="mini">arrow_upward</IconButton>
-          </Cell>
-        </Row>
-      </Head>
-      <Body>
-        {#each entitites as entity}
-          <Row class="cursor-pointer" on:click={() => onEntitySelected(entity)}>
-            <Cell>
-              {entity.Name.Value}
-            </Cell>
-            <Cell>
-              <Wrapper>
-                <span>
-                  {#await nameService.resolveName(EntityType.Group, entity.GroupId) then name}
-                    {name}
-                  {/await}
-                </span>
-
-                <Tooltip surface$class="!max-w-[400px]">
-                  {#await nameService.resolvePathName(entity.Path) then pathName}
-                    <span>{pathName}</span>
-                  {/await}
-                </Tooltip>
-              </Wrapper>
-            </Cell>
-            <Cell>
-              {entity['Type']?.Value ?? ''}
-            </Cell>
-          </Row>
-        {/each}
-      </Body>
-
-      <LinearProgress class="h-[4px] z-10" indeterminate closed={!loading} slot="progress" />
-    </DataTable>
-  </div>-->
 </div>
 
 <style>
-.table-header-grid {
-  display: grid;
-  grid-template-rows: 50px;
-  grid-template-columns: repeat(3, 1fr);
+  
+
+.progress-bar-value-animation {
+  animation: indeterminateAnimation 1s infinite linear;
+  transform-origin: 0% 50%;
 }
 
-.table-body-grid {
+@keyframes indeterminateAnimation {
+  0% {
+    transform:  translateX(0) scaleX(0);
+  }
+  40% {
+    transform:  translateX(0) scaleX(0.4);
+  }
+  100% {
+    transform:  translateX(100%) scaleX(0.5);
+  }
 }
 </style>

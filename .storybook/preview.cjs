@@ -1,5 +1,5 @@
 import { TenantHttpService, EntityHttpService, EntityNameService } from 'audako-core';
-
+import {PopupService} from '../src/shared/services/popup.service';
 import 'reflect-metadata';
 import { container } from 'tsyringe';
 
@@ -11,6 +11,7 @@ let httpConfig = {
     Live: '/live',
     Historian: '/historian',
     Maintenance: '/maintenance',
+    
     Event: '/event',
     Camera: '/camera',
     Reporting: '/reporting',
@@ -40,6 +41,7 @@ let entityHttpService = new EntityHttpService(httpConfig, access_token);
 container.register('TenantHttpService', { useValue: new TenantHttpService(httpConfig, access_token) });
 container.register('EntityHttpService', { useValue: entityHttpService });
 container.register('EntityNameService', { useValue: new EntityNameService(entityHttpService) });
+container.register('PopupContainerService', { useValue: new PopupService(document.body) });
 
 console.log(process?.env);
 

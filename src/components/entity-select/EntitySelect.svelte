@@ -1,14 +1,15 @@
 <script lang="ts">
 import EntitySelectSidebar from './EntitySelectSidebar.svelte';
-import { createEventDispatcher } from 'svelte';
+import { createEventDispatcher, onDestroy } from 'svelte';
 import EntitySelectTable from './EntitySelectTable.svelte';
 import EntitySelectFilter from './EntitySelectFilter.svelte';
-import { EntitySelectGlobalStore, EntitySelectTypeStore } from './entity-select-stores';
-import { EntityHttpService, EntityType, TenantHttpService, TenantView } from 'audako-core';
+import { EntitySelectGlobalStore, EntitySelectSelectionStore, EntitySelectTypeStore } from './entity-select-stores';
+import { ConfigurationEntity, EntityHttpService, EntityType, TenantHttpService, TenantView } from 'audako-core';
 import { resolveService } from '../../utils/service-functions';
 import TenantSelect from '../tenant-select/TenantSelect.svelte';
 
 export let entityType: EntityType = EntityType.Signal;
+export let selectMultiple = false;
 
 let httpService: EntityHttpService = resolveService(EntityHttpService);
 let tenantHttpService: TenantHttpService = resolveService(TenantHttpService);
@@ -16,9 +17,11 @@ let tenantHttpService: TenantHttpService = resolveService(TenantHttpService);
 let selectedTenant: TenantView;
 let inTenantSelect: boolean = false;
 
+let selectedEntities: Partial<ConfigurationEntity>[] = [];
+
 let dispatcher = createEventDispatcher();
 
-EntitySelectGlobalStore.subscribe((state) => {
+let globalSubscription = EntitySelectGlobalStore.subscribe((state) => {
   if (state.selectedTenant) {
     inTenantSelect = false;
     getTenantView(state.selectedTenant);
@@ -26,6 +29,33 @@ EntitySelectGlobalStore.subscribe((state) => {
     inTenantSelect = true;
   }
 });
+
+let selectionSubscription = EntitySelectSelectionStore.subscribe((state) => {
+
+  
+  if (state.selectedEntities && !selectMultiple) {
+    setLastSelectedEntities(state.selectedEntities);
+    dispatcher('selectedEntities', state.selectedEntities[0]);
+  } else {
+    selectedEntities = state.selectedEntities;
+  }
+});
+
+function setLastSelectedEntities(selected: Partial<ConfigurationEntity>[]) {
+
+  const typeStore = EntitySelectTypeStore(entityType);
+
+  const lastSelected = typeStore.value.lastSelectedEntities;
+
+  const notIncludedIds = selected.filter((entity) => !lastSelected.includes(entity.Id)).map((entity) => entity.Id);
+
+  lastSelected.unshift(...notIncludedIds);
+  lastSelected.splice(5);
+  typeStore.update((state) => ({
+    ...state,
+    lastSelectedEntities: lastSelected,
+  }));
+}
 
 async function getTenantView(id: string): Promise<void> {
   try {
@@ -46,13 +76,20 @@ async function onTenantSelected(tenant: TenantView): Promise<void> {
 function onTenantChange(): void {
   inTenantSelect = true;
 }
+
+function acceptSelection(): void {
+  setLastSelectedEntities(selectedEntities);
+  dispatcher('selectedEntities', selectedEntities);
+}
+
+onDestroy(() => {
+  globalSubscription.unsubscribe();
+  selectionSubscription.unsubscribe();
+});
+
 </script>
 
-<link
-  rel="stylesheet"
-  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-/>
-<div class="p-4 flex w-full h-full">
+<div class="flex w-full h-full">
   {#if inTenantSelect}
     <TenantSelect
       allowBack={!!selectedTenant}
@@ -62,6 +99,7 @@ function onTenantChange(): void {
   {:else}
     <div class="flex-1 border-r border-slate-400 overflow-hidden">
       <EntitySelectSidebar
+        selectMultiple={selectMultiple}
         {entityType}
         {selectedTenant}
         on:changeTenant={() => onTenantChange()}
@@ -71,12 +109,12 @@ function onTenantChange(): void {
 
     <div class="flex-[2] pl-4 pt-1 h-full overflow-hidden">
       <div class="flex flex-col h-full overflow-hidden">
-        <EntitySelectFilter {entityType} />
+        <EntitySelectFilter {entityType} selectMultiple={selectMultiple} on:acceptSelection={() => acceptSelection()} />
 
-        <div class="flex-1 overflow-hidden">
+        <div class="flex-1 overflow-hidden mt-3">
           <EntitySelectTable
+            {selectMultiple}
             {entityType}
-            on:entitySelected={(e) => dispatcher('entitySelected', { selectedEntity: e.detail.selectedEntity })}
           />
         </div>
       </div>

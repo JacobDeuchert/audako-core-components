@@ -56,7 +56,7 @@ function onClickButton(mouseEvent: MouseEvent): void {
     return;
   }
 
-  eventDispatcher('click', event);
+  eventDispatcher('click', mouseEvent);
 }
 </script>
 

@@ -46,8 +46,8 @@ onDestroy(() => {
 });
 </script>
 
-<div class="flex w-full h-full {sortable ? 'cursor-pointer' : ''} " on:click={() => toggleSort()}>
-  <div class={container$class}>
+<div class="flex w-full h-full {sortable ? 'cursor-pointer' : ''} {container$class}" on:click={() => toggleSort()}>
+  <div>
     <slot />
   </div>
 

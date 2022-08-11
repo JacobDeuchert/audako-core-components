@@ -8,7 +8,7 @@ const SERVICE_TOKEN_LOOKUP = {
   [BaseHttpService.toString()]: 'BaseHttpService',
 };
 
-export function resolveService<T>(service: InjectionToken<T>): T {
+export function resolveService<T>(service: InjectionToken<T>, defaultValue?: T): T {
   let windowContainer = window['dependencyContainer'] as DependencyContainer;
   let token: InjectionToken<T> = SERVICE_TOKEN_LOOKUP[service.toString()] ?? service;
 
@@ -23,6 +23,24 @@ export function resolveService<T>(service: InjectionToken<T>): T {
       return window[token?.toString()] as T;
     }
 
+    if (defaultValue) {
+      return defaultValue;
+    }
+
     throw new Error(`Service ${token?.toString()} not found`);
+  }
+}
+
+export function tryRegisterService<T>(token: InjectionToken<T>, instance: T): void {
+
+  try {
+    if (container.isRegistered(token)) {
+      return;
+    }
+
+    container.register(token, {useValue: instance})
+  }
+  catch {
+    throw new Error(`Failed to register service: ${token?.toString()}`);
   }
 }

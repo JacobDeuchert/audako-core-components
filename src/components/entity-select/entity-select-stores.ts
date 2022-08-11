@@ -1,9 +1,13 @@
-import { createState, getRegistry, Store, withProps } from '@ngneat/elf';
+import { createState, createStore, getRegistry, Store, withProps } from '@ngneat/elf';
 import { localStorageStrategy, persistState } from '@ngneat/elf-persist-state';
-import { EntityType, Group } from 'audako-core';
+import { ConfigurationEntity, EntityType, Group } from 'audako-core';
 import { writable } from 'svelte/store';
 
 export const entitySelectEntityType = writable<EntityType>(EntityType.Signal);
+
+export interface EntitySelectSelectionState  {
+  selectedEntities: Partial<ConfigurationEntity>[];
+}
 
 export interface EntitySelectGlobalState {
   selectedTenant: string;
@@ -22,6 +26,10 @@ const { config, state } = createState(
     selectedTenant: null,
   })
 );
+
+export const EntitySelectSelectionStore = createStore({name: 'entity-select-selection'}, withProps<EntitySelectSelectionState>({
+  selectedEntities: []
+}));
 
 export const EntitySelectGlobalStore = new Store({ state, config, name: 'entity-select-global' });
 

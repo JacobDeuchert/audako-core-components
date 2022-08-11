@@ -20,14 +20,14 @@ module.exports = {
   core: {
     builder: '@storybook/builder-vite',
   },
-  // viteFinal: (config) => {
-  //   config.resolve = {
-  //     alias: {
-  //       '@': './src',
-  //     }
-  //   }
-  //   return config;
-  // },
+  viteFinal: (config) => {
+    config.resolve = {
+      alias: {
+        '@': './src',
+      }
+    }
+    return config;
+  },
   svelteOptions: {
     preprocess: {
       typescript: true,

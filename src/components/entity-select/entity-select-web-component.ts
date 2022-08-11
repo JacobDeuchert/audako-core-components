@@ -1,5 +1,7 @@
 import EntitySelect from './EntitySelect.svelte';
-import css from 'svelte-material-ui/bare.css';
+import css from '../../index.css';
+import { tryRegisterService } from '@/utils/service-functions';
+import { PopupService } from '@/shared/services/popup.service';
 export class EntitySelectWebComponent extends HTMLElement {
   private _element: EntitySelect;
 
@@ -14,6 +16,8 @@ export class EntitySelectWebComponent extends HTMLElement {
     // @ts-ignore
     style.textContent = css as any;
     shadowRoot.appendChild(style);
+
+    tryRegisterService(PopupService, new PopupService(document.body));
 
     this._element = new EntitySelect({
       target: shadowRoot,

@@ -60,12 +60,12 @@ function pubishPageEvent(): void {
 }
 </script>
 
-<div class="flex w-full items-center justify-end pt-2">
-  <div class="mr-1 text-sm text-gray-600">Items per page:</div>
-  <div class="w-[60px]">
+<div class="flex w-full items-center justify-end pt-1">
+  <div class="mr-1 text-xs text-gray-600">Items per page:</div>
+  <div class="w-[50px]">
     <Select
-      textfield$class="text-sm text-gray-600"
-      suffixIcon$class="top-1"
+      textfield$class="text-xs text-gray-600"
+      suffixIcon$class="!top-[2px] !text-[20px]"
       bind:value={pageSize}
       on:valueChanged={(event) => changePageSize(event.detail)}
     >
@@ -74,10 +74,10 @@ function pubishPageEvent(): void {
       {/each}
     </Select>
   </div>
-  <div class="ml-6 text-sm mr-1 text-gray-600">
+  <div class="ml-4 text-xs mr-1 text-gray-600">
     {pageIndex * pageSize + 1}&nbsp;-&nbsp;{(pageIndex + 1) * pageSize}
   </div>
-  <div class="text-sm mr-6 text-gray-600">of {totalCount}</div>
+  <div class="text-xs mr-4 text-gray-600">of {totalCount}</div>
 
   <IconButton disabled={pageIndex === 0} on:click={() => goToFirstPage()}>first_page</IconButton>
   <IconButton disabled={pageIndex === 0} on:click={() => changePage(-1)}>navigate_before</IconButton>

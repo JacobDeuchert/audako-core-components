@@ -23,9 +23,7 @@ onDestroy(() => {
 
 <div class="flex flex-col h-full">
   <div class="w-full overflow-auto flex-1">
-    <div>
-      <slot />
-    </div>
+    <slot />
   </div>
 
   <slot name="pagination" />

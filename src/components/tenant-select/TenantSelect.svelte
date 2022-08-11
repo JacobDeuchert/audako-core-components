@@ -6,6 +6,7 @@ import IconButton from '../../shared/components/icon-button/IconButton.svelte';
 
 let enttiyTenantSelect = resolveService(TenantHttpService);
 
+
 export let allowBack = false;
 
 let tenantPath: TenantView[] = [];
@@ -63,8 +64,7 @@ function selectTenant(event: CustomEvent, tenant: TenantView): void {
 setupBrowser();
 </script>
 
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-<div class="w-full">
+<div class="w-full overflow-hidden">
   <div class="flex items-center">
     {#if allowBack}
       <IconButton size="small" on:click={() => eventDispatcher('back')}>arrow_back</IconButton>
@@ -79,7 +79,7 @@ setupBrowser();
       </div>
     {/each}
   </div>
-  <div style="grid-auto-rows: 60px" class="grid grid-cols-2 gap-2">
+  <div style="grid-auto-rows: 60px" class="grid grid-cols-2 gap-2 h-full overflow-auto">
     {#each tenants as tenant}
       <div
         class="flex justify-between bg-slate-200 hover:bg-slate-300 shadow-sm rounded-sm cursor-pointer"

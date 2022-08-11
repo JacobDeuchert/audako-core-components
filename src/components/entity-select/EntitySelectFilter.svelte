@@ -1,35 +1,43 @@
 <script lang="ts">
 import Checkbox from '../../shared/components/checkbox/Checkbox.svelte';
-import { Subject, takeUntil } from 'rxjs';
-import { onDestroy, onMount } from 'svelte';
-import { EntitySelectGlobalState, EntitySelectGlobalStore, EntitySelectTypeStore, EntityTypeState } from './entity-select-stores';
-import type { EntityType } from 'audako-core';
+import { debounceTime, Subject, takeUntil } from 'rxjs';
+import { createEventDispatcher, onDestroy, onMount } from 'svelte';
+import { EntitySelectGlobalState, EntitySelectGlobalStore, EntitySelectSelectionStore, EntitySelectTypeStore, EntityTypeState } from './entity-select-stores';
+import type { ConfigurationEntity, EntityType } from 'audako-core';
+import IconButton from '../../shared/components/icon-button/IconButton.svelte';
 
 export let entityType: EntityType;
+export let selectMultiple = false;
+
+let eventDispatcher = createEventDispatcher();
+
+let typeStore = EntitySelectTypeStore(entityType);
 
 let withSubGroups = false;
-let filter: string = '';
+let filter: string = typeStore.value.filter;
 
 let filterInput: HTMLInputElement;
 
 let unsub = new Subject<void>();
 
-var typeStore = EntitySelectTypeStore(entityType);
+let filterChanged = new Subject<string>();
+let selectedEntities: Partial<ConfigurationEntity>[] = [];
 
-typeStore.pipe(takeUntil(unsub)).subscribe((state: EntityTypeState) => {
-  filter = state.filter;
-});
 
-let globalStore = EntitySelectGlobalStore;
 
-globalStore.pipe(takeUntil(unsub)).subscribe((state: EntitySelectGlobalState) => {
+EntitySelectGlobalStore.pipe(takeUntil(unsub)).subscribe((state: EntitySelectGlobalState) => {
   withSubGroups = state.queryWithSubGroups;
 });
 
-function onInputFilter(event: Event): void {
-  filter = (event.target as HTMLInputElement).value;
-  typeStore.update((state) => ({ ...state, filter: filter }));
-}
+filterChanged.pipe(takeUntil(unsub), debounceTime(200)).subscribe((filter: string) => {
+  typeStore.update((state) => ({ ...state, filter }));
+});
+
+EntitySelectSelectionStore.pipe(takeUntil(unsub)).subscribe((state) => {
+  selectedEntities = state.selectedEntities;
+});
+
+$: filterChanged.next(filter);
 
 $: onSubGroupsToggled(withSubGroups);
 
@@ -40,12 +48,23 @@ function onSubGroupsToggled(withSubGroups: boolean): void {
   }
 }
 
+function onAcceptSelection(): void {
+  eventDispatcher('acceptSelection');
+}
+
 onMount(() => {
-  if (filterInput) {
-    filterInput.focus();
-    filterInput.select();
-  }
+  focusInput();
 });
+
+function focusInput() {
+  if (filterInput) {
+    setTimeout(() => {
+      filterInput.focus();
+      filterInput.select();
+    }, 0);
+  }
+}
+
 
 onDestroy(() => {
   unsub.next();
@@ -54,9 +73,19 @@ onDestroy(() => {
 </script>
 
 <div class="flex flex-col">
-  <div class="flex items-center w-full focus-within:border-blue-300 border-gray-200  border-2 rounded-md p-2">
-    <span class="material-symbols-rounded mr-2">search</span>
-    <input placeholder="Search" class="w-full outline-none" bind:this={filterInput} />
+  <div class="flex items-center">
+    <div class="flex items-center w-full focus-within:border-blue-300 border-gray-200  border-2 rounded-md p-2">
+      <span class="material-symbols-rounded mr-2">search</span>
+      <input placeholder="Search" class="w-full outline-none" bind:this={filterInput} bind:value={filter} />
+    </div>
+    {#if selectMultiple}
+      <div class="mx-2 relative">
+        <IconButton on:click={() => onAcceptSelection()} icon="done_all" />
+        {#if selectedEntities.length > 0}
+          <div class="pointer-events-none z-10 absolute bg-primary rounded-full top-0 text-xs text-center text-on-primary right-[-5px] px-[5px] py-[1px]">{selectedEntities.length}</div>
+        {/if}
+      </div>
+    {/if}
   </div>
 
   <div class="flex justify-end mt-2">

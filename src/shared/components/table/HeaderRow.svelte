@@ -2,16 +2,8 @@
 let headerElement: HTMLElement;
 </script>
 
-<div class="flex flex-col">
-  <div class="audako-tableheader-flexrow font-bold border-b " bind:this={headerElement}>
-  
-  
-    <slot />
-  </div>
-  
-  <div>
-    
-  </div>
+<div class="audako-tableheader-flexrow font-bold" bind:this={headerElement}>
+  <slot />
 </div>
 
 <style>
