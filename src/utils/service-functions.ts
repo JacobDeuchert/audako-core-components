@@ -1,14 +1,15 @@
 import { container, DependencyContainer, InjectionToken } from 'tsyringe';
-import { BaseHttpService, EntityHttpService, EntityNameService, TenantHttpService } from 'audako-core';
+import { BaseHttpService, EntityHttpService, EntityNameService, TenantHttpService, LiveValueService } from 'audako-core';
 
 const SERVICE_TOKEN_LOOKUP = {
   [TenantHttpService.toString()]: 'TenantHttpService',
   [EntityHttpService.toString()]: 'EntityHttpService',
   [EntityNameService.toString()]: 'EntityNameService',
   [BaseHttpService.toString()]: 'BaseHttpService',
+  [LiveValueService.toString()]: 'LiveValueService',
 };
 
-export function resolveService<T>(service: InjectionToken<T>, defaultValue?: T): T {
+export function resolveService<T>(service: InjectionToken<T>, defaultValue: T = null): T {
   let windowContainer = window['dependencyContainer'] as DependencyContainer;
   let token: InjectionToken<T> = SERVICE_TOKEN_LOOKUP[service.toString()] ?? service;
 
