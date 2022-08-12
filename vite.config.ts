@@ -22,8 +22,10 @@ export default defineConfig({
       emitCss: false,
     }),
     typescript2({
+      exclude: ['node_modules/**', './src/stories/**'],
       tsconfigOverride: {
         declaration: true,
+        exclude: ['node_modules/**', './src/stories/**'],
       },
     }),
   ],

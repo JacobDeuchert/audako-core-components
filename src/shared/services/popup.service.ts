@@ -48,11 +48,11 @@ export class PopupService {
 
   private _popupContainer: {[id: string]: HTMLDivElement};
 
+  private rootElement: HTMLElement;
 
-  constructor(private rootElement: HTMLElement) {
-
+  constructor(rootElement: HTMLElement) {
+    this.rootElement = rootElement;
     this._popupContainer = {};
-
   }
 
   public openPopup(containerId: string, popupElement: HTMLElement, options?: PopupOptions): PopupRef {
@@ -78,7 +78,7 @@ export class PopupService {
     const close = () => {
       console.log('close');
       this._removePopupWrapper(popupWrapper, options);
-      popupClosed.next();
+      popupClosed.next(null);
       popupClosed.complete();
     }
 

@@ -46,7 +46,7 @@ async function getRootGroup(id: string): Promise<void> {
   try {
     rootGroup = await httpService.getEntityById<Group>(EntityType.Group, id);
 
-    if (!typeStore.value?.selectedGroup) {
+    if (!typeStore.value?.selectedGroup || typeStore.value.selectedGroup.Id != rootGroup.Id) {
       typeStore.update((state) => ({ ...state, selectedGroup: rootGroup }));
     }
   } catch (error) {

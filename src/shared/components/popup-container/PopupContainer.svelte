@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { PopupOptions, PopupRef, PopupService } from '@/shared/services/popup.service';
+import { PopupOptions, PopupRef, PopupService } from '@/shared/services/popup.service';
 import { resolveService } from '@/utils/service-functions';
 export let closeOnClick = true;
 export let sizeToAnchor = false;
@@ -10,7 +10,7 @@ export let preferedVerticalAlignment: 'top' | 'bottom' = 'top';
 export let preferedHorizontalAlignment: 'left' | 'right' = 'left';
 export let positionOffset: { x: number; y: number } = { x: 0, y: 0 };
 
-let popupContainerService = resolveService<PopupService>('PopupContainerService');
+let popupContainerService = resolveService<PopupService>('PopupContainerService', new PopupService(document.body));
 
 let popupElement: HTMLDivElement;
 let popupRef: PopupRef;
