@@ -1,5 +1,5 @@
 export declare class TenantSelectWebComponent extends HTMLElement {
-    _element: any;
+    private _element;
     constructor();
     disconnectedCallback(): void;
 }

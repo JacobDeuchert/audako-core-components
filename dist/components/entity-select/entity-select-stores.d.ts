@@ -1,24 +1,30 @@
-import { Store } from "@ngneat/elf";
-import { EntityType } from "audako-core";
+import { Store } from '@ngneat/elf';
+import { ConfigurationEntity, EntityType, Group } from 'audako-core';
 export declare const entitySelectEntityType: import("svelte/store").Writable<EntityType>;
+export interface EntitySelectSelectionState {
+    selectedEntities: Partial<ConfigurationEntity>[];
+}
+export interface EntitySelectGlobalState {
+    selectedTenant: string;
+    queryWithSubGroups: boolean;
+}
+export interface EntityTypeState {
+    filter: string;
+    selectedGroup: Partial<Group>;
+    lastSelectedEntities: string[];
+}
 export declare const EntitySelectSelectionStore: Store<{
     name: string;
-    state: {
-        selectedEntities: any[];
-    };
+    state: EntitySelectSelectionState;
     config: undefined;
-}, {
-    selectedEntities: any[];
-}>;
+}, EntitySelectSelectionState>;
 export declare const EntitySelectGlobalStore: Store<{
-    state: {
-        queryWithSubGroups: boolean;
-        selectedTenant: any;
-    };
+    state: EntitySelectGlobalState;
     config: undefined;
     name: string;
-}, {
-    queryWithSubGroups: boolean;
-    selectedTenant: any;
-}>;
-export declare const EntitySelectTypeStore: (type: any) => Store<any, any>;
+}, EntitySelectGlobalState>;
+export declare const EntitySelectTypeStore: (type: EntityType) => Store<{
+    state: EntityTypeState;
+    config: undefined;
+    name: 'entity-select-type-store';
+}, EntityTypeState>;

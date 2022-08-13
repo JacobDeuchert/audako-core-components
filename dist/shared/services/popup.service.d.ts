@@ -1,17 +1,36 @@
+export declare type Position = {
+    x: number;
+    y: number;
+};
+export declare type PopupOptions = {
+    backdrop: boolean;
+    closeOnClickOutside: boolean;
+    positioning: 'center' | 'anchor' | 'custom';
+    customPosition?: Position;
+    anchorElement?: HTMLElement | null;
+    anchorVertical?: 'top' | 'bottom';
+    anchorHorizontal?: 'left' | 'right';
+    defaultClassList?: string;
+    inTransitionClassList?: string;
+    inTransitionDuration?: number;
+    outTransitionClassList?: string;
+    outTransitionDuration?: number;
+};
+export declare type PopupRef = {
+    popupId: string;
+    afterClosed: Promise<void>;
+    close: () => void;
+};
 export declare class PopupService {
-    _popupContainer: any;
-    rootElement: any;
-    constructor(rootElement: any);
-    openPopup(containerId: any, popupElement: any, options: any): {
-        popupId: any;
-        afterClosed: Promise<void>;
-        close: () => void;
-    };
-    _removePopupWrapper(popupWrapper: any, options: any): void;
-    _removeContainer(id: any): void;
-    _createPopupContainer(id: any, options: any): HTMLDivElement;
-    _createPopupWrapper(popupElement: any, options: any): HTMLDivElement;
-    _positionPopup(containerElement: any, popupWrapper: any, options: any): void;
-    _getTopPosition(y: any, popupHeight: any, containerHeight: any, anchorHeight?: number, anchorVertical?: string): any;
-    _getLeftPosition(x: any, popupWidth: any, containerWidth: any, anchorHorizontal?: string): any;
+    private _popupContainer;
+    private rootElement;
+    constructor(rootElement: HTMLElement);
+    openPopup(containerId: string, popupElement: HTMLElement, options?: PopupOptions): PopupRef;
+    private _removePopupWrapper;
+    private _removeContainer;
+    private _createPopupContainer;
+    private _createPopupWrapper;
+    private _positionPopup;
+    private _getTopPosition;
+    private _getLeftPosition;
 }
