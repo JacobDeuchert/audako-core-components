@@ -4,3 +4,4 @@ export { resolveService } from "./utils/service-functions";
 export declare const EntitySelect: typeof EntitySelectWebComponent;
 export declare const TenantSelect: typeof TenantSelectWebComponent;
 export declare function registerCustomElements(): void;
+export * from "audako-core";

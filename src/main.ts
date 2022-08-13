@@ -17,3 +17,6 @@ function _defineCustomElement(tagName: string, component: any) {
 
   customElements.define(tagName, component);
 }
+
+// export all from audako-core
+export * from 'audako-core';
