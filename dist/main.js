@@ -8260,6 +8260,7 @@ export {
   vt as LiveHubMethod,
   sc as LiveValueService,
   Uf as Signal,
+  Tr as SignalType,
   lo as SubscriptionPrefix,
   cr as TenantHttpService,
   Tf as TenantSelect,
