@@ -8298,5 +8298,6 @@ export {
   Ff as UserProfile,
   Xf as UserProfileHttpService,
   Jf as registerCustomElements,
-  Ae as resolveService
+  Ae as resolveService,
+  Ic as tryRegisterService
 };

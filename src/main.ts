@@ -1,7 +1,7 @@
 import { EntitySelectWebComponent } from './components/entity-select/entity-select-web-component';
 import { TenantSelectWebComponent } from './components/tenant-select/tenant-select-web-component';
 
-export { resolveService } from './utils/service-functions';
+export { resolveService, tryRegisterService } from './utils/service-functions';
 export const EntitySelect = EntitySelectWebComponent;
 export const TenantSelect = TenantSelectWebComponent;
 
