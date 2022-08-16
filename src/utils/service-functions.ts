@@ -1,47 +1,46 @@
 import { container, DependencyContainer, InjectionToken } from 'tsyringe';
-import { BaseHttpService, EntityHttpService, EntityNameService, TenantHttpService, LiveValueService } from 'audako-core';
+import {
+  BaseHttpService,
+  EntityHttpService,
+  EntityNameService,
+  TenantHttpService,
+  LiveValueService,
+  DataSourceHttpService,
+} from 'audako-core';
 
 const SERVICE_TOKEN_LOOKUP = {
   [TenantHttpService.toString()]: 'TenantHttpService',
+  [DataSourceHttpService.toString()]: 'DataSourceHttpService',
   [EntityHttpService.toString()]: 'EntityHttpService',
   [EntityNameService.toString()]: 'EntityNameService',
   [BaseHttpService.toString()]: 'BaseHttpService',
   [LiveValueService.toString()]: 'LiveValueService',
 };
 
-export function resolveService<T>(service: InjectionToken<T>, defaultValue: T = null): T {
-  let windowContainer = window['dependencyContainer'] as DependencyContainer;
-  let token: InjectionToken<T> = SERVICE_TOKEN_LOOKUP[service.toString()] ?? service;
+export function resolveService<T>(serviceToken: InjectionToken<T>, defaultValue: T = null): T {
+  let stringToken = SERVICE_TOKEN_LOOKUP[serviceToken.toString()] ?? serviceToken.toString();
 
-  try {
-    if (windowContainer) {
-      return windowContainer.resolve(token);
-    } else {
-      return container.resolve(token);
-    }
-  } catch {
-    if (window[token?.toString()]) {
-      return window[token?.toString()] as T;
-    }
-
-    if (defaultValue) {
-      return defaultValue;
-    }
-
-    throw new Error(`Service ${token?.toString()} not found`);
+  let dependencyContainer = (window['dependencyContainer'] as DependencyContainer) ?? container;
+  if (dependencyContainer.isRegistered(serviceToken)) {
+    return dependencyContainer.resolve(serviceToken);
+  } else if (dependencyContainer.isRegistered(stringToken)) {
+    return dependencyContainer.resolve(stringToken);
+  } else if (window[stringToken]) {
+    return window[stringToken] as T;
+  } else if (defaultValue) {
+    return defaultValue;
   }
+  throw new Error(`Service ${stringToken?.toString()} not found`);
 }
 
 export function tryRegisterService<T>(token: InjectionToken<T>, instance: T): void {
-
   try {
     if (container.isRegistered(token)) {
       return;
     }
 
-    container.register(token, {useValue: instance})
-  }
-  catch {
+    container.register(token, { useValue: instance });
+  } catch {
     throw new Error(`Failed to register service: ${token?.toString()}`);
   }
 }
