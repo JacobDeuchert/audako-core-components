@@ -3,5 +3,6 @@ import { TenantSelectWebComponent } from './components/tenant-select/tenant-sele
 export { resolveService, tryRegisterService } from './utils/service-functions';
 export declare const EntitySelect: typeof EntitySelectWebComponent;
 export declare const TenantSelect: typeof TenantSelectWebComponent;
+export { EntitySelectDialogService } from './components/entity-select/entity-select-dialog.service';
 export declare function registerCustomElements(): void;
 export * from 'audako-core';

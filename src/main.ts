@@ -5,6 +5,8 @@ export { resolveService, tryRegisterService } from './utils/service-functions';
 export const EntitySelect = EntitySelectWebComponent;
 export const TenantSelect = TenantSelectWebComponent;
 
+export {EntitySelectDialogService} from './components/entity-select/entity-select-dialog.service';
+
 export function registerCustomElements() {
   _defineCustomElement('audako-entity-select', EntitySelect);
   _defineCustomElement('audako-tenant-select', TenantSelect);
