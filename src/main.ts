@@ -1,4 +1,5 @@
 import { DataSourceHttpService, EntityHttpService, EntityNameService, HttpConfig, LiveValueService, TenantHttpService } from 'audako-core';
+import { EntitySelectDialogService } from './components/entity-select/entity-select-dialog.service';
 import { EntitySelectWebComponent } from './components/entity-select/entity-select-web-component';
 import { TenantSelectWebComponent } from './components/tenant-select/tenant-select-web-component';
 import { tryRegisterService } from './utils/service-functions';
@@ -22,6 +23,8 @@ export function registerCoreServices(httpConfig: HttpConfig, accessToken: string
 	tryRegisterService(TenantHttpService, new TenantHttpService(httpConfig, accessToken));
 	tryRegisterService(EntityNameService, new EntityNameService(entityHttpService));
 	tryRegisterService(DataSourceHttpService, new DataSourceHttpService(httpConfig, accessToken));
+  tryRegisterService(EntitySelectDialogService, new EntitySelectDialogService());
+
 }
 
 function _defineCustomElement(tagName: string, component: any) {
