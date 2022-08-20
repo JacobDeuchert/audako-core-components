@@ -103,7 +103,6 @@ onDestroy(() => {
         {entityType}
         {selectedTenant}
         on:changeTenant={() => onTenantChange()}
-        on:entitySelected={(e) => dispatcher('entitySelected', { selectedEntity: e.detail.selectedEntity })}
       />
     </div>
 

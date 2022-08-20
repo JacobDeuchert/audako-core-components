@@ -1,12 +1,12 @@
 <script lang="ts">
-import { EntityType } from 'audako-core';
+import { ConfigurationEntity, EntityType } from 'audako-core';
 
 import EntitySelect from './EntitySelect.svelte';
 import { resolveService } from '../../utils/service-functions';
 import { PopupRef, PopupService } from '../../shared/services/popup.service';
+import { createEventDispatcher } from 'svelte';
 
 export let open: boolean = false;
-
 
 export let entityType: EntityType = EntityType.Signal;
 export let selectMultiple: boolean = false;
@@ -41,9 +41,6 @@ function toggleDialog(open: boolean, dialogElement: HTMLElement) {
   } else {
     closeDialog();
   }
-
-  
-
 }
 
 function closeDialog(): void {
@@ -55,6 +52,11 @@ function onKeyDown(event: KeyboardEvent) {
   if (event.key === 'Escape') {
     closeDialog();
   }
+}
+
+function onEntitiesSelected(event: CustomEvent<ConfigurationEntity[]>): void {
+  const eventDispatcher = createEventDispatcher();
+  eventDispatcher('selectedEntities', event.detail);
 }
 
 
@@ -70,7 +72,7 @@ function onKeyDown(event: KeyboardEvent) {
        <IconButton icon="close" on:click={() => closeDialog()}></IconButton>
     </div> -->
     <div class="h-full w-full">
-      <EntitySelect {selectMultiple} {entityType} bind:this={entitySelectComponent}/>
+      <EntitySelect {selectMultiple} {entityType} bind:this={entitySelectComponent} on:selectedEntities={(event) => onEntitiesSelected(event)}/>
     </div>
   </div>
 {/if}

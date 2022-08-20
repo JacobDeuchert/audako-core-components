@@ -35,7 +35,7 @@ export class EntitySelectDialogService {
     }, 50);
 
     return new Promise((resolve, reject) => {
-      entitySelect.$on('entity-selected', (event: CustomEvent<T[]>) => {
+      entitySelect.$on('selectedEntities', (event: CustomEvent<T[]>) => {
         resolve(event.detail);
       });
     });
