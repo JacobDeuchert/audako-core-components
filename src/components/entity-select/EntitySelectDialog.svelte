@@ -7,7 +7,9 @@ import { PopupRef, PopupService } from '../../shared/services/popup.service';
 
 export let open: boolean = false;
 
+
 export let entityType: EntityType = EntityType.Signal;
+export let selectMultiple: boolean = false;
 
 let popupService = resolveService<PopupService>('PopupService', new PopupService(document.body));
 
@@ -68,7 +70,7 @@ function onKeyDown(event: KeyboardEvent) {
        <IconButton icon="close" on:click={() => closeDialog()}></IconButton>
     </div> -->
     <div class="h-full w-full">
-      <EntitySelect selectMultiple {entityType} bind:this={entitySelectComponent}/>
+      <EntitySelect {selectMultiple} {entityType} bind:this={entitySelectComponent}/>
     </div>
   </div>
 {/if}
