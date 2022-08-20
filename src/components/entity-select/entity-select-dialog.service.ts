@@ -36,6 +36,13 @@ export class EntitySelectDialogService {
 
     return new Promise((resolve, reject) => {
       entitySelect.$on('selectedEntities', (event: CustomEvent<T[]>) => {
+        entitySelect.$set({ open: false });
+
+        // destroy component after close animation is finished
+        setTimeout(() => {
+          entitySelect.$destroy();
+        }, 200);
+
         resolve(event.detail);
       });
     });
