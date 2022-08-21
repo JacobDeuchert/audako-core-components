@@ -7,8 +7,8 @@ export class EntitySelectDialogService {
     
   }
 
-  public selectEntity<T extends ConfigurationEntity>(entityType: EntityType): Promise<T> {
-    return this._openEntitySelectDialog(entityType, false).then((entities: T[]) => {
+  public selectEntity<T extends ConfigurationEntity>(entityType: EntityType, additionalFilter: Record<string, any> = null): Promise<T> {
+    return this._openEntitySelectDialog(entityType, false, additionalFilter).then((entities: T[]) => {
       if (entities.length === 1) {
         return entities[0];
       } 
@@ -16,17 +16,18 @@ export class EntitySelectDialogService {
     });
   }
 
-  public selectMultipleEntities<T extends ConfigurationEntity>(entityType: EntityType): Promise<T[]> {
-    return this._openEntitySelectDialog(entityType, true);
+  public selectMultipleEntities<T extends ConfigurationEntity>(entityType: EntityType, additionalFilter: Record<string, any> = null): Promise<T[]> {
+    return this._openEntitySelectDialog(entityType, true, additionalFilter);
   }
 
-  public _openEntitySelectDialog<T extends ConfigurationEntity>(entityType: EntityType, selectMultiple: boolean): Promise<T[]> {
+  public _openEntitySelectDialog<T extends ConfigurationEntity>(entityType: EntityType, selectMultiple: boolean, additionalFilter: Record<string, any>): Promise<T[]> {
     const entitySelectDialog = new EntitySelectDialog({
       target: document.body,
       props: {
         entityType,
         open: false,
-        selectMultiple: false
+        selectMultiple: selectMultiple,
+        additionalFilter: additionalFilter,
       }
     });
 

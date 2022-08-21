@@ -10,6 +10,7 @@ export let open: boolean = false;
 
 export let entityType: EntityType = EntityType.Signal;
 export let selectMultiple: boolean = false;
+export let additionalFilter: Record<string, any> = null;
 
 let popupService = resolveService<PopupService>('PopupService', new PopupService(document.body));
 
@@ -75,7 +76,7 @@ function onEntitiesSelected(event: CustomEvent<ConfigurationEntity[]>): void {
        <IconButton icon="close" on:click={() => closeDialog()}></IconButton>
     </div> -->
     <div class="h-full w-full">
-      <EntitySelect {selectMultiple} {entityType} bind:this={entitySelectComponent} on:selectedEntities={(event) => onEntitiesSelected(event)}/>
+      <EntitySelect {selectMultiple} {entityType} {additionalFilter} bind:this={entitySelectComponent} on:selectedEntities={(event) => onEntitiesSelected(event)}/>
     </div>
   </div>
 
