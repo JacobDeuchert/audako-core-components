@@ -21,7 +21,7 @@ export class EntitySelectDialogService {
   }
 
   public _openEntitySelectDialog<T extends ConfigurationEntity>(entityType: EntityType, selectMultiple: boolean): Promise<T[]> {
-    const entitySelect = new EntitySelectDialog({
+    const entitySelectDialog = new EntitySelectDialog({
       target: document.body,
       props: {
         entityType,
@@ -31,16 +31,16 @@ export class EntitySelectDialogService {
     });
 
     setTimeout(() => {
-      entitySelect.$set({ open: true });
+      entitySelectDialog.$set({ open: true });
     }, 50);
 
     return new Promise((resolve, reject) => {
-      entitySelect.$on('selectedEntities', (event: CustomEvent<T[]>) => {
-        entitySelect.$set({ open: false });
+      entitySelectDialog.$on('selectedEntities', (event: CustomEvent<T[]>) => {
+        entitySelectDialog.$set({ open: false });
 
         // destroy component after close animation is finished
         setTimeout(() => {
-          entitySelect.$destroy();
+          entitySelectDialog.$destroy();
         }, 200);
 
         resolve(event.detail);

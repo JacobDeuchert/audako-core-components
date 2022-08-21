@@ -10,6 +10,7 @@ import TenantSelect from '../tenant-select/TenantSelect.svelte';
 
 export let entityType: EntityType = EntityType.Signal;
 export let selectMultiple = false;
+export let additionalFilter: Record<string, any> = null;
 
 let httpService: EntityHttpService = resolveService(EntityHttpService);
 let tenantHttpService: TenantHttpService = resolveService(TenantHttpService);
@@ -114,6 +115,7 @@ onDestroy(() => {
           <EntitySelectTable
             {selectMultiple}
             {entityType}
+            {additionalFilter}
           />
         </div>
       </div>

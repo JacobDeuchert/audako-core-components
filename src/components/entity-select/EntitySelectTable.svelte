@@ -19,6 +19,7 @@ let nameService: EntityNameService = resolveService(EntityNameService);
 
 export let entityType: EntityType;
 export let selectMultiple: boolean = false;
+export let additionalFilter: Record<string, any> = null;
 
 let entities: Partial<ConfigurationEntity>[] = [];
 let entitiesRequested: Subject<void> = new Subject();
@@ -106,7 +107,9 @@ function queryEntities(): Observable<PaginationResponse<Partial<ConfigurationEnt
     });
   }
 
-  console.log('query', query);
+  if (additionalFilter) {
+    query.$and.push(additionalFilter);
+  }
 
   const paging = {
     limit: pageSize,
@@ -203,12 +206,8 @@ entitiesRequested
     loading = false;
     entities = response.data;
 
-    console.log('selectedEntities', selectedEntities);
-
     setupSelectedPageLookup();
     updateMasterToggleState();
-
-    console.log('selectedEntitiesInPageLookup', selectedEntitiesInPageLookup);
 
     // add own group to entities to be able to select the top most group
     if (entityType === EntityType.Group) {

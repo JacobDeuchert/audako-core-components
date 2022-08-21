@@ -19,6 +19,8 @@ let entitySelectComponent: EntitySelect;
 
 let popupRef: PopupRef;
 
+const eventDispatcher = createEventDispatcher();
+
 $: toggleDialog(open, dialogElement);
 
 function toggleDialog(open: boolean, dialogElement: HTMLElement) {
@@ -35,7 +37,8 @@ function toggleDialog(open: boolean, dialogElement: HTMLElement) {
     });
 
     popupRef.afterClosed.then(() => {
-      entitySelectComponent.$destroy();
+      console.log('dialog closed', entitySelectComponent);
+      entitySelectComponent?.$destroy();
       popupRef = null;
     });
   } else {
@@ -44,6 +47,7 @@ function toggleDialog(open: boolean, dialogElement: HTMLElement) {
 }
 
 function closeDialog(): void {
+  console.log('closeDialog');
   popupRef?.close();
 }
 
@@ -55,14 +59,13 @@ function onKeyDown(event: KeyboardEvent) {
 }
 
 function onEntitiesSelected(event: CustomEvent<ConfigurationEntity[]>): void {
-  const eventDispatcher = createEventDispatcher();
   eventDispatcher('selectedEntities', event.detail);
 }
 
 
 </script>
 
-{#if open}
+
   <div
     on:keydown={onKeyDown}
     bind:this={dialogElement}
@@ -75,4 +78,4 @@ function onEntitiesSelected(event: CustomEvent<ConfigurationEntity[]>): void {
       <EntitySelect {selectMultiple} {entityType} bind:this={entitySelectComponent} on:selectedEntities={(event) => onEntitiesSelected(event)}/>
     </div>
   </div>
-{/if}
+
