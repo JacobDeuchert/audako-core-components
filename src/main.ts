@@ -11,7 +11,7 @@ export {EntitySelectDialogService} from './components/entity-select/entity-selec
 
 export function registerCustomElements() {
   _defineCustomElement('audako-entity-select', EntitySelect);
-  _defineCustomElement('audako-tenant-select', TenantSelect);
+  _defineCustomElement('audako-tenant-select', TenantSelect, {extends: 'div'});
 }
 
 export function registerCoreServices(httpConfig: HttpConfig, accessToken: string | Promise<string>): void {
@@ -26,12 +26,12 @@ export function registerCoreServices(httpConfig: HttpConfig, accessToken: string
 
 }
 
-function _defineCustomElement(tagName: string, component: any) {
+function _defineCustomElement(tagName: string, component: any, options?: ElementDefinitionOptions) {
   if (customElements.get(tagName)) {
     return;
   }
 
-  customElements.define(tagName, component);
+  customElements.define(tagName, component, options);
 }
 
 

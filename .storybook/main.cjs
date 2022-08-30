@@ -29,6 +29,7 @@ module.exports = {
     return config;
   },
   svelteOptions: {
+    emitCss: false,
     preprocess: {
       typescript: true,
       postcss: true,

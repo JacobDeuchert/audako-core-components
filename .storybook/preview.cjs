@@ -2,6 +2,7 @@ import { TenantHttpService, EntityHttpService, EntityNameService } from 'audako-
 import {PopupService} from '../src/shared/services/popup.service';
 import 'reflect-metadata';
 import { container } from 'tsyringe';
+import { registerCustomElements } from '../src/main';
 
 let httpConfig = {
   Services: {
@@ -42,6 +43,9 @@ container.register('TenantHttpService', { useValue: new TenantHttpService(httpCo
 container.register('EntityHttpService', { useValue: entityHttpService });
 container.register('EntityNameService', { useValue: new EntityNameService(entityHttpService) });
 container.register('PopupContainerService', { useValue: new PopupService(document.body) });
+
+registerCustomElements();
+
 
 console.log(process?.env);
 

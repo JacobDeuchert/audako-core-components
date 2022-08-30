@@ -6,21 +6,26 @@ import { EntityType } from 'audako-core';
 export class EntitySelectWebComponent extends HTMLElement {
   private _element: EntitySelect;
 
+  private _shadowRoot: ShadowRoot;
+
   constructor() {
     super();
 
-    const shadowRoot = this.attachShadow({ mode: 'open' });
+    this._shadowRoot = this.attachShadow({ mode: 'open' });
 
     let style = document.createElement('style');
     console.log(css);
 
     // @ts-ignore
     style.textContent = css as any;
-    shadowRoot.appendChild(style);
+    this._shadowRoot.appendChild(style);
 
     tryRegisterService(PopupService, new PopupService(document.body));
+  }
 
+  connectedCallback(): void {
     const entityType = this.getAttribute('entityType') as EntityType;
+    console.log(entityType);
     
     if (!this._isValidEntityType(entityType)) {
       throw new Error(`Invalid entity type: ${entityType}`);
@@ -30,7 +35,7 @@ export class EntitySelectWebComponent extends HTMLElement {
     const additionalFilter = JSON.parse(this.getAttribute('additionalFilter') || '{}');
 
     this._element = new EntitySelect({
-      target: shadowRoot,
+      target: this._shadowRoot,
       props: {
         entityType,
         selectMultiple,

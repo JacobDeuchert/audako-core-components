@@ -48,8 +48,6 @@ let stateInitialized = false;
 let loading: boolean = true;
 
 let unsub = new Subject<void>();
-let dispatcher = createEventDispatcher();
-
 
 EntitySelectSelectionStore.pipe(takeUntil(unsub)).subscribe(state => {
   selectedEntities = state.selectedEntities;
@@ -62,6 +60,7 @@ EntitySelectSelectionStore.pipe(takeUntil(unsub)).subscribe(state => {
 combineLatest([globalStore.asObservable(), typeStore.asObservable()])
   .pipe(takeUntil(unsub))
   .subscribe(([globalState, typeState]) => {
+    console.log('combineLatest');
     selectedGroup = typeState.selectedGroup as Group;
     selectedGroupId = typeState.selectedGroup?.Id;
     filterString = typeState.filter;
