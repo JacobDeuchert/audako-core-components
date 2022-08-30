@@ -8426,7 +8426,7 @@ class Nf extends HTMLElement {
         additionalFilter: o
       }
     }), this._element.$on("selectedEntities", (i) => {
-      console.log("selectedEntities", i), this.dispatchEvent(new CustomEvent("selectedEntities", {
+      console.log("selectedEntities", i), this.dispatchEvent(new CustomEvent("selected", {
         detail: i.detail,
         bubbles: !0,
         composed: !0

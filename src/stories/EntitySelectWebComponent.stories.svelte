@@ -7,11 +7,25 @@ import EntitySelectDialog from '../components/entity-select/EntitySelectDialog.s
 function openEntitySelect() {
   const entitySelectDialogService = new EntitySelectDialogService();
   entitySelectDialogService.selectEntity(EntityType.Signal);
+
 }
+
+let entitySelect;
+
+$: {
+  if (entitySelect) {
+    console.log(entitySelect); 
+
+    entitySelect.addEventListener('selected', (event) => {
+      console.log(event);
+    });
+  }
+}
+
 </script>
 
 <Meta title="Entity Select Web Component" component={EntitySelectDialog} />
 
 <Story name="Default">
-  <audako-entity-select entityType="Signal"></audako-entity-select>
+  <audako-entity-select bind:this={entitySelect} entityType="Signal"></audako-entity-select>
 </Story>

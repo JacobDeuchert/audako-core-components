@@ -47,7 +47,7 @@ export class EntitySelectWebComponent extends HTMLElement {
     this._element.$on('selectedEntities', (entity) => {
       console.log('selectedEntities', entity);
 
-      this.dispatchEvent(new CustomEvent('selectedEntities', {
+      this.dispatchEvent(new CustomEvent('selected', {
         detail: entity.detail,
         bubbles: true,
         composed: true,
