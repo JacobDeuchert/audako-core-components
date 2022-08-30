@@ -1,5 +1,5 @@
 const svelteConfig = import('../svelte.config.js');
-const path = require;
+const reflectMetadata = require('reflect-metadata');
 module.exports = {
   stories: ['../src/**/*.stories.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx|svelte)'],
   addons: [

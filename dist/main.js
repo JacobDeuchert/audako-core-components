@@ -1,16 +1,16 @@
 var Ki = Object.defineProperty;
 var Qi = (n, e, t) => e in n ? Ki(n, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : n[e] = t;
 var yt = (n, e, t) => (Qi(n, typeof e != "symbol" ? e + "" : e, t), t);
-var Y;
+var J;
 (function(n) {
   n.Group = "Group", n.Signal = "Signal", n.Formula = "Formula", n.Dashboard = "Dashboard", n.DashboardTab = "DashboardTab", n.DataConnection = "DataConnection", n.DataSource = "DataSource", n.EventCondition = "EventCondition", n.EventDefinition = "EventDefinition", n.EventCategory = "EventCategory", n.ProcessImage = "ProcessImage";
-})(Y || (Y = {}));
+})(J || (J = {}));
 const Hf = {
-  [Y.Group]: "fas fa-folder",
-  [Y.Dashboard]: "adk adk-dashboard",
-  [Y.Signal]: "fas fa-code",
-  [Y.DataConnection]: "fas fa-circle-notch",
-  [Y.DataSource]: "fas fa-server"
+  [J.Group]: "fas fa-folder",
+  [J.Dashboard]: "adk adk-dashboard",
+  [J.Signal]: "fas fa-code",
+  [J.DataConnection]: "fas fa-circle-notch",
+  [J.DataSource]: "fas fa-server"
 }, Zi = {
   Group: "/base/Group",
   Signal: "/daq/Signal",
@@ -533,11 +533,11 @@ function Lr() {
       y.open(f.method.toUpperCase(), r(G, f.params, f.paramsSerializer), !0), y.timeout = f.timeout;
       function q() {
         if (!!y) {
-          var J = "getAllResponseHeaders" in y ? i(y.getAllResponseHeaders()) : null, $ = !p || p === "text" || p === "json" ? y.responseText : y.response, z = {
+          var Y = "getAllResponseHeaders" in y ? i(y.getAllResponseHeaders()) : null, $ = !p || p === "text" || p === "json" ? y.responseText : y.response, z = {
             data: $,
             status: y.status,
             statusText: y.statusText,
-            headers: J,
+            headers: Y,
             config: f,
             request: y
           };
@@ -563,8 +563,8 @@ function Lr() {
       }
       "setRequestHeader" in y && n.forEach(_, function($, z) {
         typeof m > "u" && z.toLowerCase() === "content-type" ? delete _[z] : y.setRequestHeader(z, $);
-      }), n.isUndefined(f.withCredentials) || (y.withCredentials = !!f.withCredentials), p && p !== "json" && (y.responseType = f.responseType), typeof f.onDownloadProgress == "function" && y.addEventListener("progress", f.onDownloadProgress), typeof f.onUploadProgress == "function" && y.upload && y.upload.addEventListener("progress", f.onUploadProgress), (f.cancelToken || f.signal) && (b = function(J) {
-        !y || (w(!J || J && J.type ? new c() : J), y.abort(), y = null);
+      }), n.isUndefined(f.withCredentials) || (y.withCredentials = !!f.withCredentials), p && p !== "json" && (y.responseType = f.responseType), typeof f.onDownloadProgress == "function" && y.addEventListener("progress", f.onDownloadProgress), typeof f.onUploadProgress == "function" && y.upload && y.upload.addEventListener("progress", f.onUploadProgress), (f.cancelToken || f.signal) && (b = function(Y) {
+        !y || (w(!Y || Y && Y.type ? new c() : Y), y.abort(), y = null);
       }, f.cancelToken && f.cancelToken.subscribe(b), f.signal && (f.signal.aborted ? b() : f.signal.addEventListener("abort", b))), m || (m = null);
       var R = u(G);
       if (R && ["http", "https", "file"].indexOf(R) === -1) {
@@ -1047,7 +1047,7 @@ class Xe extends bt {
   }
   resolvePathName(e) {
     return _t(this, void 0, void 0, function* () {
-      const t = yield this.queryConfiguration(Y.Group, { Id: { $in: e } });
+      const t = yield this.queryConfiguration(J.Group, { Id: { $in: e } });
       return e.map((r) => {
         var o, i;
         return (i = (o = t.data.find((s) => s.Id === r)) === null || o === void 0 ? void 0 : o.Name) !== null && i !== void 0 ? i : r;
@@ -1056,7 +1056,7 @@ class Xe extends bt {
   }
   uploadProcessImage(e, t, r = "process-image.svg") {
     return _t(this, void 0, void 0, function* () {
-      const o = `${this._createBaseUrlByType(Y.ProcessImage)}/${e}/file/image`, i = this.getAuthorizationHeader(), s = new Blob([t], { type: "image/svg+xml" }), a = new FormData();
+      const o = `${this._createBaseUrlByType(J.ProcessImage)}/${e}/file/image`, i = this.getAuthorizationHeader(), s = new Blob([t], { type: "image/svg+xml" }), a = new FormData();
       a.append("file", s, "process-image.svg"), yield Te.post(o, a, { headers: i });
     });
   }
@@ -2724,7 +2724,7 @@ class Et {
   }
   resolvePathName(e) {
     return An(this, void 0, void 0, function* () {
-      return e.length === 0 ? "" : Mn($i(e.map((t) => this.resolveName(Y.Group, t))).pipe(ft((t) => t.join(" / "))));
+      return e.length === 0 ? "" : Mn($i(e.map((t) => this.resolveName(J.Group, t))).pipe(ft((t) => t.join(" / "))));
     });
   }
   resolveName(e, t) {
@@ -5470,7 +5470,7 @@ function tn(n, e = F) {
   }
   return { set: o, update: i, subscribe: s };
 }
-const vo = tn(Y.Signal), { config: Hc, state: Lc } = kr(Er({
+const vo = tn(J.Signal), { config: Hc, state: Lc } = kr(Er({
   queryWithSubGroups: !0,
   selectedTenant: null
 })), We = jc({ name: "entity-select-selection" }, Er({
@@ -5682,7 +5682,7 @@ function Gc(n, e, t) {
   });
   async function f() {
     try {
-      t(4, l = await (await r.queryConfiguration(Y.Group, { GroupId: o.Id })).data);
+      t(4, l = await (await r.queryConfiguration(J.Group, { GroupId: o.Id })).data);
     } catch (p) {
       console.error(p);
     }
@@ -6131,7 +6131,7 @@ function su(n, e, t) {
   async function m(v) {
     var y;
     try {
-      t(3, l = await r.getEntityById(Y.Group, v)), (!((y = g.value) != null && y.selectedGroup) || g.value.selectedGroup.Id != l.Id) && g.update((U) => ({ ...U, selectedGroup: l }));
+      t(3, l = await r.getEntityById(J.Group, v)), (!((y = g.value) != null && y.selectedGroup) || g.value.selectedGroup.Id != l.Id) && g.update((U) => ({ ...U, selectedGroup: l }));
     } catch (U) {
       console.log(U);
     }
@@ -6996,13 +6996,13 @@ function Ju(n) {
   function R($) {
     n[9]($);
   }
-  let J = {
+  let Y = {
     textfield$class: "text-xs text-gray-600",
     suffixIcon$class: "!top-[2px] !text-[20px]",
     $$slots: { default: [qu] },
     $$scope: { ctx: n }
   };
-  return n[0] !== void 0 && (J.value = n[0]), i = new Uu({ props: J }), be.push(() => vr(i, "value", R)), i.$on("valueChanged", n[10]), b = new Me({
+  return n[0] !== void 0 && (Y.value = n[0]), i = new Uu({ props: Y }), be.push(() => vr(i, "value", R)), i.$on("valueChanged", n[10]), b = new Me({
     props: {
       disabled: n[1] === 0,
       $$slots: { default: [Vu] },
@@ -7389,7 +7389,7 @@ function ff(n) {
     catch: lf,
     value: 36
   };
-  return Zt(t = n[8].resolveName(Y.Group, n[33].GroupId), r), {
+  return Zt(t = n[8].resolveName(J.Group, n[33].GroupId), r), {
     c() {
       e = T("span"), r.block.c(), x(e, "class", "text-sm overflow-hidden whitespace-nowrap text-ellipsis");
     },
@@ -7397,7 +7397,7 @@ function ff(n) {
       P(o, e, i), r.block.m(e, r.anchor = null), r.mount = () => e, r.anchor = null;
     },
     p(o, i) {
-      n = o, r.ctx = n, i[0] & 8 && t !== (t = n[8].resolveName(Y.Group, n[33].GroupId)) && Zt(t, r) || qi(r, n, i);
+      n = o, r.ctx = n, i[0] & 8 && t !== (t = n[8].resolveName(J.Group, n[33].GroupId)) && Zt(t, r) || qi(r, n, i);
     },
     d(o) {
       o && I(e), r.block.d(), r.token = null, r = null;
@@ -7608,7 +7608,7 @@ function gf(n) {
 function wf(n, e, t) {
   let r = Ie(Xe), o = Ie(Et), { entityType: i } = e, { selectMultiple: s = !1 } = e, { additionalFilter: a = null } = e, l = [], c = new ce(), u = [], d = {}, f = "unchecked", h, g, w, m = !1, _ = 0, p = 10, b = 0, v = gt(), y = Ge, U = !1, D = !0, G = new ce();
   ye(), We.pipe($e(G)).subscribe((O) => {
-    u = O.selectedEntities, z(), J();
+    u = O.selectedEntities, z(), Y();
   }), $i([y.asObservable(), v.asObservable()]).pipe($e(G)).subscribe(([O, H]) => {
     var Ne;
     w = H.selectedGroup, g = (Ne = H.selectedGroup) == null ? void 0 : Ne.Id, h = H.filter, m = O.queryWithSubGroups, U = !0, t(1, _ = 0), c.next();
@@ -7632,15 +7632,15 @@ function wf(n, e, t) {
     return console.log(i), Ke(r.queryConfiguration(i, O, H));
   }
   function oe(O) {
-    s ? (u.find((H) => H.Id === O.Id) ? (u = u.filter((H) => H.Id !== O.Id), t(4, d[O.Id] = !1, d)) : (u.push(O), t(4, d[O.Id] = !0, d)), J()) : u = [O], We.update((H) => ({ ...H, selectedEntities: u }));
+    s ? (u.find((H) => H.Id === O.Id) ? (u = u.filter((H) => H.Id !== O.Id), t(4, d[O.Id] = !1, d)) : (u.push(O), t(4, d[O.Id] = !0, d)), Y()) : u = [O], We.update((H) => ({ ...H, selectedEntities: u }));
   }
   function R(O) {
     O ? u = [
       ...u,
       ...l.filter((H) => !d[H.Id])
-    ] : u = u.filter((H) => !l.find((Ne) => Ne.Id === H.Id)), z(), J(), We.update((H) => ({ ...H, selectedEntities: u }));
+    ] : u = u.filter((H) => !l.find((Ne) => Ne.Id === H.Id)), z(), Y(), We.update((H) => ({ ...H, selectedEntities: u }));
   }
-  function J() {
+  function Y() {
     let O = Object.keys(d).filter((H) => d[H]);
     O.length === 0 ? t(5, f = "unchecked") : O.length === l.length ? t(5, f = "checked") : t(5, f = "indeterminate");
   }
@@ -7656,7 +7656,7 @@ function wf(n, e, t) {
   He(() => {
     G.next(), G.complete();
   }), c.pipe($e(G), Ct(() => U && !!g), yl(250), ml(() => t(7, D = !0)), Mi(() => q())).subscribe((O) => {
-    t(7, D = !1), t(3, l = O.data), z(), J(), i === Y.Group && l.unshift(w), t(6, b = O.total);
+    t(7, D = !1), t(3, l = O.data), z(), Y(), i === J.Group && l.unshift(w), t(6, b = O.total);
   });
   const Le = (O) => {
     var H;
@@ -8217,7 +8217,7 @@ function Pf(n) {
   };
 }
 function Rf(n, e, t) {
-  let { entityType: r = Y.Signal } = e, { selectMultiple: o = !1 } = e, { additionalFilter: i = null } = e, s = Ie(Xe), a = Ie(xt), l, c = !1, u = [], d = ye(), f = Ge.subscribe((D) => {
+  let { entityType: r = J.Signal } = e, { selectMultiple: o = !1 } = e, { additionalFilter: i = null } = e, s = Ie(Xe), a = Ie(xt), l, c = !1, u = [], d = ye(), f = Ge.subscribe((D) => {
     D.selectedTenant ? (t(4, c = !1), w(D.selectedTenant)) : t(4, c = !0);
   }), h = We.subscribe((D) => {
     D.selectedEntities && !o ? (g(D.selectedEntities), d("selectedEntities", D.selectedEntities[0])) : u = D.selectedEntities;
@@ -8238,7 +8238,7 @@ function Rf(n, e, t) {
   }
   async function m(D) {
     console.log("Tenant selected", D);
-    const G = await s.getEntityById(Y.Group, D.Root);
+    const G = await s.getEntityById(J.Group, D.Root);
     Ge.update((q) => ({ ...q, selectedTenant: D.Id })), gt().update((q) => ({ ...q, selectedGroup: G }));
   }
   function _() {
@@ -8310,7 +8310,7 @@ function Af(n) {
 }
 const Df = (n) => n.stopPropagation();
 function $f(n, e, t) {
-  let { open: r = !1 } = e, { entityType: o = Y.Signal } = e, { selectMultiple: i = !1 } = e, { additionalFilter: s = null } = e, a = Ie("PopupService", new nn(document.body)), l, c, u;
+  let { open: r = !1 } = e, { entityType: o = J.Signal } = e, { selectMultiple: i = !1 } = e, { additionalFilter: s = null } = e, a = Ie("PopupService", new nn(document.body)), l, c, u;
   const d = ye();
   function f(b, v) {
     b && !u && v ? (u = a.openPopup("entity-select-dialog", v, {
@@ -8411,13 +8411,32 @@ class Nf extends HTMLElement {
     yt(this, "_element");
     const t = this.attachShadow({ mode: "open" });
     let r = document.createElement("style");
-    console.log(rn), r.textContent = rn, t.appendChild(r), Be(nn, new nn(document.body)), this._element = new Yi({
+    console.log(rn), r.textContent = rn, t.appendChild(r), Be(nn, new nn(document.body));
+    const o = this.getAttribute("entityType");
+    if (!this._isValidEntityType(o))
+      throw new Error(`Invalid entity type: ${o}`);
+    const i = this.getAttribute("selectMultiple") === "true", s = JSON.parse(this.getAttribute("additionalFilter") || "{}");
+    this._element = new Yi({
       target: t,
-      props: {}
+      props: {
+        entityType: o,
+        selectMultiple: i,
+        additionalFilter: s
+      }
+    }), this._element.$on("selectedEntities", (a) => {
+      this.dispatchEvent(new CustomEvent("entitySelected", {
+        detail: a.detail,
+        bubbles: !0,
+        cancelable: !1,
+        composed: !0
+      }));
     });
   }
   disconnectedCallback() {
     this._element.$destroy();
+  }
+  _isValidEntityType(t) {
+    return Object.values(J).includes(t);
   }
 }
 class jf extends HTMLElement {
@@ -8464,7 +8483,7 @@ export {
   Et as EntityNameService,
   Mf as EntitySelect,
   Go as EntitySelectDialogService,
-  Y as EntityType,
+  J as EntityType,
   qf as EventCondition,
   Ir as EventConditionSettingsType,
   Ff as EventDefinition,
