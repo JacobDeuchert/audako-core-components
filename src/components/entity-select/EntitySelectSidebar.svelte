@@ -38,8 +38,6 @@ const selectStoreSubscription = EntitySelectSelectionStore.subscribe((state) => 
   for (let entity of selectedEntities) {
     selectedEntityLookup[entity.Id] = true;
   }
-
-  console.log('selectedEntities', selectedEntities, selectedEntityLookup);
 });
 
 async function getRootGroup(id: string): Promise<void> {

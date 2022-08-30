@@ -42,16 +42,17 @@ export class EntitySelectWebComponent extends HTMLElement {
         additionalFilter,
       },
     });
+    
 
     this._element.$on('selectedEntities', (entity) => {
+      console.log('selectedEntities', entity);
 
-      this.dispatchEvent(new CustomEvent('entitySelected', {
+      this.dispatchEvent(new CustomEvent('selectedEntities', {
         detail: entity.detail,
-        bubbles: true,
-        cancelable: false,
-        composed: true
       }));
     });
+
+    console.log('connectedCallback' , this._element);
   }
 
   disconnectedCallback(): void {
