@@ -49,6 +49,8 @@ export class EntitySelectWebComponent extends HTMLElement {
 
       this.dispatchEvent(new CustomEvent('selectedEntities', {
         detail: entity.detail,
+        bubbles: true,
+        composed: true,
       }));
     });
 

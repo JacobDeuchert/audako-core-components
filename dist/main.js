@@ -8427,7 +8427,9 @@ class Nf extends HTMLElement {
       }
     }), this._element.$on("selectedEntities", (i) => {
       console.log("selectedEntities", i), this.dispatchEvent(new CustomEvent("selectedEntities", {
-        detail: i.detail
+        detail: i.detail,
+        bubbles: !0,
+        composed: !0
       }));
     }), console.log("connectedCallback", this._element);
   }
