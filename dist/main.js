@@ -8415,10 +8415,10 @@ class Nf extends HTMLElement {
     console.log(Go), t.textContent = Go, this._shadowRoot.appendChild(t), Be(nn, new nn(document.body));
   }
   connectedCallback() {
-    const t = this.getAttribute("entityType");
+    const t = this.getAttribute("entity-type");
     if (console.log(t), !this._isValidEntityType(t))
       throw new Error(`Invalid entity type: ${t}`);
-    const r = this.getAttribute("selectMultiple") === "true", o = JSON.parse(this.getAttribute("additionalFilter") || "{}");
+    const r = this.getAttribute("select-multiple") === "true", o = JSON.parse(this.getAttribute("additional-filter") || "{}");
     this._element = new Yi({
       target: this._shadowRoot,
       props: {

@@ -24,15 +24,15 @@ export class EntitySelectWebComponent extends HTMLElement {
   }
 
   connectedCallback(): void {
-    const entityType = this.getAttribute('entityType') as EntityType;
+    const entityType = this.getAttribute('entity-type') as EntityType;
     console.log(entityType);
     
     if (!this._isValidEntityType(entityType)) {
       throw new Error(`Invalid entity type: ${entityType}`);
     }
 
-    const selectMultiple = this.getAttribute('selectMultiple') === 'true';
-    const additionalFilter = JSON.parse(this.getAttribute('additionalFilter') || '{}');
+    const selectMultiple = this.getAttribute('select-multiple') === 'true';
+    const additionalFilter = JSON.parse(this.getAttribute('additional-filter') || '{}');
 
     this._element = new EntitySelect({
       target: this._shadowRoot,
