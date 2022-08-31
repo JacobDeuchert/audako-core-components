@@ -8415,9 +8415,19 @@ class Nf extends HTMLElement {
     console.log(Go), t.textContent = Go, this._shadowRoot.appendChild(t), Be(nn, new nn(document.body));
   }
   connectedCallback() {
+    this._trySetupEntitySelect();
+  }
+  attributeChangedCallback(t, r, o) {
+    var i;
+    (i = this._element) == null || i.$destroy(), this._trySetupEntitySelect();
+  }
+  disconnectedCallback() {
+    this._element.$destroy();
+  }
+  _trySetupEntitySelect() {
     const t = this.getAttribute("entitytype");
     if (console.log(t), !this._isValidEntityType(t))
-      throw new Error(`Invalid entity type: ${t}`);
+      return;
     const r = this.getAttribute("multiple") === "true", o = JSON.parse(this.getAttribute("filter") || "{}");
     this._element = new Yi({
       target: this._shadowRoot,
@@ -8433,9 +8443,6 @@ class Nf extends HTMLElement {
         composed: !0
       }));
     }), console.log("connectedCallback", this._element);
-  }
-  disconnectedCallback() {
-    this._element.$destroy();
   }
   _isValidEntityType(t) {
     return Object.values(J).includes(t);

@@ -24,11 +24,25 @@ export class EntitySelectWebComponent extends HTMLElement {
   }
 
   connectedCallback(): void {
+    this._trySetupEntitySelect();
+  }
+
+  attributeChangedCallback(name: string, oldValue: string, newValue: string): void {
+
+    this._element?.$destroy();
+    this._trySetupEntitySelect();
+  }
+
+  disconnectedCallback(): void {
+    this._element.$destroy();
+  }
+
+  private _trySetupEntitySelect(): void {
     const entityType = this.getAttribute('entitytype') as EntityType;
     console.log(entityType);
-    
+
     if (!this._isValidEntityType(entityType)) {
-      throw new Error(`Invalid entity type: ${entityType}`);
+      return;
     }
 
     const selectMultiple = this.getAttribute('multiple') === 'true';
@@ -42,23 +56,20 @@ export class EntitySelectWebComponent extends HTMLElement {
         additionalFilter,
       },
     });
-    
 
     this._element.$on('selectedEntities', (entity) => {
       console.log('selectedEntities', entity);
 
-      this.dispatchEvent(new CustomEvent('selected', {
-        detail: entity.detail,
-        bubbles: true,
-        composed: true,
-      }));
+      this.dispatchEvent(
+        new CustomEvent('selected', {
+          detail: entity.detail,
+          bubbles: true,
+          composed: true,
+        })
+      );
     });
 
-    console.log('connectedCallback' , this._element);
-  }
-
-  disconnectedCallback(): void {
-    this._element.$destroy();
+    console.log('connectedCallback', this._element);
   }
 
   private _isValidEntityType(entityType: EntityType): boolean {
