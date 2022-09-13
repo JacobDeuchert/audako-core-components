@@ -40,6 +40,6 @@ function render(node) {
   <Meta title="Select Web Component" component={Select} />
   
   <Story name="Default">
-    <audako-select use:render multiple options={options}></audako-select>
+    <audako-select use:render placeholder="Type" multiple options={options}></audako-select>
   </Story>
   

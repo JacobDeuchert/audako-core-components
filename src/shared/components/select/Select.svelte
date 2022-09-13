@@ -64,6 +64,12 @@ function openMenu(e?: MouseEvent) {
 }
 
 function setDisplayedValue(value: string | string[]): void {
+
+  if (value === null || value === undefined || value.length === 0) {
+    displayedValue = null;
+    return;
+  }
+
   if (Array.isArray(value)) {
     displayedValue = value.join(', ');
   } else {
@@ -99,13 +105,10 @@ function render(node) {
     class={tw`w-full outline-none cursor-pointer ${textfield$class}` }
   />
 
-  <div class={tw`material-symbols-rounded absolute right-1 pointer-events-none cursor-pointer text-md top-[2px] ${suffixIcon$class}`}>
+  <div class={tw`material-symbols-rounded pointer-events-none cursor-pointer text-md ${suffixIcon$class}`}>
     arrow_drop_down
   </div>
 </div>
-<!-- <Textfield disabled="{disabled}" input$placeholder={placeholder} bind:value="{displayedValue}" readonly={true} class="{textfield$class}" input$class="text-ellipsis" on:click="{openMenu}" bind:this={textfield}>
-      <slot name="prefix"></slot>
-    </Textfield> -->
 
 <PopupContainer sizeToAnchor={true} popupClass="max-h-[400px] " anchorElement={textfield} bind:this={popupContainer}>
   <slot />

@@ -8381,7 +8381,7 @@ function $p(t) {
   };
   return d = new _p({ props: T }), t[16](d), {
     c() {
-      e = I("div"), m && m.c(), n = U(), r = I("input"), o = U(), s = I("div"), l = L("arrow_drop_down"), u = U(), z(d.$$.fragment), r.disabled = t[6], $(r, "placeholder", t[0]), r.readOnly = !0, $(r, "class", i = t[5]`w-full outline-none cursor-pointer ${t[1]}`), $(s, "class", a = t[5]`material-symbols-rounded absolute right-1 pointer-events-none cursor-pointer text-md top-[2px] ${t[3]}`), $(e, "class", c = t[5]`flex items-center w-full focus-within:border-primary border-gray-500 border-b-2 relative cursor-pointer ${t[2]}`);
+      e = I("div"), m && m.c(), n = U(), r = I("input"), o = U(), s = I("div"), l = L("arrow_drop_down"), u = U(), z(d.$$.fragment), r.disabled = t[6], $(r, "placeholder", t[0]), r.readOnly = !0, $(r, "class", i = t[5]`w-full outline-none cursor-pointer ${t[1]}`), $(s, "class", a = t[5]`material-symbols-rounded pointer-events-none cursor-pointer text-md ${t[3]}`), $(e, "class", c = t[5]`flex items-center w-full focus-within:border-primary border-gray-500 border-b-2 relative cursor-pointer ${t[2]}`);
     },
     m(b, _) {
       D(b, e, _), m && m.m(e, null), A(e, n), A(e, r), lr(r, t[7]), t[15](r), A(e, o), A(e, s), A(s, l), D(b, u, _), F(d, b, _), f = !0, h || (p = [
@@ -8391,7 +8391,7 @@ function $p(t) {
       ], h = !0);
     },
     p(b, [_]) {
-      m && m.p && (!f || _ & 131072) && Le(m, g, b, b[17], f ? je(g, b[17], _, Ep) : He(b[17]), Ps), (!f || _ & 64) && (r.disabled = b[6]), (!f || _ & 1) && $(r, "placeholder", b[0]), (!f || _ & 34 && i !== (i = b[5]`w-full outline-none cursor-pointer ${b[1]}`)) && $(r, "class", i), _ & 128 && r.value !== b[7] && lr(r, b[7]), (!f || _ & 40 && a !== (a = b[5]`material-symbols-rounded absolute right-1 pointer-events-none cursor-pointer text-md top-[2px] ${b[3]}`)) && $(s, "class", a), (!f || _ & 36 && c !== (c = b[5]`flex items-center w-full focus-within:border-primary border-gray-500 border-b-2 relative cursor-pointer ${b[2]}`)) && $(e, "class", c);
+      m && m.p && (!f || _ & 131072) && Le(m, g, b, b[17], f ? je(g, b[17], _, Ep) : He(b[17]), Ps), (!f || _ & 64) && (r.disabled = b[6]), (!f || _ & 1) && $(r, "placeholder", b[0]), (!f || _ & 34 && i !== (i = b[5]`w-full outline-none cursor-pointer ${b[1]}`)) && $(r, "class", i), _ & 128 && r.value !== b[7] && lr(r, b[7]), (!f || _ & 40 && a !== (a = b[5]`material-symbols-rounded pointer-events-none cursor-pointer text-md ${b[3]}`)) && $(s, "class", a), (!f || _ & 36 && c !== (c = b[5]`flex items-center w-full focus-within:border-primary border-gray-500 border-b-2 relative cursor-pointer ${b[2]}`)) && $(e, "class", c);
       const y = {};
       _ & 256 && (y.anchorElement = b[8]), _ & 131088 && (y.$$scope = { dirty: _, ctx: b }), d.$set(y);
     },
@@ -8425,6 +8425,10 @@ function xp(t, e, n) {
     console.log("open menu"), O && (O.preventDefault(), O.stopPropagation()), !h && (m == null || m.openPopup());
   }
   function N(O) {
+    if (O == null || O.length === 0) {
+      n(7, p = null);
+      return;
+    }
     Array.isArray(O) ? n(7, p = O.join(", ")) : n(7, p = O);
   }
   ut("audako:select:multiple", s), ut("audako:select:value", b), ut("audako:select:value:changed", y), ut("audako:select:displayValue", w), ut("audako:select:close", () => m.closePopup()), vt(() => {
