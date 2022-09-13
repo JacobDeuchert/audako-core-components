@@ -1,5 +1,5 @@
-import { resolveService } from '@/main';
 import { ThemingService } from '@/shared/services/theming.service';
+import { resolveService } from '@/utils/service-functions';
 import { css, LitElement } from 'lit';
 import TenantSelect from './TenantSelect.svelte';
 
@@ -21,6 +21,7 @@ const styles = css`
     direction: ltr;
   }
 `
+
 export class TenantSelectWebComponent extends LitElement {
   private _element: TenantSelect;
 

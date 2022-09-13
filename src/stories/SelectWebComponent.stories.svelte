@@ -23,7 +23,13 @@
   let options = [{
   label: 'abc',
   value: 'abc'
-}]
+}, {
+  label: 'def',
+  value: 'def'
+}, {
+  label: 'ghi',
+  value: 'ghi'
+}];
 
 function render(node) {
   console.log('Render', node);
@@ -34,6 +40,6 @@ function render(node) {
   <Meta title="Select Web Component" component={Select} />
   
   <Story name="Default">
-    <audako-select use:render options={options}></audako-select>
+    <audako-select use:render multiple options={options}></audako-select>
   </Story>
   

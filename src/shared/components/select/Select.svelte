@@ -65,7 +65,7 @@ function openMenu(e?: MouseEvent) {
 
 function setDisplayedValue(value: string | string[]): void {
   if (Array.isArray(value)) {
-    displayedValue = value.join(',');
+    displayedValue = value.join(', ');
   } else {
     displayedValue = value;
   }
@@ -88,7 +88,7 @@ function render(node) {
 }
 </script>
 
-<div use:render class={tw`flex items-center w-full focus-within:border-primary border-gray-500 border-b-2 p-1 relative cursor-pointer`} on:click={openMenu}>
+<div use:render class={tw`flex items-center w-full focus-within:border-primary border-gray-500 border-b-2 p-1 relative cursor-pointer ${container$class}`} on:click={openMenu}>
   <slot name="prefix" />
   <input
     {disabled}

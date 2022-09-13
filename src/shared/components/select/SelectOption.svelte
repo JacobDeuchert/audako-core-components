@@ -30,7 +30,7 @@ onMount(() => {
     currentValue = selectedValue;
 
     if (multiple) {
-      isSelected = selectedValue.includes(value);
+      isSelected = selectedValue?.includes(value);
     } else {
       isSelected = selectedValue === value;
     }
@@ -49,7 +49,8 @@ function onClickOption(e: MouseEvent): void {
     if (isSelected) {
       newValue = currentValue.filter((v) => v !== value);
     } else {
-      newValue = [...currentValue, value];
+      console.log('add value', currentValue, value);
+      newValue = Array.isArray(currentValue) ? [...currentValue, value] : [value];
     }
   } else {
     newValue = value;
@@ -89,7 +90,9 @@ let highlightedStyle = 'bg-[rgba(0,0,0,0.1)] shadow-md';
     <div class={tw`h-[20px] w-[4px] rounded-full bg-primary absolute left-0 top-[50%] translate-y-[-50%]`} />
   {/if}
   {#if multiple}
-    <Checkbox bind:checked={isSelected} />
+    <div class={tw`p-1`}>
+      <Checkbox tw={tw} bind:checked={isSelected} />
+    </div>
   {/if}
   <span bind:this={labelElement}>
     <slot />

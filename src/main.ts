@@ -13,7 +13,7 @@ export {EntitySelectDialogService} from './components/entity-select/entity-selec
 
 export function registerCustomElements() {
   _defineCustomElement('audako-entity-select', EntitySelect);
-  _defineCustomElement('audako-tenant-select', TenantSelect, {extends: 'div'});
+  _defineCustomElement('audako-tenant-select', TenantSelect);
   _defineCustomElement('audako-select', SelectWebComponent);
 
   resolveService(ThemingService, new ThemingService()).createTwindContext(true);
