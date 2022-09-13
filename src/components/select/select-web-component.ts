@@ -39,18 +39,18 @@ export class SelectWebComponent extends LitElement {
 
 
   static styles = [styleSheet.target, styles];
+
+  private _select: Select;
   constructor() {
     super();
     this.multiple = false;
     this.options = [];
-
-    
   }
 
   render() {
     const div = document.createElement('div');
     
-    const select = new Select({
+    this._select = new Select({
       target: this.shadowRoot,
       props: {
         multiple: this.multiple,
@@ -59,8 +59,20 @@ export class SelectWebComponent extends LitElement {
       }
     });    
 
-    console.log(select);
+    this._select.$on('valueChanged', (event: CustomEvent) => {
+      console.log(event);
+
+      this.dispatchEvent(new CustomEvent('valueChanged', {
+        detail: event.detail
+      }));
+    });
 
     return null;
+  }
+  
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this._select?.$destroy();
+
   }
 }
