@@ -1,16 +1,19 @@
 <script lang="ts">
 import EntitySelectSidebar from './EntitySelectSidebar.svelte';
-import { createEventDispatcher, onDestroy } from 'svelte';
+import { createEventDispatcher, onDestroy, setContext } from 'svelte';
 import EntitySelectTable from './EntitySelectTable.svelte';
 import EntitySelectFilter from './EntitySelectFilter.svelte';
 import { EntitySelectGlobalStore, EntitySelectSelectionStore, EntitySelectTypeStore } from './entity-select-stores';
 import { ConfigurationEntity, EntityHttpService, EntityType, TenantHttpService, TenantView } from 'audako-core';
 import { resolveService } from '../../utils/service-functions';
 import TenantSelect from '../tenant-select/TenantSelect.svelte';
+import { tw as twDefault, TWCallable } from 'twind';
 
 export let entityType: EntityType = EntityType.Signal;
 export let selectMultiple = false;
 export let additionalFilter: Record<string, any> = null;
+export let tw: TWCallable = twDefault;
+$: setContext('tw', tw);
 
 let httpService: EntityHttpService = resolveService(EntityHttpService);
 let tenantHttpService: TenantHttpService = resolveService(TenantHttpService);
@@ -32,8 +35,6 @@ let globalSubscription = EntitySelectGlobalStore.subscribe((state) => {
 });
 
 let selectionSubscription = EntitySelectSelectionStore.subscribe((state) => {
-
-  
   if (state.selectedEntities && !selectMultiple) {
     setLastSelectedEntities(state.selectedEntities);
     dispatcher('selectedEntities', state.selectedEntities[0]);
@@ -43,7 +44,6 @@ let selectionSubscription = EntitySelectSelectionStore.subscribe((state) => {
 });
 
 function setLastSelectedEntities(selected: Partial<ConfigurationEntity>[]) {
-
   const typeStore = EntitySelectTypeStore(entityType);
 
   const lastSelected = typeStore.value.lastSelectedEntities;
@@ -87,44 +87,29 @@ onDestroy(() => {
   globalSubscription.unsubscribe();
   selectionSubscription.unsubscribe();
 });
-
 </script>
 
-<div class="flex w-full h-full">
+<div class={tw`flex w-full h-full`}>
   {#if inTenantSelect}
     <TenantSelect
+      tw={tw}
       allowBack={!!selectedTenant}
       on:back={() => (inTenantSelect = false)}
       on:tenantSelected={(event) => onTenantSelected(event.detail.tenant)}
     />
   {:else}
-    <div class="flex-1 border-r border-slate-400 overflow-hidden">
-      <EntitySelectSidebar
-        selectMultiple={selectMultiple}
-        {entityType}
-        {selectedTenant}
-        on:changeTenant={() => onTenantChange()}
-      />
+    <div class={tw`flex-1 border-r border-slate-400 overflow-hidden`}>
+      <EntitySelectSidebar {selectMultiple} {entityType} {selectedTenant} on:changeTenant={() => onTenantChange()} />
     </div>
 
-    <div class="flex-[2] pl-4 pt-1 h-full overflow-hidden">
-      <div class="flex flex-col h-full overflow-hidden">
-        <EntitySelectFilter {entityType} selectMultiple={selectMultiple} on:acceptSelection={() => acceptSelection()} />
+    <div class={tw`flex-[2] pl-4 pt-1 h-full overflow-hidden`}>
+      <div class={tw`flex flex-col h-full overflow-hidden`}>
+        <EntitySelectFilter {entityType} {selectMultiple} on:acceptSelection={() => acceptSelection()} />
 
-        <div class="flex-1 overflow-hidden mt-3">
-          <EntitySelectTable
-            {selectMultiple}
-            {entityType}
-            {additionalFilter}
-          />
+        <div class={tw`flex-1 overflow-hidden mt-3`}>
+          <EntitySelectTable {selectMultiple} {entityType} {additionalFilter} />
         </div>
       </div>
     </div>
   {/if}
 </div>
-
-<style lang="postcss" global>
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-</style>

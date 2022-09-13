@@ -1,13 +1,16 @@
 <script lang="ts">
 import Checkbox from '../../shared/components/checkbox/Checkbox.svelte';
 import { debounceTime, Subject, takeUntil } from 'rxjs';
-import { createEventDispatcher, onDestroy, onMount } from 'svelte';
+import { createEventDispatcher, getContext, onDestroy, onMount } from 'svelte';
 import { EntitySelectGlobalState, EntitySelectGlobalStore, EntitySelectSelectionStore, EntitySelectTypeStore, EntityTypeState } from './entity-select-stores';
 import type { ConfigurationEntity, EntityType } from 'audako-core';
 import IconButton from '../../shared/components/icon-button/IconButton.svelte';
+import type { TWCallable } from 'twind';
 
 export let entityType: EntityType;
 export let selectMultiple = false;
+
+let tw = getContext<TWCallable>('tw');
 
 let eventDispatcher = createEventDispatcher();
 
@@ -72,23 +75,23 @@ onDestroy(() => {
 });
 </script>
 
-<div class="flex flex-col">
-  <div class="flex items-center">
-    <div class="flex items-center w-full focus-within:border-blue-300 border-gray-200  border-2 rounded-md p-2">
-      <span class="material-symbols-rounded mr-2">search</span>
-      <input placeholder="Search" class="w-full outline-none" bind:this={filterInput} bind:value={filter} />
+<div class={tw`flex flex-col`}>
+  <div class={tw`flex items-center`}>
+    <div class={tw`flex items-center w-full focus-within:border-blue-300 border-gray-200  border-2 rounded-md p-2`}>
+      <span class={tw`material-symbols-rounded mr-2`}>search</span>
+      <input placeholder="Search" class={tw`w-full outline-none`} bind:this={filterInput} bind:value={filter} />
     </div>
     {#if selectMultiple}
-      <div class="mx-2 relative">
+      <div class={tw`mx-2 relative`}>
         <IconButton on:click={() => onAcceptSelection()} icon="done_all" />
         {#if selectedEntities.length > 0}
-          <div class="pointer-events-none z-10 absolute bg-primary rounded-full top-0 text-xs text-center text-on-primary right-[-5px] px-[5px] py-[1px]">{selectedEntities.length}</div>
+          <div class={tw`pointer-events-none z-10 absolute bg-primary rounded-full top-0 text-xs text-center text-on-primary right-[-5px] px-[5px] py-[1px]`}>{selectedEntities.length}</div>
         {/if}
       </div>
     {/if}
   </div>
 
-  <div class="flex justify-end mt-2">
+  <div class={tw`flex justify-end mt-2`}>
     <Checkbox label="Mit Untergruppen" bind:checked={withSubGroups} />
   </div>
 </div>

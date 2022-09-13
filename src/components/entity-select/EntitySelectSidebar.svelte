@@ -2,11 +2,13 @@
 import { ConfigurationEntity, EntityHttpService, EntityNameService, EntityType, Group, TenantView } from 'audako-core';
 import { Subject, takeUntil } from 'rxjs';
 import { resolveService } from '../../utils/service-functions';
-import { afterUpdate, createEventDispatcher, onDestroy } from 'svelte';
+import { afterUpdate, createEventDispatcher, getContext, onDestroy } from 'svelte';
 import { EntitySelectSelectionStore, EntitySelectTypeStore } from './entity-select-stores';
 import EntitySelectTreeNode from './EntitySelectTreeNode.svelte';
 import IconButton from '../../shared/components/icon-button/IconButton.svelte';
 import Checkbox from '../../shared/components/checkbox/Checkbox.svelte';
+import type { TWCallable } from 'twind';
+
 
 let httpService: EntityHttpService = resolveService(EntityHttpService);
 let nameService: EntityNameService = resolveService(EntityNameService);
@@ -14,6 +16,8 @@ let nameService: EntityNameService = resolveService(EntityNameService);
 export let entityType: EntityType;
 export let selectedTenant: TenantView;
 export let selectMultiple = false;
+
+let tw = getContext<TWCallable>('tw');
 
 let rootGroup: Group = null;
 let lastSelectedEntities: string[];
@@ -84,23 +88,23 @@ onDestroy(() => {
 });
 </script>
 
-<div class="flex flex-col w-full h-full overflow-hidden">
-  <div class="font-bold text-lg flex items-center cursor-pointer group" on:click={() => dispatcher('changeTenant')}>
+<div class={tw`flex flex-col w-full h-full overflow-hidden`}>
+  <div class={tw`font-bold text-lg flex items-center cursor-pointer group`} on:click={() => dispatcher('changeTenant')}>
     {selectedTenant?.Name}
     <IconButton size="small">edit</IconButton>
   </div>
 
   {#if rootGroup}
-    <div class="flex-[2] overflow-auto">
+    <div class={tw`flex-[2] overflow-auto`}>
       <EntitySelectTreeNode group={rootGroup} expanded {entityType} />
     </div>
   {/if}
 
-  <div class="flex-1">
-    <div class="font-bold text-gray-700">Zuletzt ausgewählt</div>
+  <div class={tw`flex-1`}>
+    <div class={tw`font-bold text-gray-700`}>Zuletzt ausgewählt</div>
     {#if lastSelectedEntities && lastSelectedEntities.length > 0}
       {#each lastSelectedEntities as entityId, index}
-        <div class="flex w-full hover:bg-gray-200 cursor-pointer {index < lastSelectedEntities.length - 1 ? 'border-b' : ''}" on:click={() => selectLastSelected(entityId)}>
+        <div class={tw`flex w-full hover:bg-gray-200 cursor-pointer {index < lastSelectedEntities.length - 1 ? 'border-b' : ''}`} on:click={() => selectLastSelected(entityId)}>
           {#if selectMultiple}
             <Checkbox checked={selectedEntityLookup[entityId]} />
           {/if}

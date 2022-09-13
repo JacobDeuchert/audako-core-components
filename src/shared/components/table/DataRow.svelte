@@ -1,8 +1,6 @@
 <script lang="ts">
 import { createEventDispatcher } from 'svelte';
 
-
-
   export let flexrow$class = '';
 
   let eventDispatcher = createEventDispatcher();
@@ -13,17 +11,18 @@ import { createEventDispatcher } from 'svelte';
 
 </script>
 
-<div class="audako-tablebody-flexrow w-full {flexrow$class}" on:click="{onClick}">
+<div class="audako-tablebody-flexrow {flexrow$class}" on:click="{onClick}">
   <slot />
 </div>
 
-<style>
+<style global>
 .audako-tablebody-flexrow {
   display: flex;
   height: 40px;
+  width: 100%;
 }
 
-:global(.audako-tablebody-flexrow > *) {
+.audako-tablebody-flexrow > * {
   flex: 1;
   height: 100%;
   padding: 4px 0;
@@ -32,11 +31,11 @@ import { createEventDispatcher } from 'svelte';
   padding: 0 4px;
 }
 
-:global(.audako-tablebody-flexrow > *:first-child) {
+.audako-tablebody-flexrow > *:first-child {
   padding-left: 12px;
 }
 
-:global(.audako-tablebody-flexrow > *:last-child) {
+.audako-tablebody-flexrow > *:last-child {
   padding-right: 12px;
 }
 </style>

@@ -46,7 +46,7 @@ onDestroy(() => {
 });
 </script>
 
-<div class="flex w-full h-full {sortable ? 'cursor-pointer' : ''} {container$class}" on:click={() => toggleSort()}>
+<div class="header-cell {sortable ? 'cursor-pointer' : ''} {container$class}" on:click={() => toggleSort()}>
   <div>
     <slot />
   </div>
@@ -62,3 +62,12 @@ onDestroy(() => {
     </span>
   {/if}
 </div>
+
+<style>
+  .header-cell {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+  }
+</style>

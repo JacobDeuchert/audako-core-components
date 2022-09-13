@@ -1,10 +1,13 @@
 <script lang="ts">
-import { createEventDispatcher } from 'svelte';
+import { createEventDispatcher, getContext } from 'svelte';
+import type { TWCallable } from 'twind';
 
 export let icon: string = null;
 export let size: 'small' | 'medium' | 'large' = 'medium';
 export let className: string = '';
 export let disabled: boolean = false;
+
+let tw = getContext<TWCallable>('tw');
 
 let absoluteSize: number;
 let iconFontSize: number;
@@ -61,7 +64,7 @@ function onClickButton(mouseEvent: MouseEvent): void {
 </script>
 
 <div
-  class="container group {className}"
+  class={tw`container group {className}`}
   style="height: {absoluteSize}px; width: {absoluteSize}px; {disabled ? 'cursor: default !important; opacity: 0.4;' : ''}"
   on:mousedown={(event) => onMouseDown(event)}
   on:mouseup={(event) => onMouseUp(event)}
@@ -69,8 +72,8 @@ function onClickButton(mouseEvent: MouseEvent): void {
   on:click={(event) => onClickButton(event)}
   on:blur={(event) => {}}
 >
-  <div class="ripple bg-gray-200 bg-opacity-50" style={active ? 'width: 100% !important; height: 100% !important' : ''} />
-  <span class="material-symbols-rounded z-[1] select-none" style="font-size: {iconFontSize}px">
+  <div class={tw`ripple bg-gray-200 bg-opacity-50`} style={active ? 'width: 100% !important; height: 100% !important' : ''} />
+  <span class={tw`material-symbols-rounded z-[1] select-none" style="font-size: {iconFontSize}px`}>
     <slot>{icon}</slot>
   </span>
 </div>

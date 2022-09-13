@@ -32,7 +32,7 @@ module.exports = {
     emitCss: false,
     preprocess: {
       typescript: true,
-      postcss: true,
+      postcss: false,
     },
   },
   features: {},

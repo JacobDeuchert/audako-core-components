@@ -1,10 +1,12 @@
 <script lang="ts">
 import { Subject } from 'rxjs';
-
 import { createEventDispatcher, setContext } from 'svelte';
 import { Writable, writable } from 'svelte/store';
 import { onDestroy } from 'svelte';
 import PopupContainer from '../popup-container/PopupContainer.svelte';
+import SelectOption from './SelectOption.svelte';
+import type { TextOption } from './SelectTypes';
+import { TWCallable, tw as defaultTw} from 'twind';
 
 export let value: any | any[] = null;
 export let multiple: boolean = false;
@@ -13,6 +15,11 @@ export let placeholder: string = null;
 export let textfield$class: string = '';
 export let container$class: string = '';
 export let suffixIcon$class: string = '';
+export let options: TextOption[] = [];
+export let tw: TWCallable = defaultTw;
+
+$: {setContext('tw', tw); console.log( 'setcontext', tw)};
+
 
 export let disabled: boolean = false;
 
@@ -75,9 +82,13 @@ onDestroy(() => {
   valueChangedSubscruption.unsubscribe();
   displayValueUnsubscribe();
 });
+
+function render(node) {
+  console.log('Render', node);
+}
 </script>
 
-<div class="flex items-center w-full focus-within:border-blue-300 border-gray-500 border-b-2 p-1 relative {container$class}">
+<div use:render class={tw`flex items-center w-full focus-within:border-primary border-gray-500 border-b-2 p-1 relative cursor-pointer`} on:click={openMenu}>
   <slot name="prefix" />
   <input
     {disabled}
@@ -85,11 +96,10 @@ onDestroy(() => {
     readonly
     bind:value={displayedValue}
     bind:this={textfield}
-    on:click={openMenu}
-    class="w-full outline-none {textfield$class}"
+    class={tw`w-full outline-none cursor-pointer ${textfield$class}` }
   />
 
-  <div class="material-symbols-rounded absolute right-1 pointer-events-none cursor-pointer text-md top-2 {suffixIcon$class}">
+  <div class={tw`material-symbols-rounded absolute right-1 pointer-events-none cursor-pointer text-md top-2 ${suffixIcon$class}`}>
     arrow_drop_down
   </div>
 </div>
@@ -99,4 +109,10 @@ onDestroy(() => {
 
 <PopupContainer sizeToAnchor={true} popupClass="max-h-[400px] " anchorElement={textfield} bind:this={popupContainer}>
   <slot />
+
+  {#each options as option}
+    <SelectOption value={option.value}>
+      {option.label}
+    </SelectOption>
+  {/each}
 </PopupContainer>

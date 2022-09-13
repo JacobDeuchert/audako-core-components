@@ -2,9 +2,10 @@
 import { EntityHttpEndpoints, EntityHttpService, EntityType, Group } from 'audako-core';
 import { distinctUntilKeyChanged, Subject, takeUntil } from 'rxjs';
 import { resolveService } from '../../utils/service-functions';
-import { afterUpdate, onDestroy } from 'svelte';
+import { afterUpdate, getContext, onDestroy } from 'svelte';
 import { container } from 'tsyringe';
 import { EntitySelectTypeStore, EntityTypeState } from './entity-select-stores';
+import type { TWCallable } from 'twind';
 
 const httpService = resolveService(EntityHttpService);
 
@@ -12,6 +13,8 @@ export let group: Group;
 export let expanded = false;
 export let level = 1;
 export let entityType: EntityType;
+
+let tw = getContext<TWCallable>('tw');
 
 let children: Partial<Group>[] = [];
 let selected: boolean = false;
@@ -59,27 +62,27 @@ onDestroy(() => {
 });
 </script>
 
-<div class="group cursor-pointer">
-  <div class="flex items-center hover:bg-slate-100 w-full {selected ? '!bg-slate-300' : ''}" on:click={() => selectGroup()}>
+<div class={tw`group cursor-pointer`}>
+  <div class={tw`flex items-center hover:bg-slate-100 w-full {selected ? '!bg-slate-300' : ''}`} on:click={() => selectGroup()}>
     <div />
     {#if children.length > 0}
-      <div class="flex items-center">
+      <div class={tw`flex items-center`}>
         {#if expanded}
-          <span on:click={() => toggleExpanded()} class="material-symbols-rounded text-[20px] w-[20px] cursor-pointer">expand_more</span>
+          <span on:click={() => toggleExpanded()} class={tw`material-symbols-rounded text-[20px] w-[20px] cursor-pointer`}>expand_more</span>
         {:else}
-          <span on:click={() => toggleExpanded()} class="material-symbols-rounded text-[20px] w-[20px] cursor-pointer">chevron_right</span>
+          <span on:click={() => toggleExpanded()} class={tw`material-symbols-rounded text-[20px] w-[20px] cursor-pointer`}>chevron_right</span>
         {/if}
       </div>
     {:else}
-      <div class="p-[10px]" />
+      <div class={tw`p-[10px]`} />
     {/if}
-    <div class="overflow-hidden whitespace-nowrap text-ellipsis w-full">{group?.Name?.Value}</div>
+    <div class={tw`overflow-hidden whitespace-nowrap text-ellipsis w-full`}>{group?.Name?.Value}</div>
   </div>
 
   {#if expanded}
-    <div class="flex w-full">
-      <div class="border-r group-hover:border-gray-300 border-transparent pl-1 mb-2" style="padding-right: {level * 4}px" />
-      <div class="w-full">
+    <div class={tw`flex w-full`}>
+      <div class={tw`border-r group-hover:border-gray-300 border-transparent pl-1 mb-2" style="padding-right: {level * 4}px`} />
+      <div class={tw`w-full`}>
         {#each children as child}
           <svelte:self group={child} level={level + 1} {entityType} />
         {/each}

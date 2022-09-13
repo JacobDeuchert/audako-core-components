@@ -47,9 +47,11 @@
     "@ngneat/elf": "^2.1.0",
     "@ngneat/elf-persist-state": "^1.1.2",
     "audako-core": "github:JacobDeuchert/audako-core",
+    "lit": "^2.3.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.5.6",
     "tsyringe": "^4.7.0",
+    "twind": "^0.16.17",
     "uuid": "^8.3.2"
   },
   "author": "Jacob Deuchert",

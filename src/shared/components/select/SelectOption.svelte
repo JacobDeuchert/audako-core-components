@@ -2,6 +2,7 @@
 import type { Subject } from 'rxjs';
 import { getContext, onMount } from 'svelte';
 import type { Writable } from 'svelte/store';
+import { TWCallable, tw} from 'twind';
 import Checkbox from '../checkbox/Checkbox.svelte';
 
 export let value = null;
@@ -73,17 +74,19 @@ function setDisplayValue() {
     }
   }
 }
+
+let highlightedStyle = 'bg-[rgba(0,0,0,0.1)] shadow-md';
 </script>
 
 <div
-  class="flex items-center {multiple ? '' : 'pl-3 pb-2 pt-2'} pr-3 cursor-pointer hover-highlight relative rounded-md {isSelected &&
+  class={tw`flex hover:(${highlightedStyle}) items-center ${multiple ? '' : 'pl-3 pb-2 pt-2'} pr-3 cursor-pointer relative rounded-md ${isSelected &&
   !multiple
-    ? 'highlighted'
-    : ''}"
+    ? highlightedStyle
+    : ''}`}
   on:click={onClickOption}
 >
   {#if isSelected && !multiple}
-    <div class="h-[20px] w-[4px] rounded-full bg-primary absolute left-0 top-[50%] translate-y-[-50%]" />
+    <div class={tw`h-[20px] w-[4px] rounded-full bg-primary absolute left-0 top-[50%] translate-y-[-50%]`} />
   {/if}
   {#if multiple}
     <Checkbox bind:checked={isSelected} />
@@ -92,3 +95,18 @@ function setDisplayValue() {
     <slot />
   </span>
 </div>
+
+
+<style>
+  .hover-highlight:hover {
+  background: rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
+  backdrop-filter: blur(19.2px) !important;
+}
+
+.highlighted {
+  background: rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
+  backdrop-filter: blur(19.2px) !important;
+}
+</style>

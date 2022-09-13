@@ -21,7 +21,6 @@ $: {
     });
   }
 }
-
 </script>
 
 <Meta title="Entity Select Web Component" component={EntitySelectDialog} />

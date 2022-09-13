@@ -1,6 +1,6 @@
 <script lang="ts">
 import { combineLatest, debounceTime, filter, finalize, from, Observable, Subject, switchMap, takeUntil, tap, throttleTime } from 'rxjs';
-import { createEventDispatcher, onDestroy } from 'svelte';
+import { createEventDispatcher, getContext, onDestroy } from 'svelte';
 import { EntitySelectGlobalStore, EntitySelectSelectionStore, EntitySelectTypeStore } from './entity-select-stores';
 import { ConfigurationEntity, EntityHttpService, EntityNameService, EntityType, Group } from 'audako-core';
 import { resolveService } from '../../utils/service-functions';
@@ -13,6 +13,7 @@ import DataRow from '../../shared/components/table/DataRow.svelte';
 import DataCell from '../../shared/components/table/DataCell.svelte';
 import Paginator from '../../shared/components/table/Paginator.svelte';
 import Checkbox from '../../shared/components/checkbox/Checkbox.svelte';
+import type { TWCallable } from 'twind';
 
 let httpService: EntityHttpService = resolveService(EntityHttpService);
 let nameService: EntityNameService = resolveService(EntityNameService);
@@ -20,6 +21,9 @@ let nameService: EntityNameService = resolveService(EntityNameService);
 export let entityType: EntityType;
 export let selectMultiple: boolean = false;
 export let additionalFilter: Record<string, any> = null;
+
+let tw = getContext<TWCallable>('tw');
+
 
 let entities: Partial<ConfigurationEntity>[] = [];
 let entitiesRequested: Subject<void> = new Subject();
@@ -217,11 +221,11 @@ entitiesRequested
   });
 </script>
 
-<div class="flex flex-col h-full overflow-hidden mt-[-10px]">
+<div class={tw`flex flex-col h-full overflow-hidden mt-[-10px]`}>
   <Table>
     <HeaderRow>
       {#if selectMultiple}
-        <HeaderCell container$class="basis-[50px] flex-[0] cursor-default" id="Name">
+        <HeaderCell container$class={tw`basis-[50px] flex-[0] cursor-default`} id="Name">
           <Checkbox
             checked={masterToggleState === 'checked'}
             indeterminate={masterToggleState === 'indeterminate'}
@@ -229,34 +233,34 @@ entitiesRequested
           />
         </HeaderCell>
       {/if}
-      <HeaderCell container$class="flex-[2] cursor-default" id="Name">Name</HeaderCell>
-      <HeaderCell container$class="flex-1 curstor-default" id="Name">Group</HeaderCell>
+      <HeaderCell container$class={tw`flex-[2] cursor-default"`} id="Name">Name</HeaderCell>
+      <HeaderCell container$class={tw`flex-1 curstor-default`} id="Name">Group</HeaderCell>
     </HeaderRow>
 
     {#if loading}
-      <div class="w-full h-[3px] overflow-hidden bg-blue-200">
-        <div class="progress-bar-value-animation wfull h-full bg-blue-600 "></div>
+      <div class={tw`w-full h-[3px] overflow-hidden bg-blue-200`}>
+        <div class={tw`progress-bar-value-animation wfull h-full bg-blue-600 `}></div>
       </div>
     {:else} 
     
-      <div class="w-full h-[3px]"></div>
+      <div class={tw`w-full h-[3px]`}></div>
     {/if}
 
     {#each entities as entity}
-      <DataRow flexrow$class="cursor-pointer hover:bg-gray-100" on:click={() => onEntitySelected(entity)}>
+      <DataRow flexrow$class={tw`cursor-pointer hover:bg-gray-100`} on:click={() => onEntitySelected(entity)}>
         {#if selectMultiple}
-          <DataCell container$class="basis-[50px] flex-[0]">
+          <DataCell container$class={tw`basis-[50px] flex-[0]`}>
             <Checkbox checked={selectedEntitiesInPageLookup[entity.Id]} />
           </DataCell>
         {/if}
 
-        <DataCell container$class="flex-[2]">
-          <div class="text-sm overflow-hidden whitespace-nowrap text-ellipsis">
+        <DataCell container$class={tw`flex-[2]`}>
+          <div class={tw`text-sm overflow-hidden whitespace-nowrap text-ellipsis`}>
             {entity.Name?.Value}
           </div>
         </DataCell>
-        <DataCell container$class="flex-1">
-          <span class=" text-sm overflow-hidden whitespace-nowrap text-ellipsis">
+        <DataCell container$class={tw`flex-1`}>
+          <span class={tw` text-sm overflow-hidden whitespace-nowrap text-ellipsis`}>
             {#await nameService.resolveName(EntityType.Group, entity.GroupId) then name}
               {name}
             {/await}

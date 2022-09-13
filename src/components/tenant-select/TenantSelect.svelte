@@ -3,11 +3,13 @@ import { TenantHttpService, TenantView } from 'audako-core';
 import { resolveService } from '../../utils/service-functions';
 import { createEventDispatcher } from 'svelte';
 import IconButton from '../../shared/components/icon-button/IconButton.svelte';
+import type { TWCallable } from 'twind';
 
 let enttiyTenantSelect = resolveService(TenantHttpService);
 
 
 export let allowBack = false;
+export let tw: TWCallable;
 
 let tenantPath: TenantView[] = [];
 let tenants: TenantView[] = [];
@@ -64,28 +66,28 @@ function selectTenant(event: CustomEvent, tenant: TenantView): void {
 setupBrowser();
 </script>
 
-<div class="w-full overflow-hidden">
-  <div class="flex items-center">
+<div class={tw`w-full overflow-hidden`}>
+  <div class={tw`flex items-center`}>
     {#if allowBack}
       <IconButton size="small" on:click={() => eventDispatcher('back')}>arrow_back</IconButton>
     {/if}
-    <div class="font-bold text-gray-600 text-lg">Mandant auswählen</div>
+    <div class={tw`font-bold text-gray-600 text-lg`}>Mandant auswählen</div>
   </div>
 
-  <div class="flex mb-1">
+  <div class={tw`flex mb-1`}>
     {#each tenantPath as tenant, i}
-      <div class="cursor-pointer hover:bg-slate-100 p-1" on:click={() => selectTenantInPath(tenant)}>
+      <div class={tw`cursor-pointer hover:bg-slate-100 p-1`} on:click={() => selectTenantInPath(tenant)}>
         {tenant.Name}{i == tenantPath.length - 1 ? '' : ' /'}
       </div>
     {/each}
   </div>
-  <div style="grid-auto-rows: 60px" class="grid grid-cols-2 gap-2 h-full overflow-auto">
+  <div style="grid-auto-rows: 60px" class={tw`grid grid-cols-2 gap-2 h-full overflow-auto`}>
     {#each tenants as tenant}
       <div
-        class="flex justify-between bg-slate-200 hover:bg-slate-300 shadow-sm rounded-sm cursor-pointer"
+        class={tw`flex justify-between bg-gray-200 hover:bg-gray-300 shadow-sm rounded-sm cursor-pointer`}
         on:click={() => browseTenant(tenant)}
       >
-        <div class="mt-2 ml-2 ">
+        <div class={tw`mt-2 ml-2 `}>
           {tenant?.Name}
         </div>
         {#if tenant.Root}
@@ -97,9 +99,3 @@ setupBrowser();
     {/each}
   </div>
 </div>
-
-<style lang="postcss">
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-</style>

@@ -2,20 +2,21 @@
 let headerElement: HTMLElement;
 </script>
 
-<div class="audako-tableheader-flexrow font-bold" bind:this={headerElement}>
+<div class="audako-tableheader-flexrow" bind:this={headerElement}>
   <slot />
 </div>
 
-<style>
+<style global>
 .audako-tableheader-flexrow {
   display: flex;
   height: 40px;
   position: sticky;
   top: 0;
   background: white;
+  font-weight: 700;
 }
 
-:global(.audako-tableheader-flexrow > *) {
+.audako-tableheader-flexrow > * {
   flex: 1;
   height: 100%;
   padding: 4px 0;
@@ -23,11 +24,11 @@ let headerElement: HTMLElement;
   align-items: center;
 }
 
-:global(.audako-tableheader-flexrow > *:first-child) {
+.audako-tableheader-flexrow > *:first-child {
   padding-left: 12px !important;
 }
 
-:global(.audako-tableheader-flexrow > *:last-child) {
+.audako-tableheader-flexrow > *:last-child {
   padding-right: 12px !important;
 }
 </style>

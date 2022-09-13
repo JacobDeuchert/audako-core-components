@@ -179,6 +179,8 @@ export class PopupService {
 
     const containerRect = containerElement.getBoundingClientRect();
     const popupRect  = popupWrapper.getBoundingClientRect();
+
+    console.log('popupRect', popupRect, popupWrapper.style);
     const anchorRect = options.anchorElement?.getBoundingClientRect();
     
     popupStyle.position = 'absolute';
@@ -188,8 +190,8 @@ export class PopupService {
       popupStyle.left = '50%';
       popupStyle.transform = 'translate(-50%, -50%)';
     } else if (options.positioning === 'anchor') {
-      popupWrapper.style.top = `${this._getTopPosition(anchorRect.top, popupRect.height, containerRect.height, anchorRect.height) + (options.customPosition?.y ?? 0)}px`;
-      popupWrapper.style.left = `${this._getLeftPosition(anchorRect.left - 4, popupRect.width, containerRect.width) + (options.customPosition?.x ?? 0)}px`;
+      popupWrapper.style.top = `${this._getTopPosition(anchorRect.top, popupRect.height, containerRect.height, anchorRect.height, options.anchorVertical ?? 'bottom') + (options.customPosition?.y ?? 0)}px`;
+      popupWrapper.style.left = `${this._getLeftPosition(anchorRect.left - 4, popupRect.width, containerRect.width, options.anchorHorizontal ?? 'right') + (options.customPosition?.x ?? 0)}px`;
     } else if (options.positioning === 'custom') {
       popupWrapper.style.top = `${this._getTopPosition(options.customPosition.y, popupRect.height, containerRect.height) + (options.customPosition?.y ?? 0)}px`;
       popupWrapper.style.left = `${this._getLeftPosition(options.customPosition.x, popupRect.width, containerRect.width) + (options.customPosition?.x ?? 0)}px`;
@@ -213,12 +215,9 @@ export class PopupService {
   }
   
   private _getLeftPosition(x: number, popupWidth: number, containerWidth: number, anchorHorizontal: 'left' | 'right' = 'right') {
+    console.log(arguments);
     if (anchorHorizontal == 'left') {
-      if (x + popupWidth + 40 < containerWidth) {
-        return x;
-      } else {
-        return x + popupWidth;
-      }
+      return x;
     } else {
       if (x - popupWidth > 40) {
         return x - popupWidth;

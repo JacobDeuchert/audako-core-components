@@ -1,47 +1,65 @@
 import EntitySelect from './EntitySelect.svelte';
-import css from '../../index.css';
-import { tryRegisterService } from '@/utils/service-functions';
+import { resolveService, tryRegisterService } from '@/utils/service-functions';
 import { PopupService } from '@/shared/services/popup.service';
 import { EntityType } from 'audako-core';
-export class EntitySelectWebComponent extends HTMLElement {
+import { css, LitElement } from 'lit';
+import { create, cssomSheet, TWCallable } from 'twind';
+import { property } from 'lit/decorators.js';
+import { ThemingService } from '@/shared/services/theming.service';
+
+const {tw, styleSheet}= resolveService(ThemingService, new ThemingService()).createTwindContext();
+
+const styles = css`
+  .material-symbols-rounded {
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 100, 'opsz' 48;
+    font-family: 'Material Symbols Rounded';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+  }
+`
+
+
+export class EntitySelectWebComponent extends LitElement {
   private _element: EntitySelect;
 
-  private _shadowRoot: ShadowRoot;
+  @property({type: String, attribute: 'entitytype'})
+  declare entityType: EntityType;
+
+  @property({type: Boolean, attribute: 'multiple'})
+  declare multiple: boolean;
+
+  static styles = [styleSheet.target, styles];
 
   constructor() {
     super();
-
-    this._shadowRoot = this.attachShadow({ mode: 'open' });
-
-    let style = document.createElement('style');
-    console.log(css);
-
-    // @ts-ignore
-    style.textContent = css as any;
-    this._shadowRoot.appendChild(style);
-
     tryRegisterService(PopupService, new PopupService(document.body));
   }
 
-  connectedCallback(): void {
-    this._trySetupEntitySelect();
-  }
+  render() {
 
-  attributeChangedCallback(name: string, oldValue: string, newValue: string): void {
-
+    console.log(this.shadowRoot);
     this._element?.$destroy();
-    this._trySetupEntitySelect();
+    const div = document.createElement('div');
+    div.style.width = '100%';
+    div.style.height = '100%';
+    div.style.overflow = 'hidden';
+
+    this._trySetupEntitySelect(this.shadowRoot);
+
+    return div;
   }
 
-  disconnectedCallback(): void {
-    this._element.$destroy();
-  }
-
-  private _trySetupEntitySelect(): void {
-    const entityType = this.getAttribute('entitytype') as EntityType;
-    console.log(entityType);
-
-    if (!this._isValidEntityType(entityType)) {
+  private _trySetupEntitySelect(target: any): void {
+    
+    if (!this._isValidEntityType(this.entityType)) {
       return;
     }
 
@@ -49,11 +67,12 @@ export class EntitySelectWebComponent extends HTMLElement {
     const additionalFilter = JSON.parse(this.getAttribute('filter') || '{}');
 
     this._element = new EntitySelect({
-      target: this._shadowRoot,
+      target: target,
       props: {
-        entityType,
+        entityType: this.entityType,
         selectMultiple,
         additionalFilter,
+        tw: tw
       },
     });
 

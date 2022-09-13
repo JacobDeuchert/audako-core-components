@@ -1,5 +1,6 @@
 <script lang="ts">
-import { createEventDispatcher } from 'svelte';
+import { createEventDispatcher, getContext } from 'svelte';
+import type { TWCallable } from 'twind';
 
 import IconButton from '../icon-button/IconButton.svelte';
 import Select from '../select/Select.svelte';
@@ -9,6 +10,8 @@ import type { PageEvent } from './table.types';
 export let pageIndex: number;
 export let pageSize: number;
 export let totalCount: number;
+
+let tw = getContext<TWCallable>('tw');
 
 let lastPageIndex: number;
 
@@ -60,12 +63,13 @@ function pubishPageEvent(): void {
 }
 </script>
 
-<div class="flex w-full items-center justify-end pt-1">
-  <div class="mr-1 text-xs text-gray-600">Items per page:</div>
-  <div class="w-[50px]">
+<div class={tw`flex w-full items-center justify-end pt-1`}>
+  <div class={tw`mr-1 text-xs text-gray-600`}>Items per page:</div>
+  <div class={tw`w-[50px]`}>
     <Select
-      textfield$class="text-xs text-gray-600"
-      suffixIcon$class="!top-[2px] !text-[20px]"
+      tw={tw}
+      textfield$class={tw`text-xs text-gray-600`}
+      suffixIcon$class={tw`!top-[2px] !text-[20px]`}
       bind:value={pageSize}
       on:valueChanged={(event) => changePageSize(event.detail)}
     >
@@ -74,10 +78,10 @@ function pubishPageEvent(): void {
       {/each}
     </Select>
   </div>
-  <div class="ml-4 text-xs mr-1 text-gray-600">
+  <div class={tw`ml-4 text-xs mr-1 text-gray-600`}>
     {pageIndex * pageSize + 1}&nbsp;-&nbsp;{(pageIndex + 1) * pageSize}
   </div>
-  <div class="text-xs mr-4 text-gray-600">of {totalCount}</div>
+  <div class={tw`text-xs mr-4 text-gray-600`}>of {totalCount}</div>
 
   <IconButton disabled={pageIndex === 0} on:click={() => goToFirstPage()}>first_page</IconButton>
   <IconButton disabled={pageIndex === 0} on:click={() => changePage(-1)}>navigate_before</IconButton>
