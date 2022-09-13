@@ -1,10 +1,12 @@
-export declare class EntitySelectWebComponent extends HTMLElement {
+import { EntityType } from 'audako-core';
+import { LitElement } from 'lit';
+export declare class EntitySelectWebComponent extends LitElement {
     private _element;
-    private _shadowRoot;
+    entityType: EntityType;
+    multiple: boolean;
+    static styles: (CSSStyleSheet | import("lit").CSSResult)[];
     constructor();
-    connectedCallback(): void;
-    attributeChangedCallback(name: string, oldValue: string, newValue: string): void;
-    disconnectedCallback(): void;
+    render(): HTMLDivElement;
     private _trySetupEntitySelect;
     private _isValidEntityType;
 }
