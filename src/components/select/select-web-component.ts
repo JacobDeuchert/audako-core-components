@@ -28,11 +28,23 @@ const styles = css`
 
 export class SelectWebComponent extends LitElement {
 
+  @property({attribute: 'value', type: String})
+  declare value: string
+
+  @property({attribute: 'arrayValue', type: Array})
+  declare arrayValue: string
+  
+
   @property({attribute: 'multiple', type: Boolean})
   declare multiple: boolean;
 
   @property({attribute: 'options', type: Array})
   declare options: TextOption[];
+
+  @property({attribute: 'placeholder', type: String})
+  declare placeholder: string;
+
+  
 
 
   @property({attribute: 'container$class', type: String})
@@ -60,11 +72,13 @@ export class SelectWebComponent extends LitElement {
     this._select = new Select({
       target: this.shadowRoot,
       props: {
+        value: this.multiple ? this.arrayValue : this.value,
         multiple: this.multiple,
         options: this.options,
         container$class: this.container$class,
         textfield$class: this.textfield$class,
         suffix$class: this.suffix$class,
+        placeholder: this.placeholder,
         tw: tw
       }
     });    

@@ -6,6 +6,7 @@ import { TenantSelectWebComponent } from './components/tenant-select/tenant-sele
 import { ThemingService } from './shared/services/theming.service';
 import { resolveService, tryRegisterService } from './utils/service-functions';
 export { resolveService, tryRegisterService } from './utils/service-functions';
+export type { TextOption } from './shared/components/select/SelectTypes';
 export const EntitySelect = EntitySelectWebComponent;
 export const TenantSelect = TenantSelectWebComponent;
 
