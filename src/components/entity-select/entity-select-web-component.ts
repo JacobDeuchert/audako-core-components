@@ -44,8 +44,6 @@ export class EntitySelectWebComponent extends LitElement {
   }
 
   render() {
-
-    console.log(this.shadowRoot);
     this._element?.$destroy();
     const div = document.createElement('div');
     div.style.width = '100%';

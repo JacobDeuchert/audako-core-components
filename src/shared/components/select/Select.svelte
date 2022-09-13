@@ -88,7 +88,7 @@ function render(node) {
 }
 </script>
 
-<div use:render class={tw`flex items-center w-full focus-within:border-primary border-gray-500 border-b-2 p-1 relative cursor-pointer ${container$class}`} on:click={openMenu}>
+<div use:render class={tw`flex items-center w-full focus-within:border-primary border-gray-500 border-b-2 relative cursor-pointer ${container$class}`} on:click={openMenu}>
   <slot name="prefix" />
   <input
     {disabled}
@@ -99,7 +99,7 @@ function render(node) {
     class={tw`w-full outline-none cursor-pointer ${textfield$class}` }
   />
 
-  <div class={tw`material-symbols-rounded absolute right-1 pointer-events-none cursor-pointer text-md top-2 ${suffixIcon$class}`}>
+  <div class={tw`material-symbols-rounded absolute right-1 pointer-events-none cursor-pointer text-md top-[2px] ${suffixIcon$class}`}>
     arrow_drop_down
   </div>
 </div>

@@ -31,12 +31,19 @@ export class SelectWebComponent extends LitElement {
   @property({attribute: 'multiple', type: Boolean})
   declare multiple: boolean;
 
-  @property({attribute: 'options', type: Array, hasChanged: (oldValue, newValue) => {
-    console.log(oldValue, newValue);
-    return oldValue !== newValue;
-  }})
+  @property({attribute: 'options', type: Array})
   declare options: TextOption[];
 
+
+  @property({attribute: 'container$class', type: String})
+  declare container$class: string;
+
+  
+  @property({attribute: 'textfield$class', type: String})
+  declare textfield$class: string;
+
+  @property({attribute: 'suffix$class', type: String})
+  declare suffix$class: string;
 
   static styles = [styleSheet.target, styles];
 
@@ -55,6 +62,9 @@ export class SelectWebComponent extends LitElement {
       props: {
         multiple: this.multiple,
         options: this.options,
+        container$class: this.container$class,
+        textfield$class: this.textfield$class,
+        suffix$class: this.suffix$class,
         tw: tw
       }
     });    
