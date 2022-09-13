@@ -8,6 +8,6 @@ import type { TWCallable } from 'twind';
   export let container$class: string = '';
 </script>
 
-<div class={tw`border-t overflow-hidden {container$class}`}>
+<div class={tw`border-t overflow-hidden ${container$class}`}>
   <slot />
 </div>

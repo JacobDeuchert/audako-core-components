@@ -64,7 +64,7 @@ function onClickButton(mouseEvent: MouseEvent): void {
 </script>
 
 <div
-  class={tw`container group {className}`}
+  class={tw`container group ${className}`}
   style="height: {absoluteSize}px; width: {absoluteSize}px; {disabled ? 'cursor: default !important; opacity: 0.4;' : ''}"
   on:mousedown={(event) => onMouseDown(event)}
   on:mouseup={(event) => onMouseUp(event)}
