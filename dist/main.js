@@ -5398,6 +5398,7 @@ function St(t, e) {
   } catch {
     throw new Error(`Failed to register service: ${t == null ? void 0 : t.toString()}`);
   }
+  return e;
 }
 function no(...t) {
   const e = {

@@ -33,7 +33,16 @@ export function resolveService<T>(serviceToken: InjectionToken<T>, defaultValue:
   throw new Error(`Service ${stringToken?.toString()} not found`);
 }
 
-export function tryRegisterService<T>(token: InjectionToken<T>, instance: T): void {
+
+export function tryResolveService<T>(serviceToken: InjectionToken<T>, defaultValue: T = null): T {
+  try {
+    return resolveService(serviceToken, defaultValue);
+  } catch (e) {
+    return defaultValue;
+  }
+}
+
+export function tryRegisterService<T>(token: InjectionToken<T>, instance: T): T {
   try {
     if (container.isRegistered(token)) {
       return;
@@ -43,4 +52,6 @@ export function tryRegisterService<T>(token: InjectionToken<T>, instance: T): vo
   } catch {
     throw new Error(`Failed to register service: ${token?.toString()}`);
   }
+
+  return instance;
 }
