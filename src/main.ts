@@ -1,4 +1,6 @@
 import { DataSourceHttpService, EntityHttpService, EntityNameService, HttpConfig, LiveValueService, TenantHttpService } from 'audako-core';
+import type { Observable } from 'rxjs';
+import { container } from 'tsyringe';
 import { EntitySelectDialogService } from './components/entity-select/entity-select-dialog.service';
 import { EntitySelectWebComponent } from './components/entity-select/entity-select-web-component';
 import { SelectWebComponent } from './components/select/select-web-component';
@@ -20,7 +22,7 @@ export function registerCustomElements() {
   resolveService(ThemingService, new ThemingService()).createTwindContext(true);
 }
 
-export function registerCoreServices(httpConfig: HttpConfig, accessToken: string | Promise<string>): void {
+export function registerCoreServices(httpConfig: HttpConfig, accessToken: string | Promise<string> | Observable<string>): void {
   const entityHttpService = new EntityHttpService(httpConfig, accessToken)
   
   tryRegisterService(LiveValueService, new LiveValueService(httpConfig, accessToken));
