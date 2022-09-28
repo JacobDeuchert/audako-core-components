@@ -5434,13 +5434,13 @@ function Re(t, e = null) {
     return e;
   throw new Error(`Service ${n == null ? void 0 : n.toString()} not found`);
 }
-function St(t, e) {
-  var r;
-  const n = (r = window.dependencyContainer) != null ? r : na;
+function St(t, e, n = !0) {
+  var i;
+  const r = (i = window.dependencyContainer) != null ? i : na;
   try {
-    if (n.isRegistered(t))
+    if (r.isRegistered(t) && !n)
       return;
-    n.register(t, { useValue: e });
+    r.registerInstance(t, e);
   } catch {
     throw new Error(`Failed to register service: ${t == null ? void 0 : t.toString()}`);
   }

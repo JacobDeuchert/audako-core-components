@@ -42,16 +42,16 @@ export function tryResolveService<T>(serviceToken: InjectionToken<T>, defaultVal
   }
 }
 
-export function tryRegisterService<T>(token: InjectionToken<T>, instance: T): T {
+export function tryRegisterService<T>(token: InjectionToken<T>, instance: T, overwrite: boolean = true): T {
 
   const dependencyContainer = (window['dependencyContainer'] as DependencyContainer) ?? container;
 
   try {
-    if (dependencyContainer.isRegistered(token)) {
+    if (dependencyContainer.isRegistered(token) && !overwrite) {
       return;
     }
 
-    dependencyContainer.register(token, { useValue: instance });
+    dependencyContainer.registerInstance(token, instance);
   } catch {
     throw new Error(`Failed to register service: ${token?.toString()}`);
   }
