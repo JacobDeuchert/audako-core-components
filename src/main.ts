@@ -41,6 +41,5 @@ function _defineCustomElement(tagName: string, component: any, options?: Element
   customElements.define(tagName, component, options);
 }
 
-
 // export all from audako-core
 export * from 'audako-core';

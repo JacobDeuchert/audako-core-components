@@ -86,7 +86,7 @@ export class SelectWebComponent extends LitElement {
     this._select.$on('valueChanged', (event: CustomEvent) => {
       console.log(event);
 
-      this.dispatchEvent(new CustomEvent('valueChanged', {
+      this.dispatchEvent(new CustomEvent('valuechanged', {
         detail: event.detail
       }));
     });
