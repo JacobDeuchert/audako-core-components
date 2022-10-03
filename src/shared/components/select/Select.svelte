@@ -18,7 +18,7 @@ export let suffixIcon$class: string = '';
 export let options: TextOption[] = [];
 export let tw: TWCallable = defaultTw;
 
-$: {setContext('tw', tw); console.log( 'setcontext', tw)};
+$: setContext('tw', tw);
 
 
 export let disabled: boolean = false;
@@ -33,7 +33,6 @@ let eventDispatcher = createEventDispatcher();
 let valueStore = writable(value);
 const valueUnsubscribe = valueStore.subscribe((storeValue) => {
   value = storeValue;
-  console.log('Select Value', value);
 });
 
 // create seperate subject to listen to changes from the select only
@@ -45,12 +44,10 @@ const valueChangedSubscruption = valueChanged.subscribe((value) => {
 let displayValueStore = writable<string | string[]>(multiple ? [] : '');
 
 let displayValueUnsubscribe = displayValueStore.subscribe((value) => {
-  console.log('displayValueStore', value);
   setDisplayedValue(value);
 });
 
 function openMenu(e?: MouseEvent) {
-  console.log('open menu');
   if (e) {
     e.preventDefault();
     e.stopPropagation();
@@ -88,13 +85,9 @@ onDestroy(() => {
   valueChangedSubscruption.unsubscribe();
   displayValueUnsubscribe();
 });
-
-function render(node) {
-  console.log('Render', node);
-}
 </script>
 
-<div use:render class={tw`flex items-center w-full focus-within:border-primary border-gray-500 border-b-2 relative cursor-pointer ${container$class}`} on:click={openMenu}>
+<div class={tw`flex items-center w-full focus-within:border-primary border-gray-500 border-b-2 relative cursor-pointer ${container$class}`} on:click={openMenu}>
   <slot name="prefix" />
   <input
     {disabled}

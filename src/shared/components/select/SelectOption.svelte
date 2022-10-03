@@ -49,7 +49,6 @@ function onClickOption(e: MouseEvent): void {
     if (isSelected) {
       newValue = currentValue.filter((v) => v !== value);
     } else {
-      console.log('add value', currentValue, value);
       newValue = Array.isArray(currentValue) ? [...currentValue, value] : [value];
     }
   } else {

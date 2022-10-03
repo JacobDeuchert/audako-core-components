@@ -68,6 +68,8 @@ export class SelectWebComponent extends LitElement {
   }
 
   render() {
+
+    this._select?.$destroy();
     const div = document.createElement('div');
 
     console.log('arrayvalue', this.arrayvalue, this.value)
