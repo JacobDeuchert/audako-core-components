@@ -31,7 +31,7 @@ export class SelectWebComponent extends LitElement {
   @property({attribute: 'value', type: String})
   declare value: string
 
-  @property({attribute: 'arrayValue', type: Array})
+  @property({attribute: 'arrayvalue', type: Array})
   declare arrayValue: string
   
 

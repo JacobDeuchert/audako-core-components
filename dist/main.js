@@ -10881,7 +10881,7 @@ _t([
   Je({ attribute: "value", type: String })
 ], Xe.prototype, "value", 2);
 _t([
-  Je({ attribute: "arrayValue", type: Array })
+  Je({ attribute: "arrayvalue", type: Array })
 ], Xe.prototype, "arrayValue", 2);
 _t([
   Je({ attribute: "multiple", type: Boolean })
