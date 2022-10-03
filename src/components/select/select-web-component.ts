@@ -32,7 +32,7 @@ export class SelectWebComponent extends LitElement {
   declare value: string
 
   @property({attribute: 'arrayvalue', type: Array})
-  declare arrayValue: string
+  declare arrayvalue: object[];
   
 
   @property({attribute: 'multiple', type: Boolean})
@@ -64,20 +64,23 @@ export class SelectWebComponent extends LitElement {
     super();
     this.multiple = false;
     this.options = [];
+    this.arrayvalue = [];
   }
 
   render() {
     const div = document.createElement('div');
+
+    console.log('arrayvalue', this.arrayvalue, this.value)
     
     this._select = new Select({
       target: this.shadowRoot,
       props: {
-        value: this.multiple ? this.arrayValue : this.value,
+        value: this.multiple ? this.arrayvalue : this.value,
         multiple: this.multiple,
         options: this.options,
         container$class: this.container$class,
         textfield$class: this.textfield$class,
-        suffix$class: this.suffix$class,
+        suffixIcon$class: this.suffix$class,
         placeholder: this.placeholder,
         tw: tw
       }

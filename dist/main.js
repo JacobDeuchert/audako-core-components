@@ -10850,18 +10850,18 @@ class Xe extends Pt {
   constructor() {
     super();
     st(this, "_select");
-    this.multiple = !1, this.options = [];
+    this.multiple = !1, this.options = [], this.arrayvalue = [];
   }
   render() {
-    return document.createElement("div"), this._select = new Aa({
+    return document.createElement("div"), console.log("arrayvalue", this.arrayvalue, this.value), this._select = new Aa({
       target: this.shadowRoot,
       props: {
-        value: this.multiple ? this.arrayValue : this.value,
+        value: this.multiple ? this.arrayvalue : this.value,
         multiple: this.multiple,
         options: this.options,
         container$class: this.container$class,
         textfield$class: this.textfield$class,
-        suffix$class: this.suffix$class,
+        suffixIcon$class: this.suffix$class,
         placeholder: this.placeholder,
         tw: Bg
       }
@@ -10882,7 +10882,7 @@ _t([
 ], Xe.prototype, "value", 2);
 _t([
   Je({ attribute: "arrayvalue", type: Array })
-], Xe.prototype, "arrayValue", 2);
+], Xe.prototype, "arrayvalue", 2);
 _t([
   Je({ attribute: "multiple", type: Boolean })
 ], Xe.prototype, "multiple", 2);

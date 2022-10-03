@@ -31,6 +31,8 @@
   value: 'ghi'
 }];
 
+let value = ['abc'];
+
 function render(node) {
   console.log('Render', node);
 }
@@ -40,6 +42,6 @@ function render(node) {
   <Meta title="Select Web Component" component={Select} />
   
   <Story name="Default">
-    <audako-select use:render placeholder="Type" multiple options={options}></audako-select>
+    <audako-select use:render placeholder="Type" multiple options={options} arrayvalue={value}  ></audako-select>
   </Story>
   
