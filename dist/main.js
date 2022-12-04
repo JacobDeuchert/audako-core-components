@@ -202,7 +202,7 @@ class am {
   static _setObjectProperty(e, n, r) {
     const i = Object.keys(e), o = n.shift();
     if (n.length === 0) {
-      Ie.isField(i[o]) ? e[o] = new Ie(r) : e[o] = r;
+      Ie.isField(e[o]) ? e[o] = new Ie(r) : e[o] = r;
       return;
     } else if (i.includes(o) && typeof e[o] == "object") {
       const s = e[o];
