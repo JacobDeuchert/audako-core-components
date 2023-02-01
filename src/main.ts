@@ -1,4 +1,4 @@
-import { DataSourceHttpService, EntityHttpService, EntityNameService, HttpConfig, LiveValueService, TenantHttpService } from 'audako-core';
+import { DataSourceHttpService, EntityHttpService, EntityNameService, HistoricalValueService, HttpConfig, LiveValueService, TenantHttpService } from 'audako-core';
 import type { Observable } from 'rxjs';
 import { container } from 'tsyringe';
 import { EntitySelectDialogService } from './components/entity-select/entity-select-dialog.service';
@@ -31,6 +31,7 @@ export function registerCoreServices(httpConfig: HttpConfig, accessToken: string
 	tryRegisterService(EntityNameService, new EntityNameService(entityHttpService));
 	tryRegisterService(DataSourceHttpService, new DataSourceHttpService(httpConfig, accessToken));
   tryRegisterService(EntitySelectDialogService, new EntitySelectDialogService());
+  tryRegisterService(HistoricalValueService, new HistoricalValueService(httpConfig, accessToken));
 }
 
 function _defineCustomElement(tagName: string, component: any, options?: ElementDefinitionOptions) {
