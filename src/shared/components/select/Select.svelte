@@ -97,8 +97,7 @@ onDestroy(() => {
     bind:this={textfield}
     class={tw`w-full outline-none cursor-pointer ${textfield$class}` }
   />
-
-  <div class={tw`material-symbols-rounded pointer-events-none cursor-pointer text-md ${suffixIcon$class}`}>
+  <div class={tw` material-symbols-rounded pointer-events-none cursor-pointer text-md ${suffixIcon$class} select-none`}>
     arrow_drop_down
   </div>
 </div>

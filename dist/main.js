@@ -9445,8 +9445,8 @@ function Mp(t) {
       ), r.readOnly = !0, E(r, "class", i = /*tw*/
       t[5]`w-full outline-none cursor-pointer ${/*textfield$class*/
       t[1]}`), E(s, "class", c = /*tw*/
-      t[5]`material-symbols-rounded pointer-events-none cursor-pointer text-md ${/*suffixIcon$class*/
-      t[3]}`), E(e, "class", a = /*tw*/
+      t[5]` material-symbols-rounded pointer-events-none cursor-pointer text-md ${/*suffixIcon$class*/
+      t[3]} select-none`), E(e, "class", a = /*tw*/
       t[5]`flex items-center w-full focus-within:border-primary border-gray-500 border-b-2 relative cursor-pointer ${/*container$class*/
       t[2]}`);
     },
@@ -9508,8 +9508,8 @@ function Mp(t) {
         y[7]
       ), (!d || b & /*tw, suffixIcon$class*/
       40 && c !== (c = /*tw*/
-      y[5]`material-symbols-rounded pointer-events-none cursor-pointer text-md ${/*suffixIcon$class*/
-      y[3]}`)) && E(s, "class", c), (!d || b & /*tw, container$class*/
+      y[5]` material-symbols-rounded pointer-events-none cursor-pointer text-md ${/*suffixIcon$class*/
+      y[3]} select-none`)) && E(s, "class", c), (!d || b & /*tw, container$class*/
       36 && a !== (a = /*tw*/
       y[5]`flex items-center w-full focus-within:border-primary border-gray-500 border-b-2 relative cursor-pointer ${/*container$class*/
       y[2]}`)) && E(e, "class", a);
@@ -12481,7 +12481,7 @@ class Ze extends _t {
   }
   render() {
     var n;
-    return (n = this._select) == null || n.$destroy(), document.createElement("div"), console.log("arrayvalue", this.arrayvalue, this.value), this._select = new ja({
+    return this.multiple && this._select || ((n = this._select) == null || n.$destroy(), document.createElement("div"), console.log("render select", this.arrayvalue, this.value), this._select = new ja({
       target: this.shadowRoot,
       props: {
         value: this.multiple ? this.arrayvalue : this.value,
@@ -12497,11 +12497,11 @@ class Ze extends _t {
       console.log(r), this.dispatchEvent(new CustomEvent("valuechanged", {
         detail: r.detail
       }));
-    }), null;
+    })), null;
   }
   disconnectedCallback() {
     var n;
-    super.disconnectedCallback(), (n = this._select) == null || n.$destroy();
+    super.disconnectedCallback(), (n = this._select) == null || n.$destroy(), this._select = null, console.log("disconnectedCallback");
   }
 }
 Je(Ze, "styles", [Yg.target, Qg]);
@@ -12509,7 +12509,9 @@ Et([
   Ne({ attribute: "value", type: String })
 ], Ze.prototype, "value", 2);
 Et([
-  Ne({ attribute: "arrayvalue", type: Array })
+  Ne({ attribute: "arrayvalue", type: Array, hasChanged(t, e) {
+    return console.log("hasChanged", t, e), !0;
+  } })
 ], Ze.prototype, "arrayvalue", 2);
 Et([
   Ne({ attribute: "multiple", type: Boolean })

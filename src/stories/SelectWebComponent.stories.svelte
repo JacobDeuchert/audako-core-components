@@ -6,14 +6,15 @@ import { EntityType } from 'audako-core';
   
 
 
-  let entitySelect;
+  let select;
   
   $: {
-    if (entitySelect) {
-      console.log(entitySelect); 
-  
-      entitySelect.addEventListener('selected', (event) => {
+    console.log('Select', select)
+    if (select) {
+
+      select.addEventListener('valuechanged', (event) => {
         console.log(event);
+        value = event.detail;
       });
     }
   }
@@ -42,6 +43,6 @@ function render(node) {
   <Meta title="Select Web Component" component={Select} />
   
   <Story name="Default">
-    <audako-select use:render placeholder="Type" multiple options={options} arrayvalue={value}  ></audako-select>
+    <audako-select use:render placeholder="Type" multiple options={options} arrayvalue={value} bind:this={select}  ></audako-select>
   </Story>
   

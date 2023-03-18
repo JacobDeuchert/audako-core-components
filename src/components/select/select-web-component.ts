@@ -30,7 +30,10 @@ export class SelectWebComponent extends LitElement {
   @property({attribute: 'value', type: String})
   declare value: string
 
-  @property({attribute: 'arrayvalue', type: Array})
+  @property({attribute: 'arrayvalue', type: Array, hasChanged(value, oldValue) {
+    console.log('hasChanged', value, oldValue)
+    return true;
+  },})
   declare arrayvalue: object[];
   
 
@@ -67,11 +70,15 @@ export class SelectWebComponent extends LitElement {
   }
 
   render() {
+    
+    if (this.multiple && this._select) {
+      return null;
+    }
 
     this._select?.$destroy();
     const div = document.createElement('div');
 
-    console.log('arrayvalue', this.arrayvalue, this.value)
+    console.log('render select', this.arrayvalue, this.value)
     
     this._select = new Select({
       target: this.shadowRoot,
@@ -101,6 +108,9 @@ export class SelectWebComponent extends LitElement {
   disconnectedCallback(): void {
     super.disconnectedCallback();
     this._select?.$destroy();
+    this._select = null;
+
+    console.log('disconnectedCallback')
 
   }
 }
