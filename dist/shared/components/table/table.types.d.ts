@@ -1,8 +1,8 @@
-export declare type PageEvent = {
+export type PageEvent = {
     pageIndex: number;
     pageSize: number;
 };
-export declare type Sort = {
+export type Sort = {
     active: string;
     direction: 'asc' | 'desc';
 } | null;

@@ -1,4 +1,4 @@
-export declare type TextOption = {
+export type TextOption = {
     label: string;
     value: string;
 };

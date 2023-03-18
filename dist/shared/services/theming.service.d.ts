@@ -1,5 +1,5 @@
-import { Sheet, TWCallable } from 'twind';
-export declare type Theme = {
+import { type Sheet, type TWCallable } from 'twind';
+export type Theme = {
     primary: string;
     'on-primary': string;
     secondary: string;

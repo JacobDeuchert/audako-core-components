@@ -1,8 +1,8 @@
-export declare type Position = {
+export type Position = {
     x: number;
     y: number;
 };
-export declare type PopupOptions = {
+export type PopupOptions = {
     backdrop: boolean;
     closeOnClickOutside: boolean;
     positioning: 'center' | 'anchor' | 'custom';
@@ -16,7 +16,7 @@ export declare type PopupOptions = {
     outTransitionClassList?: string;
     outTransitionDuration?: number;
 };
-export declare type PopupRef = {
+export type PopupRef = {
     popupId: string;
     afterClosed: Promise<void>;
     close: () => void;
