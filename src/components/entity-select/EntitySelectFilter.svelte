@@ -2,7 +2,7 @@
 import Checkbox from '../../shared/components/checkbox/Checkbox.svelte';
 import { debounceTime, Subject, takeUntil } from 'rxjs';
 import { createEventDispatcher, getContext, onDestroy, onMount } from 'svelte';
-import { EntitySelectGlobalState, EntitySelectGlobalStore, EntitySelectSelectionStore, EntitySelectTypeStore, EntityTypeState } from './entity-select-stores';
+import { type EntitySelectGlobalState, EntitySelectGlobalStore, EntitySelectSelectionStore, EntitySelectTypeStore, type EntityTypeState } from './entity-select-stores';
 import type { ConfigurationEntity, EntityType } from 'audako-core';
 import IconButton from '../../shared/components/icon-button/IconButton.svelte';
 import type { TWCallable } from 'twind';

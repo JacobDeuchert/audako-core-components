@@ -7,7 +7,7 @@ import { EntitySelectGlobalStore, EntitySelectSelectionStore, EntitySelectTypeSt
 import { ConfigurationEntity, EntityHttpService, EntityType, TenantHttpService, TenantView } from 'audako-core';
 import { resolveService } from '../../utils/service-functions';
 import TenantSelect from '../tenant-select/TenantSelect.svelte';
-import { tw as twDefault, TWCallable } from 'twind';
+import { tw as twDefault, type TWCallable } from 'twind';
 
 export let entityType: EntityType = EntityType.Signal;
 export let selectMultiple = false;

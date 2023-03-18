@@ -1,4 +1,4 @@
-import { create, cssomSheet, setup, Sheet, tw, TWCallable, ThemeConfiguration } from 'twind';
+import { create, cssomSheet, setup, type Sheet, tw, type TWCallable, type ThemeConfiguration } from 'twind';
 
 export type Theme = {
   primary: string;

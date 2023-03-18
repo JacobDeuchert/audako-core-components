@@ -1,4 +1,4 @@
-import { DataSourceHttpService, EntityHttpService, EntityNameService, HistoricalValueService, HttpConfig, LiveValueService, TenantHttpService } from 'audako-core';
+import { DataSourceHttpService, EntityHttpService, EntityNameService, HistoricalValueService, type HttpConfig, LiveValueService, TenantHttpService } from 'audako-core';
 import type { Observable } from 'rxjs';
 import { container } from 'tsyringe';
 import { EntitySelectDialogService } from './components/entity-select/entity-select-dialog.service';
@@ -7,6 +7,7 @@ import { SelectWebComponent } from './components/select/select-web-component';
 import { TenantSelectWebComponent } from './components/tenant-select/tenant-select-web-component';
 import { ThemingService } from './shared/services/theming.service';
 import { resolveService, tryRegisterService } from './utils/service-functions';
+import { MenuWebComponent } from './components/menu/menu-web-component';
 export { resolveService, tryRegisterService } from './utils/service-functions';
 export type { TextOption } from './shared/components/select/SelectTypes';
 export const EntitySelect = EntitySelectWebComponent;
@@ -18,6 +19,7 @@ export function registerCustomElements() {
   _defineCustomElement('audako-entity-select', EntitySelect);
   _defineCustomElement('audako-tenant-select', TenantSelect);
   _defineCustomElement('audako-select', SelectWebComponent);
+  _defineCustomElement('audako-menu', MenuWebComponent);
 
   resolveService(ThemingService, new ThemingService()).createTwindContext(true);
 }

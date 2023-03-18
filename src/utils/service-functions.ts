@@ -1,4 +1,4 @@
-import { container, DependencyContainer, InjectionToken } from 'tsyringe';
+import { container, type DependencyContainer, type InjectionToken} from 'tsyringe';
 import {
   BaseHttpService,
   EntityHttpService,

@@ -1,5 +1,5 @@
 <script lang="ts">
-import { PopupOptions, PopupRef, PopupService } from '@/shared/services/popup.service';
+import { type PopupOptions, type PopupRef, PopupService } from '@/shared/services/popup.service';
 import { resolveService } from '@/utils/service-functions';
 import { tw } from 'twind';
 
@@ -24,8 +24,6 @@ let popupWidth: number;
 let popupHeight: number;
 
 export function openPopup() {
-
-
 
   const popupOptions: PopupOptions= {
     backdrop: false,

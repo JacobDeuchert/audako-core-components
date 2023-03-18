@@ -3,7 +3,7 @@ import { ConfigurationEntity, EntityType } from 'audako-core';
 
 import EntitySelect from './EntitySelect.svelte';
 import { resolveService } from '../../utils/service-functions';
-import { PopupRef, PopupService } from '../../shared/services/popup.service';
+import { type PopupRef, PopupService } from '../../shared/services/popup.service';
 import { createEventDispatcher } from 'svelte';
 import {tw as twDefault } from 'twind';
 

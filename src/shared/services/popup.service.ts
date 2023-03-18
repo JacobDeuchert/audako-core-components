@@ -180,7 +180,7 @@ export class PopupService {
     const containerRect = containerElement.getBoundingClientRect();
     const popupRect  = popupWrapper.getBoundingClientRect();
 
-    console.log('popupRect', popupRect, popupWrapper.style);
+    console.log('popupRect', popupRect, popupWrapper.style, options);
     const anchorRect = options.anchorElement?.getBoundingClientRect();
     
     popupStyle.position = 'absolute';

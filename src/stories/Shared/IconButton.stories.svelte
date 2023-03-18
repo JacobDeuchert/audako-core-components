@@ -1,29 +1,31 @@
+<script>
 import IconButton from '../../shared/components/icon-button/IconButton.svelte';
 import '../../index.css';
+import { Meta, Story } from '@storybook/addon-svelte-csf';
+import { ThemingService } from '@/shared/services/theming.service';
+import { setContext } from 'svelte';
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 // More on argTypes: https://storybook.js.org/docs/svelte/api/argtypes
-export default {
-  title: 'Shared Components/Button',
-  component: IconButton,
-  argTypes: {
-    icon: { control: 'text' },
-    size: {
-      control: { type: 'select' },
-      options: ['small', 'medium', 'large'],
-    },
-  },
-};
 
-// More on component templates: https://storybook.js.org/docs/svelte/writing-stories/introduction#using-args
-const Template = (args) => ({
-  Component: IconButton,
-  props: args,
-  on: {
-    click: args.onClick,
-  },
-});
+const themingService = new ThemingService();
+const twContext = themingService.createTwindContext();
+setContext('tw', twContext.tw);
 
-// More on args: https://storybook.js.org/docs/svelte/writing-stories/args
+
+
+
+
+</script>
+
+<Meta title="IconButton" component={IconButton} />
+
+<Story name='Primary'>
+  <IconButton icon={'add'} on:click={() => console.log('clicked')}></IconButton>
+</Story>
+
+
+
+<!-- // More on args: https://storybook.js.org/docs/svelte/writing-stories/args
 export const Primary = Template.bind({});
 Primary.args = {
   icon: 'add',
@@ -56,4 +58,4 @@ Small.args = {
   onClick: (event) => {
     console.log('clicked', event);
   },
-};
+}; -->

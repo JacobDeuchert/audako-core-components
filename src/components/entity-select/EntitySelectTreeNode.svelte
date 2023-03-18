@@ -4,7 +4,7 @@ import { distinctUntilKeyChanged, Subject, takeUntil } from 'rxjs';
 import { resolveService } from '../../utils/service-functions';
 import { afterUpdate, getContext, onDestroy } from 'svelte';
 import { container } from 'tsyringe';
-import { EntitySelectTypeStore, EntityTypeState } from './entity-select-stores';
+import { EntitySelectTypeStore, type EntityTypeState } from './entity-select-stores';
 import type { TWCallable } from 'twind';
 
 const httpService = resolveService(EntityHttpService);

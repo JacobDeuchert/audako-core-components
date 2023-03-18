@@ -1,5 +1,6 @@
 <script>
   import { Meta, Story } from '@storybook/addon-svelte-csf';
+import { EntityType } from 'audako-core';
   
   import Select from '../shared/components/select/Select.svelte';
   
@@ -19,19 +20,18 @@
 
   console.log(window.CustomElementRegistry);
 
+  const entityTypes = Object.keys(EntityType);
+  const options = [{label: 'All', value: 'all'}, ...entityTypes.map((entityType) => {
+    return {
+      label: entityType,
+      value: entityType,
+    };
+  })];
 
-  let options = [{
-  label: 'abc',
-  value: 'abc'
-}, {
-  label: 'def',
-  value: 'def'
-}, {
-  label: 'ghi',
-  value: 'ghi'
-}];
 
-let value = ['abc'];
+  
+
+let value = ['all'];
 
 function render(node) {
   console.log('Render', node);

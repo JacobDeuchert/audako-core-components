@@ -1,12 +1,12 @@
 <script lang="ts">
 import { Subject } from 'rxjs';
 import { createEventDispatcher, setContext } from 'svelte';
-import { Writable, writable } from 'svelte/store';
+import { type Writable, writable } from 'svelte/store';
 import { onDestroy } from 'svelte';
 import PopupContainer from '../popup-container/PopupContainer.svelte';
 import SelectOption from './SelectOption.svelte';
 import type { TextOption } from './SelectTypes';
-import { TWCallable, tw as defaultTw} from 'twind';
+import { type TWCallable, tw as defaultTw} from 'twind';
 
 export let value: any | any[] = null;
 export let multiple: boolean = false;
@@ -107,7 +107,7 @@ onDestroy(() => {
   <slot />
 
   {#each options as option}
-    <SelectOption value={option.value}>
+    <SelectOption {tw} value={option.value}>
       {option.label}
     </SelectOption>
   {/each}
