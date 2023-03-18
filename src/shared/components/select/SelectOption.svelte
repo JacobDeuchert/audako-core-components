@@ -2,10 +2,10 @@
 import type { Subject } from 'rxjs';
 import { getContext, onMount } from 'svelte';
 import type { Writable } from 'svelte/store';
-import type { TWCallable } from 'twind';
+import { tw } from 'twind';
 import Checkbox from '../checkbox/Checkbox.svelte';
 
-export let tw: TWCallable;
+
 export let value = null;
 
 let isSelected = false;

@@ -107,7 +107,7 @@ onDestroy(() => {
   <slot />
 
   {#each options as option}
-    <SelectOption {tw} value={option.value}>
+    <SelectOption value={option.value}>
       {option.label}
     </SelectOption>
   {/each}
