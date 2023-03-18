@@ -10,6 +10,7 @@ import { resolveService, tryRegisterService } from './utils/service-functions';
 import { MenuWebComponent } from './components/menu/menu-web-component';
 export { resolveService, tryRegisterService } from './utils/service-functions';
 export type { TextOption } from './shared/components/select/SelectTypes';
+export type { MenuItem } from './shared/components/menu/MenuTypes';
 export const EntitySelect = EntitySelectWebComponent;
 export const TenantSelect = TenantSelectWebComponent;
 
