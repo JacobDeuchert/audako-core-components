@@ -2762,7 +2762,10 @@ class vn {
     return be.get(`${e}/assets/conf/application.config`).then((n) => n.data);
   }
   static isApiReachable(e) {
-    return be.get(`${e}/api/structure/about/version`).then((n) => n.status === 200 || n.status === 401).catch((n) => !1);
+    return be.get(`${e}/api/structure/about/version`).then((n) => n.status === 200 || n.status === 401).catch((n) => {
+      var r;
+      return ((r = n == null ? void 0 : n.response) === null || r === void 0 ? void 0 : r.status) === 401;
+    });
   }
 }
 var tt = globalThis && globalThis.__awaiter || function(t, e, n, r) {
