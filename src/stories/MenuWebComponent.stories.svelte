@@ -25,7 +25,6 @@ function openMenu() {
 <Meta title="Menu Web Component" component={Menu} />
 
 <Story name="Default">
-
-  <button on:click={() => openMenu()} id="menu-anchor">Open Menu</button>
+  <button on:click={() => openMenu()} style="margin-top: 200px;" id="menu-anchor">Open Menu</button>
   <audako-menu bind:this={menu} anchorselector={"#menu-anchor"} use:render items={menuItems} />
 </Story>

@@ -9022,7 +9022,7 @@ function xp(t, e, n) {
     const w = {
       backdrop: !1,
       closeOnClickOutside: o,
-      positioning: s ? "anchor" : "custom",
+      positioning: l ? "anchor" : "custom",
       anchorElement: l,
       customPosition: s ? d : c,
       anchorHorizontal: f,
@@ -12860,7 +12860,7 @@ function sm(t) {
   );
 }
 function lm(t, e, n) {
-  let { anchorSelector: r } = e, { preferedVerticalAlignment: i = "top" } = e, { preferedHorizontalAlignment: o = "left" } = e, { positionOffset: s = { x: 0, y: 0 } } = e, { container$class: l } = e, { tw: c = He } = e, { closeOnClick: a = !0 } = e, { items: u = [] } = e, f, d;
+  let { anchorSelector: r } = e, { preferedVerticalAlignment: i = "top" } = e, { preferedHorizontalAlignment: o = "left" } = e, { positionOffset: s = { x: 0, y: 10 } } = e, { container$class: l } = e, { tw: c = He } = e, { closeOnClick: a = !0 } = e, { items: u = [] } = e, f, d;
   function h() {
     console.log("openMenu", f, u), d.openPopup();
   }

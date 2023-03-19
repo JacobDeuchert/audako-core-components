@@ -7,7 +7,7 @@ import type { MenuItem } from './MenuTypes';
 export let anchorSelector: string;
 export let preferedVerticalAlignment: 'top' | 'bottom' = 'top';
 export let preferedHorizontalAlignment: 'left' | 'right' = 'left';
-export let positionOffset: { x: number; y: number } = { x: 0, y: 0 };
+export let positionOffset: { x: number; y: number } = { x: 0, y: 10 };
 export let container$class: string;
 export let tw: TWCallable = defaultTw;
 export let closeOnClick = true;

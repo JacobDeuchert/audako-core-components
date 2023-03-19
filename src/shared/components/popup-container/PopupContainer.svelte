@@ -28,7 +28,7 @@ export function openPopup() {
   const popupOptions: PopupOptions= {
     backdrop: false,
     closeOnClickOutside: closeOnClick,
-    positioning: sizeToAnchor ? 'anchor' : 'custom',
+    positioning: anchorElement ? 'anchor' : 'custom',
     anchorElement: anchorElement,
     customPosition: sizeToAnchor ? positionOffset : position,
     anchorHorizontal: preferedHorizontalAlignment,
