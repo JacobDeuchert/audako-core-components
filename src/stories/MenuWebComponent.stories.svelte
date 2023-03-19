@@ -4,6 +4,7 @@ import { EntityType } from 'audako-core';
 import Menu from '../shared/components/menu/Menu.svelte';
 
 const menuItems= [{
+  icon: 'home',
   label: 'Jo was geht',
   action: (e) => {
     console.log('Jo was geht', e);

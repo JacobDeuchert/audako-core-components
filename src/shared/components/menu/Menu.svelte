@@ -39,7 +39,7 @@ export function closeMenu(): void {
   
   <div class="{tw`bg-white rounded shadow-lg ${container$class}`}">
     {#each items as item}
-      <MenuItemComponent {tw} label={item.label} icon={item.label} on:click={(e) => item.action(e)}>
+      <MenuItemComponent {tw} label={item.label} icon={item.icon} on:click={(e) => item.action(e)}>
       </MenuItemComponent>
     {/each}
   </div>

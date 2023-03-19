@@ -73,7 +73,7 @@ function onClickButton(mouseEvent: MouseEvent): void {
   on:blur={(event) => {}}
 >
   <div class={tw`ripple bg-gray-200 bg-opacity-50`} style={active ? 'width: 100% !important; height: 100% !important' : ''} />
-  <span class={tw`material-symbols-rounded z-[1] select-none" style="font-size: {iconFontSize}px`}>
+  <span class={tw`material-symbols-rounded z-[1] select-none`}>
     <slot>{icon}</slot>
   </span>
 </div>

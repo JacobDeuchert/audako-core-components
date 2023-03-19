@@ -5,6 +5,7 @@ const config = {
     name: '@storybook/svelte-vite',
     options: {}
   },
+  staticDirs: ['../src/assets'],
   docs: {
     autodocs: 'tag'
   }

@@ -4,7 +4,7 @@ import 'reflect-metadata';
 import { container } from 'tsyringe';
 import {PopupService} from '../src/shared/services/popup.service';
 import { registerCustomElements } from '../src/main';
-
+import './preview.css';
 
 let httpConfig = {
   Services: {
