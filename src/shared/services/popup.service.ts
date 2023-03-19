@@ -217,7 +217,7 @@ export class PopupService {
   private _getLeftPosition(x: number, popupWidth: number, containerWidth: number, anchorHorizontal: 'left' | 'right' = 'right') {
     console.log(arguments);
     if (anchorHorizontal == 'left') {
-      return x;
+      return Math.min(x, containerWidth - popupWidth - 10);
     } else {
       if (x - popupWidth > 40) {
         return x - popupWidth;
