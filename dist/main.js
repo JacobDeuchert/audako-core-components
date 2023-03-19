@@ -13082,6 +13082,7 @@ export {
   nc as DataConnection,
   bm as DataConnectionFailureConditionSettings,
   ym as DataConnectionSettings,
+  _o as DataConnectionType,
   tc as DataSource,
   yi as DataSourceHttpService,
   vo as DataSourceType,
