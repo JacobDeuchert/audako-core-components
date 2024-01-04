@@ -11,4 +11,6 @@ const Template = (args) => ({
   props: args,
 });
 
-export const Small = Template.bind({});
+export const Small = Template.bind({
+  selectMultiple: true
+});

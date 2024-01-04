@@ -26,5 +26,7 @@ $: {
 <Meta title="Entity Select Web Component" component={EntitySelectDialog} />
 
 <Story name="Default">
-  <audako-entity-select bind:this={entitySelect} entityType="Signal"></audako-entity-select>
+  <audako-entity-select bind:this={entitySelect} entityType="Signal" multiple="true"></audako-entity-select>
 </Story>
+
+

@@ -64,7 +64,6 @@ EntitySelectSelectionStore.pipe(takeUntil(unsub)).subscribe(state => {
 combineLatest([globalStore.asObservable(), typeStore.asObservable()])
   .pipe(takeUntil(unsub))
   .subscribe(([globalState, typeState]) => {
-    console.log('combineLatest');
     selectedGroup = typeState.selectedGroup as Group;
     selectedGroupId = typeState.selectedGroup?.Id;
     filterString = typeState.filter;
@@ -118,7 +117,6 @@ function queryEntities(): Observable<PaginationResponse<Partial<ConfigurationEnt
     limit: pageSize,
     skip: pageIndex * pageSize,
   };
-  console.log(entityType);
   return from(httpService.queryConfiguration(entityType, query, paging));
 }
 
@@ -225,7 +223,7 @@ entitiesRequested
   <Table>
     <HeaderRow>
       {#if selectMultiple}
-        <HeaderCell container$class={tw`basis-[50px] flex-[0] cursor-default`} id="Name">
+        <HeaderCell container$class={tw`flex-[50px] flex-grow-0 cursor-default`} id="Name">
           <Checkbox
             checked={masterToggleState === 'checked'}
             indeterminate={masterToggleState === 'indeterminate'}
@@ -239,7 +237,7 @@ entitiesRequested
 
     {#if loading}
       <div class={tw`w-full h-[3px] overflow-hidden bg-blue-200`}>
-        <div class={tw`progress-bar-value-animation wfull h-full bg-blue-600 `}></div>
+        <div class={tw`progress-bar-value-animation w-full h-full bg-blue-600 `}></div>
       </div>
     {:else} 
     
@@ -249,7 +247,7 @@ entitiesRequested
     {#each entities as entity}
       <DataRow flexrow$class={tw`cursor-pointer hover:bg-gray-100`} on:click={() => onEntitySelected(entity)}>
         {#if selectMultiple}
-          <DataCell container$class={tw`basis-[50px] flex-[0]`}>
+          <DataCell container$class={tw`flex-[50px] flex-grow-0`}>
             <Checkbox checked={selectedEntitiesInPageLookup[entity.Id]} />
           </DataCell>
         {/if}

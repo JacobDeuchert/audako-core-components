@@ -55,12 +55,13 @@ export class EntitySelectWebComponent extends LitElement {
   }
 
   private _trySetupEntitySelect(target: any): void {
+    console.log('SETUP HELLOOO');
     
     if (!this._isValidEntityType(this.entityType)) {
       return;
     }
 
-    const selectMultiple = this.getAttribute('multiple') === 'true';
+    const selectMultiple = this.getAttribute('multiple') === 'true' || this.multiple;
     const additionalFilter = JSON.parse(this.getAttribute('filter') || '{}');
 
     this._element = new EntitySelect({
