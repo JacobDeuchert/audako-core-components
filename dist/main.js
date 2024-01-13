@@ -4878,7 +4878,7 @@ class ps extends bn {
   }
   requestHistoricalValues(e) {
     return Sn(this, void 0, void 0, function* () {
-      const n = yield this.getHistorianUrl(), r = yield this.getAuthorizationHeader(), i = yield we.post(`${n}value/manyflat`, e, {
+      const n = yield this.getHistorianUrl(), r = yield this.getAuthorizationHeader(), i = yield we.post(`${n}/value/manyflat`, e, {
         headers: r
       });
       if (i.status !== 200)
