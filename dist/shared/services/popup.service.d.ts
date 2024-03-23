@@ -5,6 +5,7 @@ export type Position = {
 export type PopupOptions = {
     backdrop: boolean;
     closeOnClickOutside: boolean;
+    closeOnEscape?: boolean;
     positioning: 'center' | 'anchor' | 'custom';
     customPosition?: Position;
     anchorElement?: HTMLElement | null;
