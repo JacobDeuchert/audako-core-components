@@ -10,6 +10,7 @@ export type Position = {
 export type PopupOptions = {
   backdrop: boolean;
   closeOnClickOutside: boolean;
+  closeOnEscape?: boolean;
   positioning: 'center' | 'anchor' | 'custom';
   customPosition?: Position;
   anchorElement?: HTMLElement | null;
@@ -26,6 +27,7 @@ const defaultOptions: PopupOptions = {
   backdrop: true,
   positioning: 'center',
   closeOnClickOutside: true,
+  closeOnEscape: true,
   anchorElement: null,
   customPosition: {
     x: 0,
@@ -75,12 +77,24 @@ export class PopupService {
 
     container.appendChild(popupWrapper);
 
+    let closeOnEscapeRef = null;
+
     const close = () => {
       console.log('close');
       this._removePopupWrapper(popupWrapper, options);
       popupClosed.next(null);
       popupClosed.complete();
+      document.removeEventListener('keydown', closeOnEscapeRef);
     }
+
+
+    closeOnEscapeRef = (e: KeyboardEvent) => {
+      console.log('closeOnEscapeRef', e);
+      if (e.key === 'Escape') {
+        close();
+      }
+    }
+    
 
 
     if (options.closeOnClickOutside) {
@@ -89,6 +103,10 @@ export class PopupService {
           close();
         }
       });
+    }
+
+    if (options.closeOnEscape) {
+      document.addEventListener('keydown',  closeOnEscapeRef);
     }
 
 

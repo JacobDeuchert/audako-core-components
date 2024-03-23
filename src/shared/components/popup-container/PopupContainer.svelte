@@ -5,6 +5,7 @@ import { tw } from 'twind';
 
 
 export let closeOnClick = true;
+export let closeOnEscape = true;
 export let sizeToAnchor = false;
 export let anchorElement: HTMLElement = null;
 export let position: { x: number; y: number } = null;
@@ -28,6 +29,7 @@ export function openPopup() {
   const popupOptions: PopupOptions= {
     backdrop: false,
     closeOnClickOutside: closeOnClick,
+    closeOnEscape: closeOnEscape,
     positioning: anchorElement ? 'anchor' : 'custom',
     anchorElement: anchorElement,
     customPosition: sizeToAnchor ? positionOffset : position,

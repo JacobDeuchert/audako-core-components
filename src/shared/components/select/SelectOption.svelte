@@ -41,6 +41,7 @@ onMount(() => {
 });
 
 function onClickOption(e: MouseEvent): void {
+  console.log('clicked option');
   e.preventDefault();
   e.stopPropagation();
 
@@ -91,7 +92,7 @@ let highlightedStyle = 'bg-[rgba(0,0,0,0.1)] shadow-md';
   {/if}
   {#if multiple}
     <div class={tw`p-1`}>
-      <Checkbox tw={tw} bind:checked={isSelected} />
+      <Checkbox tw={tw} readonly bind:checked={isSelected} />
     </div>
   {/if}
   <span bind:this={labelElement}>
