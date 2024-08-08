@@ -260,7 +260,7 @@ entitiesRequested
         <DataCell container$class={tw`flex-1`}>
           <span class={tw` text-sm overflow-hidden whitespace-nowrap text-ellipsis`}>
             {#await nameService.resolveName(EntityType.Group, entity.GroupId) then name}
-              {name}
+              {name ?? ''}
             {/await}
           </span>
         </DataCell>
