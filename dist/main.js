@@ -278,8 +278,8 @@ class Zm {
     const i = new r();
     return this._getObjectKeys(i, n);
   }
-  static setPropertyValue(e, n, r, i) {
-    this._setObjectProperty(e, n.split("."), r, i);
+  static setPropertyValue(e, n, r, i, o) {
+    this._setObjectProperty(e, n.split("."), r, i, o);
   }
   static getPropertyValue(e, n, r) {
     var i;
@@ -328,7 +328,9 @@ class Zm {
   static _setObjectProperty(e, n, r, i, o) {
     const s = Object.keys(e), l = n.shift();
     if (n.length === 0) {
-      (!o || s.includes(l)) && (i || U.isField(e[l])) ? e[l] = new U(r) : e[l] = r;
+      if (o && !s.includes(l))
+        return;
+      i || U.isField(e[l]) ? e[l] = new U(r) : e[l] = r;
       return;
     } else if (s.includes(l) && typeof e[l] == "object") {
       const c = e[l];
