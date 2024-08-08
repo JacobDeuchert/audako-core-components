@@ -51,8 +51,7 @@ function changePageSize(size: number): void {
 }
 
 function calculateLastPageIndex(pageSize, totalCount): number {
-  console.log()
-  return Math.max(Math.floor(totalCount / pageSize) - 1, 0);
+  return Math.max(Math.ceil(totalCount / pageSize) - 1, 0);
 }
 
 function pubishPageEvent(): void {

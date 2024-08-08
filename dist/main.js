@@ -10088,7 +10088,7 @@ function og(t) {
   );
 }
 function Ys(t, e) {
-  return console.log(), Math.max(Math.floor(e / t) - 1, 0);
+  return Math.max(Math.ceil(e / t) - 1, 0);
 }
 function sg(t, e, n) {
   let { pageIndex: r } = e, { pageSize: i } = e, { totalCount: o } = e, s = De("tw"), l, { pageSizeOptions: c = [10, 20, 50, 100] } = e, a = qe();
