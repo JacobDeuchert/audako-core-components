@@ -288,7 +288,7 @@ class Zm {
     for (const c of o) {
       if (!s)
         return null;
-      l === "AdditionalFields" ? !((i = s.AdditionalFields[c]) === null || i === void 0) && i.Value && (s = kc.tryParseJson(s.AdditionalFields[c].Value)) : s = s[c], l = c;
+      l === "AdditionalFields" ? (console.log(s, c), !((i = s[c]) === null || i === void 0) && i.Value && (s = kc.tryParseJson(s[c].Value), console.log("AdditionalValue", s))) : s = s[c], l = c;
     }
     return r || U.isField(s) ? s == null ? void 0 : s.Value : s;
   }
