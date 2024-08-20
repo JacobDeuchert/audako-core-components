@@ -7,6 +7,7 @@ export interface EntitySelectSelectionState {
 export interface EntitySelectGlobalState {
     selectedTenant: string;
     queryWithSubGroups: boolean;
+    pageSize: number;
 }
 export interface EntityTypeState {
     filter: string;

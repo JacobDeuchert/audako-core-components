@@ -40,7 +40,6 @@ let withSubGroups: boolean = false;
 let pageIndex: number = 0;
 let pageSize: number = 10;
 let totalCount: number = 0;
-let lastPageIndex: number = 0;
 
 let sort: string;
 let sortDirection: Sort;
@@ -64,6 +63,7 @@ EntitySelectSelectionStore.pipe(takeUntil(unsub)).subscribe(state => {
 combineLatest([globalStore.asObservable(), typeStore.asObservable()])
   .pipe(takeUntil(unsub))
   .subscribe(([globalState, typeState]) => {
+    console.log('globalState', globalState);
     selectedGroup = typeState.selectedGroup as Group;
     selectedGroupId = typeState.selectedGroup?.Id;
     filterString = typeState.filter;
@@ -72,6 +72,7 @@ combineLatest([globalStore.asObservable(), typeStore.asObservable()])
     stateInitialized = true;
 
     pageIndex = 0;
+    pageSize = globalState.pageSize ?? 10;
     entitiesRequested.next();
   });
 
@@ -186,8 +187,7 @@ $: {
 
 $: {
   pageSize = pageSize;
-  pageIndex = 0;
-  entitiesRequested.next();
+  globalStore.update((state) => ({ ...state, pageSize: pageSize }));
 }
 
 onDestroy(() => {

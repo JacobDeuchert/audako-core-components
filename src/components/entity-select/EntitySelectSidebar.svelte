@@ -33,6 +33,7 @@ let typeStore = EntitySelectTypeStore(entityType);
 
 typeStore.pipe(takeUntil(unsub)).subscribe((state) => {
   lastSelectedEntities = state.lastSelectedEntities;
+  
 });
 
 const selectStoreSubscription = EntitySelectSelectionStore.subscribe((state) => {
@@ -70,17 +71,15 @@ async function selectLastSelected(entityId: string): Promise<void> {
   }
 
   EntitySelectSelectionStore.update((state) => ({ ...state, selectedEntities: selectedEntities }));
-
-  
 }
 
-afterUpdate(() => {
-  try {
-    if (selectedTenant && selectedTenant.Root && rootGroup === null) {
+
+$: {
+  console.log('building sidebar', selectedTenant);
+  if (selectedTenant && selectedTenant.Root) {
       getRootGroup(selectedTenant.Root);
     }
-  } catch {}
-});
+}
 
 onDestroy(() => {
   console.log('onDestroy');

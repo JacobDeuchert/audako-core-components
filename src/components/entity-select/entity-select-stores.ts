@@ -12,6 +12,7 @@ export interface EntitySelectSelectionState  {
 export interface EntitySelectGlobalState {
   selectedTenant: string;
   queryWithSubGroups: boolean;
+  pageSize: number;
 }
 
 export interface EntityTypeState {
@@ -24,6 +25,7 @@ const { config, state } = createState(
   withProps<EntitySelectGlobalState>({
     queryWithSubGroups: true,
     selectedTenant: null,
+    pageSize: 10,
   })
 );
 
