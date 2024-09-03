@@ -11398,8 +11398,8 @@ function Rg(t) {
       t[1]`font-bold text-gray-600 text-lg`), C(n, "class", l = /*tw*/
       t[1]`flex items-center`), C(a, "class", u = /*tw*/
       t[1]`flex mb-1`), Ri(d, "grid-auto-rows", "60px"), C(d, "class", p = /*tw*/
-      t[1]`grid grid-cols-2 gap-2 h-full overflow-auto`), C(e, "class", b = /*tw*/
-      t[1]`w-full overflow-hidden`);
+      t[1]`grid grid-cols-2 gap-2 flex-1 overflow-auto`), C(e, "class", b = /*tw*/
+      t[1]`w-full overflow-hidden flex flex-col`);
     },
     m(A, w) {
       O(A, e, w), x(e, n), m && m.m(n, null), x(n, r), x(n, i), x(i, o), x(e, c), x(e, a);
@@ -11449,9 +11449,9 @@ function Rg(t) {
       }
       (!h || w & /*tw*/
       2 && p !== (p = /*tw*/
-      A[1]`grid grid-cols-2 gap-2 h-full overflow-auto`)) && C(d, "class", p), (!h || w & /*tw*/
+      A[1]`grid grid-cols-2 gap-2 flex-1 overflow-auto`)) && C(d, "class", p), (!h || w & /*tw*/
       2 && b !== (b = /*tw*/
-      A[1]`w-full overflow-hidden`)) && C(e, "class", b);
+      A[1]`w-full overflow-hidden flex flex-col`)) && C(e, "class", b);
     },
     i(A) {
       if (!h) {

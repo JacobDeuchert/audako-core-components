@@ -66,7 +66,7 @@ function selectTenant(event: CustomEvent, tenant: TenantView): void {
 setupBrowser();
 </script>
 
-<div class={tw`w-full overflow-hidden`}>
+<div class={tw`w-full overflow-hidden flex flex-col`}>
   <div class={tw`flex items-center`}>
     {#if allowBack}
       <IconButton size="small" on:click={() => eventDispatcher('back')}>arrow_back</IconButton>
@@ -81,7 +81,7 @@ setupBrowser();
       </div>
     {/each}
   </div>
-  <div style="grid-auto-rows: 60px" class={tw`grid grid-cols-2 gap-2 h-full overflow-auto`}>
+  <div style="grid-auto-rows: 60px" class={tw`grid grid-cols-2 gap-2 flex-1 overflow-auto`}>
     {#each tenants as tenant}
       <div
         class={tw`flex justify-between bg-gray-200 hover:bg-gray-300 shadow-sm rounded-sm cursor-pointer`}
