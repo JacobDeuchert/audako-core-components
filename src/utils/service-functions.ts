@@ -58,3 +58,7 @@ export function tryRegisterService<T>(token: InjectionToken<T>, instance: T, ove
 
   return instance;
 }
+
+export function setGlobalDependencyContainer(dependencyContainer: DependencyContainer) {
+  window['dependencyContainer'] = dependencyContainer;
+}

@@ -1,4 +1,13 @@
-import { DataSourceHttpService, EntityHttpService, EntityNameService, HistoricalValueService, type HttpConfig, LiveValueService, TenantHttpService } from 'audako-core';
+import {
+  DataSourceHttpService,
+  EntityHttpService,
+  EntityNameService,
+  HistoricalValueService,
+  type AsyncValue,
+  type HttpConfig,
+  LiveValueService,
+  TenantHttpService,
+} from 'audako-core';
 import type { Observable } from 'rxjs';
 import { container } from 'tsyringe';
 import { EntitySelectDialogService } from './components/entity-select/entity-select-dialog.service';
@@ -8,13 +17,13 @@ import { TenantSelectWebComponent } from './components/tenant-select/tenant-sele
 import { ThemingService } from './shared/services/theming.service';
 import { resolveService, tryRegisterService } from './utils/service-functions';
 import { MenuWebComponent } from './components/menu/menu-web-component';
-export { resolveService, tryRegisterService } from './utils/service-functions';
+export { resolveService, tryRegisterService, setGlobalDependencyContainer } from './utils/service-functions';
 export type { TextOption } from './shared/components/select/SelectTypes';
 export type { MenuItem } from './shared/components/menu/MenuTypes';
 export const EntitySelect = EntitySelectWebComponent;
 export const TenantSelect = TenantSelectWebComponent;
 
-export {EntitySelectDialogService} from './components/entity-select/entity-select-dialog.service';
+export { EntitySelectDialogService } from './components/entity-select/entity-select-dialog.service';
 
 export function registerCustomElements() {
   _defineCustomElement('audako-entity-select', EntitySelect);
@@ -25,14 +34,14 @@ export function registerCustomElements() {
   resolveService(ThemingService, new ThemingService()).createTwindContext(true);
 }
 
-export function registerCoreServices(httpConfig: HttpConfig, accessToken: string | Promise<string> | Observable<string>): void {
-  const entityHttpService = new EntityHttpService(httpConfig, accessToken)
-  
+export function registerCoreServices(httpConfig: HttpConfig, accessToken: AsyncValue<string>): void {
+  const entityHttpService = new EntityHttpService(httpConfig, accessToken);
+
   tryRegisterService(LiveValueService, new LiveValueService(httpConfig, accessToken));
-	tryRegisterService(EntityHttpService, entityHttpService);
-	tryRegisterService(TenantHttpService, new TenantHttpService(httpConfig, accessToken));
-	tryRegisterService(EntityNameService, new EntityNameService(entityHttpService));
-	tryRegisterService(DataSourceHttpService, new DataSourceHttpService(httpConfig, accessToken));
+  tryRegisterService(EntityHttpService, entityHttpService);
+  tryRegisterService(TenantHttpService, new TenantHttpService(httpConfig, accessToken));
+  tryRegisterService(EntityNameService, new EntityNameService(entityHttpService));
+  tryRegisterService(DataSourceHttpService, new DataSourceHttpService(httpConfig, accessToken));
   tryRegisterService(EntitySelectDialogService, new EntitySelectDialogService());
   tryRegisterService(HistoricalValueService, new HistoricalValueService(httpConfig, accessToken));
 }
