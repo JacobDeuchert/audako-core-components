@@ -6,11 +6,12 @@ var X;
   t.Group = "Group", t.Signal = "Signal", t.Formula = "Formula", t.Dashboard = "Dashboard", t.DashboardTab = "DashboardTab", t.DataConnection = "DataConnection", t.DataSource = "DataSource", t.EventCondition = "EventCondition", t.EventDefinition = "EventDefinition", t.EventCategory = "EventCategory", t.ProcessImage = "ProcessImage", t.BatchDefinition = "BatchDefinition";
 })(X || (X = {}));
 const a0 = {
-  [X.Group]: "fas fa-folder",
+  [X.Group]: "mat folder",
   [X.Dashboard]: "adk adk-dashboard",
-  [X.Signal]: "fas fa-code",
-  [X.DataConnection]: "fas fa-circle-notch",
-  [X.DataSource]: "fas fa-server"
+  [X.Signal]: "mat code",
+  [X.Formula]: "mat timeline",
+  [X.DataConnection]: "mat data_usage",
+  [X.DataSource]: "mat storage"
 }, pc = {
   Group: "/base/Group",
   Signal: "/daq/Signal",
@@ -3892,7 +3893,9 @@ class qt extends Cn {
   }
   updateEntity(e, n) {
     return Be(this, void 0, void 0, function* () {
-      const r = `${yield this._createBaseUrlByType(e)}/${n.Id}`, i = yield this.getAuthorizationHeader();
+      const r = `${yield this._createBaseUrlByType(e)}/${n.Id}`;
+      delete n.ChangedBy, delete n.ChangedOn, delete n.CreatedBy, delete n.CreatedOn;
+      const i = yield this.getAuthorizationHeader();
       return se.put(r, n, { headers: i }).then((o) => o.data);
     });
   }
