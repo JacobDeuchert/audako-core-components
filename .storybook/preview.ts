@@ -2,7 +2,7 @@ import type { Preview } from '@storybook/web-components';
 import { EntityHttpService, TenantHttpService, EntityNameService } from 'audako-core';
 import 'reflect-metadata';
 import { container } from 'tsyringe';
-import {PopupService} from '../src/shared/services/popup.service';
+import { PopupService } from '../src/shared/services/popup.service';
 import { registerCustomElements } from '../src/main';
 import './preview.css';
 
@@ -14,7 +14,7 @@ let httpConfig = {
     Live: '/live',
     Historian: '/historian',
     Maintenance: '/maintenance',
-    
+
     Event: '/event',
     Camera: '/camera',
     Reporting: '/reporting',
@@ -37,7 +37,7 @@ let httpConfig = {
     GatewayImage: null,
   },
 };
-let access_token ='';
+let access_token = '';
 
 let entityHttpService = new EntityHttpService(httpConfig, access_token);
 
@@ -47,8 +47,6 @@ container.register('EntityNameService', { useValue: new EntityNameService(entity
 container.register('PopupContainerService', { useValue: new PopupService(document.body) });
 
 registerCustomElements();
-
-
 
 const preview: Preview = {
   parameters: {

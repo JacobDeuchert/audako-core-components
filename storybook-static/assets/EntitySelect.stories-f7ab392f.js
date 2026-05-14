@@ -1,0 +1,3 @@
+import{E as p}from"./EntitySelect-70987991.js";import"./index-a9078045.js";import"./service-functions-652749c9.js";import"./twind-40f06e9c.js";import"./IconButton-b42e74eb.js";import"./Checkbox-a03dc9ce.js";import"./Paginator-82826a65.js";import"./Select-8cf9d73c.js";import"./PopupContainer-c91a1e2b.js";import"./TenantSelect-0e117110.js";const T={title:"Entity Select",component:p,argTypes:{}},s=m=>({Component:p,props:m}),t=s.bind({selectMultiple:!0});var e,r,o;t.parameters={...t.parameters,docs:{...(e=t.parameters)==null?void 0:e.docs,source:{originalSource:`Template.bind({
+  selectMultiple: true
+})`,...(o=(r=t.parameters)==null?void 0:r.docs)==null?void 0:o.source}}};const _=["Small"];export{t as Small,_ as __namedExportsOrder,T as default};
