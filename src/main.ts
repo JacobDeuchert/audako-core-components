@@ -7,6 +7,7 @@ import {
   type HttpConfig,
   LiveValueService,
   TenantHttpService,
+  UserProfileHttpService,
 } from 'audako-core';
 import type { Observable } from 'rxjs';
 import { container } from 'tsyringe';
@@ -44,6 +45,7 @@ export function registerCoreServices(httpConfig: HttpConfig, accessToken: AsyncV
   tryRegisterService(DataSourceHttpService, new DataSourceHttpService(httpConfig, accessToken));
   tryRegisterService(EntitySelectDialogService, new EntitySelectDialogService());
   tryRegisterService(HistoricalValueService, new HistoricalValueService(httpConfig, accessToken));
+  tryRegisterService(UserProfileHttpService, new UserProfileHttpService(httpConfig, accessToken));
 }
 
 function _defineCustomElement(tagName: string, component: any, options?: ElementDefinitionOptions) {
