@@ -1,0 +1,59 @@
+@import 'tailwindcss';
+
+/* Scan the component sources for utility classes. */
+@source '../**/*.svelte';
+@source '../**/*.ts';
+
+/* Palette previously injected into twind by ThemingService. Exposed as CSS
+   custom properties so consumers can retheme at runtime, including across a
+   shadow boundary (custom properties inherit through it). */
+@theme {
+  --color-primary: #1d4ed8;
+  --color-on-primary: #ffffff;
+  --color-secondary: #a9377a;
+  --color-on-secondary: #ffffff;
+  --color-background: #eeeeee;
+  --color-surface: #ffffff;
+  --color-on-surface: #000000;
+  --color-surface-border: #cccccc;
+
+  --shadow-sm: 0px 0.3px 0.9px rgba(0, 0, 0, 0.1), 0px 1.6px 3.6px rgba(0, 0, 0, 0.13);
+  --shadow-md: 0px 0.6px 1.8px rgba(0, 0, 0, 0.1), 0px 3.2px 7.2px rgba(0, 0, 0, 0.13);
+  --shadow-lg: 0px 1.2px 3.6px rgba(0, 0, 0, 0.11), 0px 6.4px 14.4px rgba(0, 0, 0, 0.13);
+  --shadow-xl: 0px 4.8px 14.4px rgba(0, 0, 0, 0.18), 0px 25.6px 57.6px rgba(0, 0, 0, 0.22);
+}
+
+/* Tailwind 4 changed the default border colour from gray-200 to currentColor,
+   which turns every bare `border`/`border-t` black. Restore the v3 default so
+   the existing components keep their intended look. */
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+@font-face {
+  font-family: 'Material Symbols Rounded';
+  font-style: normal;
+  font-weight: 100 700;
+  src: url(https://fonts.gstatic.com/s/materialsymbolsrounded/v34/sykg-zNym6YjUruM-QrEh7-nyTnjDwKNJ_190Fjzag.woff2) format('woff2');
+}
+
+.material-symbols-rounded {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 100, 'opsz' 48;
+  font-family: 'Material Symbols Rounded';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+}

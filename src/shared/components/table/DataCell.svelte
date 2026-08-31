@@ -1,13 +1,14 @@
 <script lang="ts">
-import { getContext } from 'svelte';
-import type { TWCallable } from 'twind';
+import { getContext, type Snippet } from 'svelte';
 
+interface Props {
+  container$class?: string;
+  children?: Snippet;
+}
 
-  let tw = getContext<TWCallable>('tw');
-
-  export let container$class: string = '';
+let { container$class = '', children }: Props = $props();
 </script>
 
-<div class={tw`border-t overflow-hidden ${container$class}`}>
-  <slot />
+<div class="border-t overflow-hidden {container$class}">
+  {@render children?.()}
 </div>

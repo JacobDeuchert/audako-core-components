@@ -1,19 +1,20 @@
 <script lang="ts">
 import { TenantHttpService, TenantView } from 'audako-core';
 import { resolveService } from '../../utils/service-functions';
-import { createEventDispatcher } from 'svelte';
 import IconButton from '../../shared/components/icon-button/IconButton.svelte';
-import type { TWCallable } from 'twind';
 
 let enttiyTenantSelect = resolveService(TenantHttpService);
 
+interface Props {
+  allowBack?: boolean;
+  ontenantSelected?: (tenant: TenantView) => void;
+  onback?: () => void;
+}
 
-export let allowBack = false;
-export let tw: TWCallable;
+let { allowBack = false, ontenantSelected, onback }: Props = $props();
 
-let tenantPath: TenantView[] = [];
-let tenants: TenantView[] = [];
-const eventDispatcher = createEventDispatcher();
+let tenantPath: TenantView[] = $state([]);
+let tenants: TenantView[] = $state([]);
 
 async function setupBrowser(): Promise<void> {
   const topTenants = await enttiyTenantSelect.getTopTenants();
@@ -57,42 +58,42 @@ async function selectTenantInPath(tenant: TenantView): Promise<void> {
   loadChildren(tenant);
 }
 
-function selectTenant(event: CustomEvent, tenant: TenantView): void {
-  console.log(event, tenant);
-  event.detail.stopPropagation();
-  eventDispatcher('tenantSelected', { tenant: tenant });
+function selectTenant(event: MouseEvent, tenant: TenantView): void {
+  // Stop the click from also triggering browseTenant on the surrounding tile.
+  event.stopPropagation();
+  ontenantSelected?.(tenant);
 }
 
 setupBrowser();
 </script>
 
-<div class={tw`w-full overflow-hidden flex flex-col`}>
-  <div class={tw`flex items-center`}>
+<div class="w-full overflow-hidden flex flex-col">
+  <div class="flex items-center">
     {#if allowBack}
-      <IconButton size="small" on:click={() => eventDispatcher('back')}>arrow_back</IconButton>
+      <IconButton size="small" onclick={() => onback?.()}>arrow_back</IconButton>
     {/if}
-    <div class={tw`font-bold text-gray-600 text-lg`}>Mandant auswählen</div>
+    <div class="font-bold text-gray-600 text-lg">Mandant auswählen</div>
   </div>
 
-  <div class={tw`flex mb-1`}>
+  <div class="flex mb-1">
     {#each tenantPath as tenant, i}
-      <div class={tw`cursor-pointer hover:bg-slate-100 p-1`} on:click={() => selectTenantInPath(tenant)}>
+      <div class="cursor-pointer hover:bg-slate-100 p-1" onclick={() => selectTenantInPath(tenant)}>
         {tenant.Name}{i == tenantPath.length - 1 ? '' : ' /'}
       </div>
     {/each}
   </div>
-  <div style="grid-auto-rows: 60px" class={tw`grid grid-cols-2 gap-2 flex-1 overflow-auto`}>
+  <div style="grid-auto-rows: 60px" class="grid grid-cols-2 gap-2 flex-1 overflow-auto">
     {#each tenants as tenant}
       <div
-        class={tw`flex justify-between bg-gray-200 hover:bg-gray-300 shadow-sm rounded-sm cursor-pointer`}
-        on:click={() => browseTenant(tenant)}
+        class="flex justify-between bg-gray-200 hover:bg-gray-300 shadow-sm rounded-sm cursor-pointer"
+        onclick={() => browseTenant(tenant)}
       >
-        <div class={tw`mt-2 ml-2 `}>
+        <div class="mt-2 ml-2">
           {tenant?.Name}
         </div>
         {#if tenant.Root}
           <div>
-            <IconButton on:click={(event) => selectTenant(event, tenant)}>done</IconButton>
+            <IconButton onclick={(event) => selectTenant(event, tenant)}>done</IconButton>
           </div>
         {/if}
       </div>

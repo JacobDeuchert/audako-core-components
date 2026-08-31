@@ -20,7 +20,13 @@
     "checkJs": true,
     "isolatedModules": true,
     "declaration": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    /**
+     * @tsconfig/svelte v5 enables `strict` by default; the codebase predates it
+     * and does not yet typecheck cleanly under it. Kept off to match the previous
+     * baseline — enabling it is a separate cleanup.
+     */
+    "strict": false
   },
   "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.js", "src/**/*.svelte"],
   "exclude": ["src/stories/**"],

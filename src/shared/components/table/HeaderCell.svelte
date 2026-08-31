@@ -1,25 +1,23 @@
 <script lang="ts">
-import { createEventDispatcher, getContext, onDestroy } from 'svelte';
+import { getContext, onDestroy, type Snippet } from 'svelte';
 import type { Writable } from 'svelte/store';
 import type { Sort } from './table.types';
 
-export let sortable: boolean = false;
-export let id: string;
+interface Props {
+  id: string;
+  sortable?: boolean;
+  container$class?: string;
+  children?: Snippet;
+}
 
-export let container$class: string = '';
+let { id, sortable = false, container$class = '', children }: Props = $props();
 
-let sortDirection: 'asc' | 'desc' | null = 'asc';
+let sortDirection = $state<'asc' | 'desc' | null>('asc');
 
-let activeTableSort = getContext<Writable<Sort>>('audako:table:sort');
+const activeTableSort = getContext<Writable<Sort>>('audako:table:sort');
 
-console.log(activeTableSort);
-
-let sortUnsubscribe = activeTableSort.subscribe((sort) => {
-  if (id && sort?.active === id) {
-    sortDirection = sort.direction;
-  } else {
-    sortDirection = null;
-  }
+const sortUnsubscribe = activeTableSort.subscribe((sort) => {
+  sortDirection = id && sort?.active === id ? sort.direction : null;
 });
 
 function toggleSort(): void {
@@ -41,14 +39,12 @@ function toggleSort(): void {
   );
 }
 
-onDestroy(() => {
-  sortUnsubscribe();
-});
+onDestroy(sortUnsubscribe);
 </script>
 
-<div class="header-cell {sortable ? 'cursor-pointer' : ''} {container$class}" on:click={() => toggleSort()}>
+<div class="header-cell {sortable ? 'cursor-pointer' : ''} {container$class}" onclick={() => toggleSort()}>
   <div>
-    <slot />
+    {@render children?.()}
   </div>
 
   {#if sortable}

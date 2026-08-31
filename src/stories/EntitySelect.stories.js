@@ -6,11 +6,8 @@ export default {
   argTypes: {},
 };
 
-const Template = (args) => ({
-  Component: EntitySelect,
-  props: args,
-});
-
-export const Small = Template.bind({
-  selectMultiple: true
-});
+export const Small = {
+  args: {
+    selectMultiple: true,
+  },
+};

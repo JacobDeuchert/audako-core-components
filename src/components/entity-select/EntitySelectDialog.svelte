@@ -4,30 +4,41 @@ import { ConfigurationEntity, EntityType } from 'audako-core';
 import EntitySelect from './EntitySelect.svelte';
 import { resolveService } from '../../utils/service-functions';
 import { type PopupRef, PopupService } from '../../shared/services/popup.service';
-import { createEventDispatcher } from 'svelte';
-import {tw as twDefault } from 'twind';
 
-export let open: boolean = false;
+interface Props {
+  // Driven by `setOpen` below as well as by the parent, so it must be bindable.
+  open?: boolean;
+  entityType?: EntityType;
+  selectMultiple?: boolean;
+  additionalFilter?: Record<string, any>;
+  onselectedEntities?: (entities: Partial<ConfigurationEntity> | Partial<ConfigurationEntity>[]) => void;
+}
 
-export let entityType: EntityType = EntityType.Signal;
-export let selectMultiple: boolean = false;
-export let additionalFilter: Record<string, any> = null;
-export let tw = twDefault;
+let {
+  open = $bindable(false),
+  entityType = EntityType.Signal,
+  selectMultiple = false,
+  additionalFilter = null,
+  onselectedEntities,
+}: Props = $props();
 
 let popupService = resolveService<PopupService>('PopupService', new PopupService(document.body));
 
-let dialogElement: HTMLElement;
-
-let entitySelectComponent: EntitySelect;
+let dialogElement: HTMLElement = $state();
 
 let popupRef: PopupRef;
 
-const eventDispatcher = createEventDispatcher();
+$effect(() => {
+  toggleDialog(open, dialogElement);
+});
 
-$: toggleDialog(open, dialogElement);
+// Imperative handle for consumers that mount this component directly, since
+// Svelte 5 removed the `$set` API used to drive the open/close animation.
+export function setOpen(value: boolean): void {
+  open = value;
+}
 
 function toggleDialog(open: boolean, dialogElement: HTMLElement) {
-
   if (open && !popupRef && dialogElement) {
     popupRef = popupService.openPopup('entity-select-dialog', dialogElement, {
       backdrop: true,
@@ -40,8 +51,6 @@ function toggleDialog(open: boolean, dialogElement: HTMLElement) {
     });
 
     popupRef.afterClosed.then(() => {
-      console.log('dialog closed', entitySelectComponent);
-      entitySelectComponent?.$destroy();
       popupRef = null;
     });
   } else {
@@ -50,35 +59,28 @@ function toggleDialog(open: boolean, dialogElement: HTMLElement) {
 }
 
 function closeDialog(): void {
-  console.log('closeDialog');
   popupRef?.close();
 }
 
 function onKeyDown(event: KeyboardEvent) {
-  console.log(event);
   if (event.key === 'Escape') {
     closeDialog();
   }
 }
-
-function onEntitiesSelected(event: CustomEvent<ConfigurationEntity[]>): void {
-  eventDispatcher('selectedEntities', event.detail);
-}
-
-
 </script>
 
-
-  <div
-    on:keydown={onKeyDown}
-    bind:this={dialogElement}
-    class={tw`bg-surface rounded-md shadow-lg w-[80vw] h-[70vh] md:w-[80vw] lg:w-[60vw]  flex 2xl:w-[50vw] py-2 px-4`}
-    on:click={(event) => event.stopPropagation()}>
-    <!-- <div class={tw`absolute right-2 top-1`}>
-       <IconButton icon="close" on:click={() => closeDialog()}></IconButton>
-    </div> -->
-    <div class={tw`h-full w-full`}>
-      <EntitySelect {selectMultiple} {entityType} {additionalFilter} bind:this={entitySelectComponent} on:selectedEntities={(event) => onEntitiesSelected(event)}/>
-    </div>
+<div
+  onkeydown={onKeyDown}
+  bind:this={dialogElement}
+  class="bg-surface rounded-md shadow-lg w-[80vw] h-[70vh] md:w-[80vw] lg:w-[60vw] flex 2xl:w-[50vw] py-2 px-4"
+  onclick={(event) => event.stopPropagation()}
+>
+  <div class="h-full w-full">
+    <EntitySelect
+      {selectMultiple}
+      {entityType}
+      {additionalFilter}
+      onselectedEntities={(entities) => onselectedEntities?.(entities)}
+    />
   </div>
-
+</div>

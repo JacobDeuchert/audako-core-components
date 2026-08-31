@@ -27,5 +27,5 @@ export declare const EntitySelectGlobalStore: Store<{
 export declare const EntitySelectTypeStore: (type: EntityType) => Store<{
     state: EntityTypeState;
     config: undefined;
-    name: 'entity-select-type-store';
-}, EntityTypeState>;
+    name: "entity-select-type-store";
+}>;

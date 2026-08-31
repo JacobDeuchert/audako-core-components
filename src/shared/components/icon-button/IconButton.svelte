@@ -1,38 +1,23 @@
 <script lang="ts">
-import { createEventDispatcher, getContext } from 'svelte';
-import type { TWCallable } from 'twind';
+import type { Snippet } from 'svelte';
 
-export let icon: string = null;
-export let size: 'small' | 'medium' | 'large' = 'medium';
-export let className: string = '';
-export let disabled: boolean = false;
-
-let tw = getContext<TWCallable>('tw');
-
-let absoluteSize: number;
-let iconFontSize: number;
-
-let active: boolean;
-let activeTimestamp: number;
-
-$: {
-  switch (size) {
-    case 'small':
-      absoluteSize = 24;
-      iconFontSize = 20;
-      break;
-    case 'medium':
-      absoluteSize = 40;
-      iconFontSize = 24;
-      break;
-    case 'large':
-      absoluteSize = 56;
-      iconFontSize = 30;
-      break;
-  }
+interface Props {
+  icon?: string;
+  size?: 'small' | 'medium' | 'large';
+  className?: string;
+  disabled?: boolean;
+  onclick?: (event: MouseEvent) => void;
+  children?: Snippet;
 }
 
-let eventDispatcher = createEventDispatcher();
+let { icon = null, size = 'medium', className = '', disabled = false, onclick, children }: Props = $props();
+
+const absoluteSizes = { small: 24, medium: 40, large: 56 } as const;
+
+const absoluteSize = $derived(absoluteSizes[size]);
+
+let active = $state(false);
+let activeTimestamp: number;
 
 function onMouseDown(event: MouseEvent): void {
   if (disabled) {
@@ -59,22 +44,22 @@ function onClickButton(mouseEvent: MouseEvent): void {
     return;
   }
 
-  eventDispatcher('click', mouseEvent);
+  onclick?.(mouseEvent);
 }
 </script>
 
 <div
-  class={tw`container group ${className}`}
+  class="container group {className}"
   style="height: {absoluteSize}px; width: {absoluteSize}px; {disabled ? 'cursor: default !important; opacity: 0.4;' : ''}"
-  on:mousedown={(event) => onMouseDown(event)}
-  on:mouseup={(event) => onMouseUp(event)}
-  on:mouseout={(event) => onMouseUp(event)}
-  on:click={(event) => onClickButton(event)}
-  on:blur={(event) => {}}
+  onmousedown={(event) => onMouseDown(event)}
+  onmouseup={(event) => onMouseUp(event)}
+  onmouseout={(event) => onMouseUp(event)}
+  onclick={(event) => onClickButton(event)}
+  onblur={() => {}}
 >
-  <div class={tw`ripple bg-gray-200 bg-opacity-50`} style={active ? 'width: 100% !important; height: 100% !important' : ''} />
-  <span class={tw`material-symbols-rounded z-[1] select-none`}>
-    <slot>{icon}</slot>
+  <div class="ripple bg-gray-200 bg-opacity-50" style={active ? 'width: 100% !important; height: 100% !important' : ''}></div>
+  <span class="material-symbols-rounded z-[1] select-none">
+    {#if children}{@render children()}{:else}{icon}{/if}
   </span>
 </div>
 

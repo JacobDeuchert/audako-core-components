@@ -1,8 +1,16 @@
+<script module>
+import { defineMeta } from '@storybook/addon-svelte-csf';
+import EntitySelectDialog from '../components/entity-select/EntitySelectDialog.svelte';
+
+const { Story } = defineMeta({
+  title: 'EntitySelectDialog',
+  component: EntitySelectDialog,
+});
+</script>
+
 <script>
-import { Meta, Story } from '@storybook/addon-svelte-csf';
 import { EntitySelectDialogService } from '../components/entity-select/entity-select-dialog.service';
 import { EntityType } from 'audako-core';
-import EntitySelectDialog from '../components/entity-select/EntitySelectDialog.svelte';
 
 function openEntitySelect() {
   const entitySelectDialogService = new EntitySelectDialogService();
@@ -10,8 +18,6 @@ function openEntitySelect() {
 }
 </script>
 
-<Meta title="EntitySelectDialog" component={EntitySelectDialog} />
-
-<Story name="Default">
-  <button on:click={() => openEntitySelect()}>Select Entity</button>
+<Story name="Default" asChild>
+  <button onclick={() => openEntitySelect()}>Select Entity</button>
 </Story>

@@ -1,48 +1,32 @@
+<script module>
+import { defineMeta } from '@storybook/addon-svelte-csf';
+import Select from '../shared/components/select/Select.svelte';
+
+const { Story } = defineMeta({
+  title: 'Select Web Component',
+  component: Select,
+});
+</script>
+
 <script>
-  import { Meta, Story } from '@storybook/addon-svelte-csf';
 import { EntityType } from 'audako-core';
-  
-  import Select from '../shared/components/select/Select.svelte';
-  
 
-
-  let select;
-  
-  $: {
-    console.log('Select', select)
-    if (select) {
-
-      select.addEventListener('valuechanged', (event) => {
-        console.log(event);
-        value = event.detail;
-      });
-    }
-  }
-
-  console.log(window.CustomElementRegistry);
-
-  const entityTypes = Object.keys(EntityType);
-  const options = [{label: 'All', value: 'all'}, ...entityTypes.map((entityType) => {
-    return {
-      label: entityType,
-      value: entityType,
-    };
-  })];
-
-
-  
+const entityTypes = Object.keys(EntityType);
+const options = [
+  { label: 'All', value: 'all' },
+  ...entityTypes.map((entityType) => ({ label: entityType, value: entityType })),
+];
 
 let value = ['all'];
+let select;
 
-function render(node) {
-  console.log('Render', node);
+$: if (select) {
+  select.addEventListener('valuechanged', (event) => {
+    value = event.detail;
+  });
 }
-  
-  </script>
-  
-  <Meta title="Select Web Component" component={Select} />
-  
-  <Story name="Default">
-    <audako-select use:render placeholder="Type" multiple options={options} arrayvalue={value} bind:this={select}  ></audako-select>
-  </Story>
-  
+</script>
+
+<Story name="Default" asChild>
+  <audako-select placeholder="Type" multiple options={options} arrayvalue={value} bind:this={select}></audako-select>
+</Story>

@@ -1,14 +1,17 @@
 <script lang="ts">
 import type { Subject } from 'rxjs';
-import { getContext, onMount } from 'svelte';
+import { getContext, onMount, type Snippet } from 'svelte';
 import type { Writable } from 'svelte/store';
-import { tw } from 'twind';
 import Checkbox from '../checkbox/Checkbox.svelte';
 
+interface Props {
+  value?: any;
+  children?: Snippet;
+}
 
-export let value = null;
+let { value = null, children }: Props = $props();
 
-let isSelected = false;
+let isSelected = $state(false);
 let currentValue: any | any[] = null;
 let currentDisplayedValue: string | string[] = null;
 let labelElement: HTMLSpanElement;
@@ -41,7 +44,6 @@ onMount(() => {
 });
 
 function onClickOption(e: MouseEvent): void {
-  console.log('clicked option');
   e.preventDefault();
   e.stopPropagation();
 
@@ -81,25 +83,21 @@ let highlightedStyle = 'bg-[rgba(0,0,0,0.1)] shadow-md';
 </script>
 
 <div
-  class={tw`flex hover:(${highlightedStyle}) items-center ${multiple ? '' : 'pl-3 pb-2 pt-2'} pr-3 cursor-pointer relative rounded-md ${isSelected &&
-  !multiple
-    ? highlightedStyle
-    : ''}`}
-  on:click={onClickOption}
+  class="flex hover:({highlightedStyle}) items-center {multiple ? '' : 'pl-3 pb-2 pt-2'} pr-3 cursor-pointer relative rounded-md {isSelected && !multiple ? highlightedStyle : ''}"
+  onclick={onClickOption}
 >
   {#if isSelected && !multiple}
-    <div class={tw`h-[20px] w-[4px] rounded-full bg-primary absolute left-0 top-[50%] translate-y-[-50%]`} />
+    <div class="h-[20px] w-[4px] rounded-full bg-primary absolute left-0 top-[50%] translate-y-[-50%]"></div>
   {/if}
   {#if multiple}
-    <div class={tw`p-1`}>
-      <Checkbox tw={tw} readonly bind:checked={isSelected} />
+    <div class="p-1">
+      <Checkbox readonly checked={isSelected} />
     </div>
   {/if}
   <span bind:this={labelElement}>
-    <slot />
+    {@render children?.()}
   </span>
 </div>
-
 
 <style>
   .hover-highlight:hover {

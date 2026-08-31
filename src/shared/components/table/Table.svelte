@@ -1,30 +1,36 @@
 <script lang="ts">
-import { createEventDispatcher, onDestroy, setContext } from 'svelte';
+import { getContext, onDestroy, setContext, type Snippet } from 'svelte';
 import { writable } from 'svelte/store';
 
 import type { Sort } from './table.types';
 
-export let startSort: Sort = null;
+interface Props {
+  startSort?: Sort;
+  onsort?: (sort: Sort) => void;
+  children?: Snippet;
+  pagination?: Snippet;
+}
 
-let eventDispatcher = createEventDispatcher();
+let { startSort = null, onsort, children, pagination }: Props = $props();
 
-let sort = writable<Sort>(startSort);
+// Layout utilities must go through twind: nothing in this project emits CSS
+// for bare Tailwind class names.
+
+const sort = writable<Sort>(startSort);
 
 setContext('audako:table:sort', sort);
 
-let sortUnsubscribe = sort.subscribe((sort) => {
-  eventDispatcher('sort', sort);
+const sortUnsubscribe = sort.subscribe((value) => {
+  onsort?.(value);
 });
 
-onDestroy(() => {
-  sortUnsubscribe();
-});
+onDestroy(sortUnsubscribe);
 </script>
 
 <div class="flex flex-col h-full">
   <div class="w-full overflow-auto flex-1">
-    <slot />
+    {@render children?.()}
   </div>
 
-  <slot name="pagination" />
+  {@render pagination?.()}
 </div>

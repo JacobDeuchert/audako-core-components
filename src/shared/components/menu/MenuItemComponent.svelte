@@ -1,29 +1,28 @@
 <script lang="ts">
-import { createEventDispatcher } from 'svelte';
-import type { TWCallable } from 'twind';
+import type { Snippet } from 'svelte';
 
-  export let icon: string = null;
-  export let label: string = null;
-  export let tw: TWCallable;
+interface Props {
+  icon?: string;
+  label?: string;
+  onclick?: (event: MouseEvent) => void;
+  children?: Snippet;
+}
 
-  let dispatcher = createEventDispatcher();
-
+let { icon = null, label = null, onclick, children }: Props = $props();
 </script>
 
-<div on:click="{(e) => dispatcher('click', e)}" class={tw`hover-highlight flex items-center pl-3 pb-2 pt-2 pr-3 cursor-pointer relative rounded-md`}>
-
+<div onclick={(e) => onclick?.(e)} class="hover-highlight flex items-center pl-3 pb-2 pt-2 pr-3 cursor-pointer relative rounded-md">
   {#if icon}
-    <div class={tw`mr-2 flex item-center`}>
-      <span class={tw`material-symbols-rounded z-[1] select-none flex items-center`}>
-        <slot>{icon}</slot>
+    <div class="mr-2 flex item-center">
+      <span class="material-symbols-rounded z-[1] select-none flex items-center">
+        {#if children}{@render children()}{:else}{icon}{/if}
       </span>
     </div>
   {/if}
-  <div class={tw`flex-grow`}>
+  <div class="flex-grow">
     {label}
   </div>
 </div>
-
 
 <style>
   .hover-highlight:hover {

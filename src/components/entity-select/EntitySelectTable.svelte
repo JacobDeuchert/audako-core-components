@@ -1,54 +1,52 @@
 <script lang="ts">
 import { combineLatest, debounceTime, filter, finalize, from, Observable, Subject, switchMap, takeUntil, tap, throttleTime } from 'rxjs';
-import { createEventDispatcher, getContext, onDestroy } from 'svelte';
+import { onDestroy } from 'svelte';
 import { EntitySelectGlobalStore, EntitySelectSelectionStore, EntitySelectTypeStore } from './entity-select-stores';
 import { ConfigurationEntity, EntityHttpService, EntityNameService, EntityType, Group } from 'audako-core';
 import { resolveService } from '../../utils/service-functions';
 import type { PaginationResponse } from 'audako-core';
 import Table from '../../shared/components/table/Table.svelte';
-import type { PageEvent, Sort } from '../../shared/components/table/table.types';
+import type { PageEvent } from '../../shared/components/table/table.types';
 import HeaderRow from '../../shared/components/table/HeaderRow.svelte';
 import HeaderCell from '../../shared/components/table/HeaderCell.svelte';
 import DataRow from '../../shared/components/table/DataRow.svelte';
 import DataCell from '../../shared/components/table/DataCell.svelte';
 import Paginator from '../../shared/components/table/Paginator.svelte';
 import Checkbox from '../../shared/components/checkbox/Checkbox.svelte';
-import type { TWCallable } from 'twind';
 
 let httpService: EntityHttpService = resolveService(EntityHttpService);
 let nameService: EntityNameService = resolveService(EntityNameService);
 
-export let entityType: EntityType;
-export let selectMultiple: boolean = false;
-export let additionalFilter: Record<string, any> = null;
+interface Props {
+  entityType: EntityType;
+  selectMultiple?: boolean;
+  additionalFilter?: Record<string, any>;
+}
 
-let tw = getContext<TWCallable>('tw');
+let { entityType, selectMultiple = false, additionalFilter = null }: Props = $props();
 
 
-let entities: Partial<ConfigurationEntity>[] = [];
+let entities: Partial<ConfigurationEntity>[] = $state([]);
 let entitiesRequested: Subject<void> = new Subject();
 
 let selectedEntities: Partial<ConfigurationEntity>[] = [];
-let selectedEntitiesInPageLookup: Record<string, boolean> = {};
-let masterToggleState: 'checked' | 'indeterminate' | 'unchecked' = 'unchecked';
+let selectedEntitiesInPageLookup: Record<string, boolean> = $state({});
+let masterToggleState: 'checked' | 'indeterminate' | 'unchecked' = $state('unchecked');
 
 let filterString: string;
 let selectedGroupId: string;
 let selectedGroup: Group;
 let withSubGroups: boolean = false;
 
-let pageIndex: number = 0;
-let pageSize: number = 10;
-let totalCount: number = 0;
-
-let sort: string;
-let sortDirection: Sort;
+let pageIndex: number = $state(0);
+let pageSize: number = $state(10);
+let totalCount: number = $state(0);
 
 let typeStore = EntitySelectTypeStore(entityType);
 let globalStore = EntitySelectGlobalStore;
 let stateInitialized = false;
 
-let loading: boolean = true;
+let loading: boolean = $state(true);
 
 let unsub = new Subject<void>();
 
@@ -163,8 +161,7 @@ function updateMasterToggleState(): void {
   }
 }
 
-function onPageChanged(event: CustomEvent<PageEvent>): void {
-  const pageEvent = event.detail;
+function onPageChanged(pageEvent: PageEvent): void {
   if (pageEvent.pageSize != pageSize) {
     pageIndex = 0;
     pageSize = pageEvent.pageSize;
@@ -180,15 +177,15 @@ function setupSelectedPageLookup(): void {
   } );
 }
 
-$: {
-  pageIndex = pageIndex;
+// Re-query when the page changes; `pageIndex` is read to register the dependency.
+$effect(() => {
+  void pageIndex;
   entitiesRequested.next();
-}
+});
 
-$: {
-  pageSize = pageSize;
-  globalStore.update((state) => ({ ...state, pageSize: pageSize }));
-}
+$effect(() => {
+  globalStore.update((state) => ({ ...state, pageSize }));
+});
 
 onDestroy(() => {
   unsub.next();
@@ -219,46 +216,46 @@ entitiesRequested
   });
 </script>
 
-<div class={tw`flex flex-col h-full overflow-hidden mt-[-10px]`}>
+<div class="flex flex-col h-full overflow-hidden mt-[-10px]">
   <Table>
     <HeaderRow>
       {#if selectMultiple}
-        <HeaderCell container$class={tw`flex-[50px] flex-grow-0 cursor-default`} id="Name">
+        <HeaderCell container$class="flex-[50px] flex-grow-0 cursor-default" id="Name">
           <Checkbox
             checked={masterToggleState === 'checked'}
             indeterminate={masterToggleState === 'indeterminate'}
-            on:change={(e) => toggleMasterSelect(e.detail?.checked)}
+            onchange={(checked) => toggleMasterSelect(checked)}
           />
         </HeaderCell>
       {/if}
-      <HeaderCell container$class={tw`flex-[2] cursor-default"`} id="Name">Name</HeaderCell>
-      <HeaderCell container$class={tw`flex-1 curstor-default`} id="Name">Group</HeaderCell>
+      <HeaderCell container$class="flex-[2] cursor-default" id="Name">Name</HeaderCell>
+      <HeaderCell container$class="flex-1 curstor-default" id="Name">Group</HeaderCell>
     </HeaderRow>
 
     {#if loading}
-      <div class={tw`w-full h-[3px] overflow-hidden bg-blue-200`}>
-        <div class={tw`progress-bar-value-animation w-full h-full bg-blue-600 `}></div>
+      <div class="w-full h-[3px] overflow-hidden bg-blue-200">
+        <div class="progress-bar-value-animation w-full h-full bg-blue-600"></div>
       </div>
     {:else} 
     
-      <div class={tw`w-full h-[3px]`}></div>
+      <div class="w-full h-[3px]"></div>
     {/if}
 
     {#each entities as entity}
-      <DataRow flexrow$class={tw`cursor-pointer hover:bg-gray-100`} on:click={() => onEntitySelected(entity)}>
+      <DataRow flexrow$class="cursor-pointer hover:bg-gray-100" onclick={() => onEntitySelected(entity)}>
         {#if selectMultiple}
-          <DataCell container$class={tw`flex-[50px] flex-grow-0`}>
+          <DataCell container$class="flex-[50px] flex-grow-0">
             <Checkbox checked={selectedEntitiesInPageLookup[entity.Id]} />
           </DataCell>
         {/if}
 
-        <DataCell container$class={tw`flex-[2]`}>
-          <div class={tw`text-sm overflow-hidden whitespace-nowrap text-ellipsis`}>
+        <DataCell container$class="flex-[2]">
+          <div class="text-sm overflow-hidden whitespace-nowrap text-ellipsis">
             {entity.Name?.Value}
           </div>
         </DataCell>
-        <DataCell container$class={tw`flex-1`}>
-          <span class={tw` text-sm overflow-hidden whitespace-nowrap text-ellipsis`}>
+        <DataCell container$class="flex-1">
+          <span class="text-sm overflow-hidden whitespace-nowrap text-ellipsis">
             {#await nameService.resolveName(EntityType.Group, entity.GroupId) then name}
               {name ?? ''}
             {/await}
@@ -267,7 +264,9 @@ entitiesRequested
       </DataRow>
     {/each}
 
-    <Paginator slot="pagination" {pageIndex} {pageSize} {totalCount} on:changePage={onPageChanged} />
+    {#snippet pagination()}
+      <Paginator {pageIndex} {pageSize} {totalCount} onchangePage={onPageChanged} />
+    {/snippet}
   </Table>
 </div>
 

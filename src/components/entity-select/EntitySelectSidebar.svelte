@@ -2,30 +2,29 @@
 import { ConfigurationEntity, EntityHttpService, EntityNameService, EntityType, Group, TenantView } from 'audako-core';
 import { Subject, takeUntil } from 'rxjs';
 import { resolveService } from '../../utils/service-functions';
-import { afterUpdate, createEventDispatcher, getContext, onDestroy } from 'svelte';
+import { onDestroy } from 'svelte';
 import { EntitySelectSelectionStore, EntitySelectTypeStore } from './entity-select-stores';
 import EntitySelectTreeNode from './EntitySelectTreeNode.svelte';
 import IconButton from '../../shared/components/icon-button/IconButton.svelte';
 import Checkbox from '../../shared/components/checkbox/Checkbox.svelte';
-import type { TWCallable } from 'twind';
-
 
 let httpService: EntityHttpService = resolveService(EntityHttpService);
 let nameService: EntityNameService = resolveService(EntityNameService);
 
-export let entityType: EntityType;
-export let selectedTenant: TenantView;
-export let selectMultiple = false;
+interface Props {
+  entityType: EntityType;
+  selectedTenant: TenantView;
+  selectMultiple?: boolean;
+  onchangeTenant?: () => void;
+}
 
-let tw = getContext<TWCallable>('tw');
+let { entityType, selectedTenant, selectMultiple = false, onchangeTenant }: Props = $props();
 
-let rootGroup: Group = null;
-let lastSelectedEntities: string[];
+let rootGroup: Group = $state(null);
+let lastSelectedEntities: string[] = $state();
 
 let selectedEntities: Partial<ConfigurationEntity>[] = [];
-let selectedEntityLookup: Record<string, boolean> = {};
-
-let dispatcher = createEventDispatcher();
+let selectedEntityLookup: Record<string, boolean> = $state({});
 
 let unsub = new Subject<void>();
 
@@ -33,7 +32,6 @@ let typeStore = EntitySelectTypeStore(entityType);
 
 typeStore.pipe(takeUntil(unsub)).subscribe((state) => {
   lastSelectedEntities = state.lastSelectedEntities;
-  
 });
 
 const selectStoreSubscription = EntitySelectSelectionStore.subscribe((state) => {
@@ -73,37 +71,34 @@ async function selectLastSelected(entityId: string): Promise<void> {
   EntitySelectSelectionStore.update((state) => ({ ...state, selectedEntities: selectedEntities }));
 }
 
-
-$: {
-  console.log('building sidebar', selectedTenant);
+$effect(() => {
   if (selectedTenant && selectedTenant.Root) {
-      getRootGroup(selectedTenant.Root);
-    }
-}
+    getRootGroup(selectedTenant.Root);
+  }
+});
 
 onDestroy(() => {
-  console.log('onDestroy');
   selectStoreSubscription.unsubscribe();
 });
 </script>
 
-<div class={tw`flex flex-col w-full h-full overflow-hidden`}>
-  <div class={tw`font-bold text-lg flex items-center cursor-pointer group`} on:click={() => dispatcher('changeTenant')}>
+<div class="flex flex-col w-full h-full overflow-hidden">
+  <div class="font-bold text-lg flex items-center cursor-pointer group" onclick={() => onchangeTenant?.()}>
     {selectedTenant?.Name}
     <IconButton size="small">edit</IconButton>
   </div>
 
   {#if rootGroup}
-    <div class={tw`flex-[2] overflow-auto`}>
+    <div class="flex-[2] overflow-auto">
       <EntitySelectTreeNode group={rootGroup} expanded {entityType} />
     </div>
   {/if}
 
-  <div class={tw`flex-1`}>
-    <div class={tw`font-bold text-gray-700`}>Zuletzt ausgewählt</div>
+  <div class="flex-1">
+    <div class="font-bold text-gray-700">Zuletzt ausgewählt</div>
     {#if lastSelectedEntities && lastSelectedEntities.length > 0}
       {#each lastSelectedEntities as entityId, index}
-        <div class={tw`flex w-full hover:bg-gray-200 cursor-pointer {index < lastSelectedEntities.length - 1 ? 'border-b' : ''}`} on:click={() => selectLastSelected(entityId)}>
+        <div class="flex w-full hover:bg-gray-200 cursor-pointer {index < lastSelectedEntities.length - 1 ? 'border-b' : ''}" onclick={() => selectLastSelected(entityId)}>
           {#if selectMultiple}
             <Checkbox checked={selectedEntityLookup[entityId]} />
           {/if}

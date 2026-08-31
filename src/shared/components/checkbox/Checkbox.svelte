@@ -1,53 +1,35 @@
 <script lang="ts">
-import { createEventDispatcher, getContext } from 'svelte';
-import type { TWCallable } from 'twind';
-
-export let readonly: boolean = false;
-export let label: string = '';
-export let checked: boolean = false;
-export let indeterminate: boolean = false;
-export let tw: TWCallable = getContext('tw');
-
-let eventDispatcher = createEventDispatcher();
-
-let checkboxElement: HTMLInputElement;
-
-$: {
-  console.log('checked', checked);
-
-  if (indeterminate && checkboxElement && !checked) {
-    checkboxElement.indeterminate = true;
-  } else if (checkboxElement) {
-    checkboxElement.indeterminate = false;
-    setElementChecked(checked);
-  }
+interface Props {
+  readonly?: boolean;
+  label?: string;
+  // Toggled internally on click, so it must be bindable.
+  checked?: boolean;
+  indeterminate?: boolean;
+  onchange?: (checked: boolean) => void;
 }
 
-function onClick(event: MouseEvent): void {
+let { readonly = false, label = '', checked = $bindable(false), indeterminate = false, onchange }: Props = $props();
+
+function onClick(): void {
   if (readonly) {
     return;
   }
 
   checked = !checked;
-  console.log('checked', checked);
-  eventDispatcher('change', { checked });
-}
-
-function setElementChecked(value: boolean): void {
-  setTimeout(() => {
-    if (checkboxElement?.checked !== value) {
-      checkboxElement.checked = value;
-    }
-  });
+  onchange?.(checked);
 }
 </script>
 
-<div class={tw`flex items-center cursor-pointer`} on:click={(event) => onClick(event)}>
+<!-- The input is display-only (`pointer-events-none`): the wrapper handles every
+     click, so `checked` stays the single source of truth. Letting the click reach
+     the input instead means the browser toggles it natively before the handler
+     runs, which leaves the rendered box a click behind the state. -->
+<div class="flex items-center cursor-pointer" onclick={() => onClick()}>
   <input
     type="checkbox"
-    class={tw`mr-2 h-[18px] w-[18px] cursor-pointer`}
-    bind:this={checkboxElement}
-    on:click={(event) => (readonly ? event.preventDefault() : {})}
+    class="mr-2 h-[18px] w-[18px] cursor-pointer pointer-events-none"
+    {checked}
+    indeterminate={indeterminate && !checked}
   />
   <div>{label}</div>
 </div>

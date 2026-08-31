@@ -1,35 +1,25 @@
-<script>
-import { Meta, Story } from '@storybook/addon-svelte-csf';
-import { EntitySelectDialogService } from '../components/entity-select/entity-select-dialog.service';
-import { EntityType } from 'audako-core';
+<script module>
+import { defineMeta } from '@storybook/addon-svelte-csf';
 import EntitySelectDialog from '../components/entity-select/EntitySelectDialog.svelte';
 
-function openEntitySelect() {
-  const entitySelectDialogService = new EntitySelectDialogService();
-  entitySelectDialogService.selectEntity(EntityType.Signal);
+const { Story } = defineMeta({
+  title: 'Entity Select Web Component',
+  component: EntitySelectDialog,
+});
+</script>
 
-}
-
+<script>
 let entitySelect;
 
-$: {
-  if (entitySelect) {
-    console.log(entitySelect); 
-
-    entitySelect.addEventListener('selected', (event) => {
-      console.log(event);
-    });
-  }
+$: if (entitySelect) {
+  entitySelect.addEventListener('selected', (event) => {
+    console.log(event);
+  });
 }
 </script>
 
-<Meta title="Entity Select Web Component" component={EntitySelectDialog} />
-
-<Story name="Default">
+<Story name="Default" asChild>
   <div style="height: 500px">
-    <audako-entity-select bind:this={entitySelect} entityType="Signal" multiple="true"></audako-entity-select>
+    <audako-entity-select bind:this={entitySelect} entitytype="Signal" multiple="true"></audako-entity-select>
   </div>
-  
 </Story>
-
-

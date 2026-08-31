@@ -1,16 +1,16 @@
 import { fileURLToPath } from 'node:url';
+import type { StorybookConfig } from '@storybook/svelte-vite';
 
-const config = {
+const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx|svelte)'],
-  addons: ['@storybook/addon-links', '@storybook/addon-essentials', '@storybook/addon-svelte-csf', '@storybook/addon-mdx-gfm'],
+  // addon-essentials, addon-links, blocks and addon-mdx-gfm were folded into
+  // the storybook core package in v9.
+  addons: ['@storybook/addon-svelte-csf', '@storybook/addon-docs'],
   framework: {
     name: '@storybook/svelte-vite',
     options: {},
   },
   staticDirs: ['../src/assets'],
-  docs: {
-    autodocs: 'tag',
-  },
   async viteFinal(config) {
     const existingAliases = Array.isArray(config.resolve?.alias)
       ? config.resolve.alias

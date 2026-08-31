@@ -1,10 +1,13 @@
-import type { Preview } from '@storybook/web-components';
+import type { Preview } from '@storybook/svelte-vite';
 import { EntityHttpService, TenantHttpService, EntityNameService } from 'audako-core';
 import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { PopupService } from '../src/shared/services/popup.service';
 import { registerCustomElements } from '../src/main';
-import './preview.css';
+// Stories render plain Svelte components into the document, so the Tailwind
+// sheet is loaded globally here. Custom elements adopt it into their shadow
+// roots separately via withShadowStyles.
+import '../src/styles/tailwind.css';
 
 let httpConfig = {
   Services: {
@@ -37,11 +40,24 @@ let httpConfig = {
     GatewayImage: null,
   },
 };
-let access_token = '';
+const TOKEN_STORAGE_KEY = 'audako:access-token';
 
-let entityHttpService = new EntityHttpService(httpConfig, access_token);
+// audako-core accepts a getter for AsyncValue (Lazy<T> = () => T), so the token
+// is read per request rather than captured at startup. That means you can drop
+// in a fresh one without restarting Storybook:
+//
+//   localStorage.setItem('audako:access-token', '<jwt>')
+//
+// and reload the story. Otherwise it falls back to VITE_ACCESS_TOKEN from
+// .env.local, which is gitignored - do not hardcode a token here.
+function getAccessToken(): string {
+  const stored = typeof localStorage !== 'undefined' ? localStorage.getItem(TOKEN_STORAGE_KEY) : null;
+  return stored ?? import.meta.env.VITE_ACCESS_TOKEN ?? '';
+}
 
-container.register('TenantHttpService', { useValue: new TenantHttpService(httpConfig, access_token) });
+let entityHttpService = new EntityHttpService(httpConfig, getAccessToken);
+
+container.register('TenantHttpService', { useValue: new TenantHttpService(httpConfig, getAccessToken) });
 container.register('EntityHttpService', { useValue: entityHttpService });
 container.register('EntityNameService', { useValue: new EntityNameService(entityHttpService) });
 container.register('PopupContainerService', { useValue: new PopupService(document.body) });
@@ -50,10 +66,8 @@ registerCustomElements();
 
 const preview: Preview = {
   parameters: {
-    backgrounds: {
-      default: 'light',
-    },
-    actions: { argTypesRegex: '^on[A-Z].*' },
+    // `actions.argTypesRegex` was removed in Storybook 8; use the `fn()` spy
+    // from storybook/test on individual args instead.
     controls: {
       matchers: {
         color: /(background|color)$/i,
