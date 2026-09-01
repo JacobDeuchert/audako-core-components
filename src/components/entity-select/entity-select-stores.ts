@@ -25,7 +25,7 @@ const { config, state } = createState(
   withProps<EntitySelectGlobalState>({
     queryWithSubGroups: true,
     selectedTenant: null,
-    pageSize: 10,
+    pageSize: 25,
   })
 );
 

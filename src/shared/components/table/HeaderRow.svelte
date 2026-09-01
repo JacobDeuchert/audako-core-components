@@ -23,24 +23,34 @@ let { children }: Props = $props();
     height: 40px;
     position: sticky;
     top: 0;
-    background: white;
-    font-weight: 700;
+    z-index: 1;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-line);
+    font-size: var(--text-cell);
+    color: var(--color-ink-secondary);
   }
-  
+
   .audako-tableheader-flexrow > * {
     flex: 1;
     height: 100%;
-    padding: 4px 0;
+    min-width: 0;
     display: flex;
     align-items: center;
   }
-  
-  .audako-tableheader-flexrow > *:first-child {
-    padding-left: 12px !important;
+
+  /* The vertical rules between header cells are what make the header read
+     like the production table. */
+  .audako-tableheader-flexrow > * + * {
+    padding-left: 12px;
+    border-left: 1px solid var(--color-line);
   }
-  
+
+  .audako-tableheader-flexrow > *:first-child {
+    padding-left: 16px;
+  }
+
   .audako-tableheader-flexrow > *:last-child {
-    padding-right: 12px !important;
+    padding-right: 16px;
   }
 }
 </style>

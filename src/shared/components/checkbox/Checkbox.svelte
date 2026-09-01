@@ -5,10 +5,23 @@ interface Props {
   // Toggled internally on click, so it must be bindable.
   checked?: boolean;
   indeterminate?: boolean;
+  size?: number;
+  container$class?: string;
   onchange?: (checked: boolean) => void;
 }
 
-let { readonly = false, label = '', checked = $bindable(false), indeterminate = false, onchange }: Props = $props();
+let {
+  readonly = false,
+  label = '',
+  checked = $bindable(false),
+  indeterminate = false,
+  size = 16,
+  container$class = '',
+  onchange,
+}: Props = $props();
+
+const showIndeterminate = $derived(indeterminate && !checked);
+const filled = $derived(checked || showIndeterminate);
 
 function onClick(): void {
   if (readonly) {
@@ -20,16 +33,31 @@ function onClick(): void {
 }
 </script>
 
-<!-- The input is display-only (`pointer-events-none`): the wrapper handles every
-     click, so `checked` stays the single source of truth. Letting the click reach
-     the input instead means the browser toggles it natively before the handler
-     runs, which leaves the rendered box a click behind the state. -->
-<div class="flex items-center cursor-pointer" onclick={() => onClick()}>
-  <input
-    type="checkbox"
-    class="mr-2 h-[18px] w-[18px] cursor-pointer pointer-events-none"
-    {checked}
-    indeterminate={indeterminate && !checked}
-  />
-  <div>{label}</div>
+<!-- Drawn by hand rather than with a native <input>: the design specifies an
+     exact box (2px border, 3px radius, blue fill, `check`/`remove` glyph) that
+     no browser's default control renders, and the wrapper owns the click so
+     `checked` stays the single source of truth. -->
+<div
+  class="flex items-center {readonly ? 'cursor-default' : 'cursor-pointer'} {container$class}"
+  onclick={() => onClick()}
+>
+  <div
+    class="flex shrink-0 items-center justify-center rounded-[3px] transition-colors"
+    class:border-2={!filled}
+    class:border-checkbox-border={!filled && !readonly}
+    class:border-checkbox-border-disabled={!filled && readonly}
+    class:bg-select={filled && !readonly}
+    class:bg-ink-disabled={filled && readonly}
+    style="height: {size}px; width: {size}px;"
+  >
+    {#if filled}
+      <span class="material-symbols-rounded text-on-primary" style="font-size: {size - 2}px;">
+        {showIndeterminate ? 'remove' : 'check'}
+      </span>
+    {/if}
+  </div>
+
+  {#if label}
+    <div class="ml-2 text-cell text-ink">{label}</div>
+  {/if}
 </div>

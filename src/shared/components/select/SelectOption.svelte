@@ -79,36 +79,20 @@ function setDisplayValue() {
   }
 }
 
-let highlightedStyle = 'bg-[rgba(0,0,0,0.1)] shadow-md';
 </script>
 
 <div
-  class="flex hover:({highlightedStyle}) items-center {multiple ? '' : 'pl-3 pb-2 pt-2'} pr-3 cursor-pointer relative rounded-md {isSelected && !multiple ? highlightedStyle : ''}"
+  class="relative flex cursor-pointer items-center gap-[10px] rounded-control px-[10px] py-2 text-cell hover:bg-neutral-hover {isSelected && !multiple ? 'bg-neutral-hover' : ''}"
   onclick={onClickOption}
 >
   {#if isSelected && !multiple}
-    <div class="h-[20px] w-[4px] rounded-full bg-primary absolute left-0 top-[50%] translate-y-[-50%]"></div>
+    <div class="absolute left-0 top-[50%] h-[20px] w-[3px] translate-y-[-50%] rounded-full bg-primary"></div>
   {/if}
   {#if multiple}
-    <div class="p-1">
-      <Checkbox readonly checked={isSelected} />
-    </div>
+    <Checkbox readonly checked={isSelected} />
   {/if}
   <span bind:this={labelElement}>
     {@render children?.()}
   </span>
 </div>
 
-<style>
-  .hover-highlight:hover {
-  background: rgba(0, 0, 0, 0.1) !important;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
-  backdrop-filter: blur(19.2px) !important;
-}
-
-.highlighted {
-  background: rgba(0, 0, 0, 0.1) !important;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
-  backdrop-filter: blur(19.2px) !important;
-}
-</style>

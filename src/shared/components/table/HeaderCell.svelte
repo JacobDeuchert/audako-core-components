@@ -12,7 +12,7 @@ interface Props {
 
 let { id, sortable = false, container$class = '', children }: Props = $props();
 
-let sortDirection = $state<'asc' | 'desc' | null>('asc');
+let sortDirection = $state<'asc' | 'desc' | null>(null);
 
 const activeTableSort = getContext<Writable<Sort>>('audako:table:sort');
 
@@ -21,6 +21,10 @@ const sortUnsubscribe = activeTableSort.subscribe((sort) => {
 });
 
 function toggleSort(): void {
+  if (!sortable) {
+    return;
+  }
+
   if (sortDirection === 'asc') {
     sortDirection = 'desc';
   } else if (sortDirection === 'desc') {
@@ -29,41 +33,26 @@ function toggleSort(): void {
     sortDirection = 'asc';
   }
 
-  activeTableSort.set(
-    sortDirection
-      ? {
-          active: id,
-          direction: sortDirection,
-        }
-      : null
-  );
+  activeTableSort.set(sortDirection ? { active: id, direction: sortDirection } : null);
 }
 
 onDestroy(sortUnsubscribe);
 </script>
 
-<div class="header-cell {sortable ? 'cursor-pointer' : ''} {container$class}" onclick={() => toggleSort()}>
-  <div>
+<div
+  class="flex h-full w-full items-center gap-1 {sortable ? 'cursor-pointer' : 'cursor-default'} {container$class}"
+  onclick={() => toggleSort()}
+>
+  <div class="truncate">
     {@render children?.()}
   </div>
 
   {#if sortable}
     <span
-      class="material-symbols-rounded text-xs transition-all"
-      style="{sortDirection == 'asc' ? 'transform: rotateX(0);' : 'transform: rotateX(-180deg);'}{sortDirection == null
-        ? 'opacity: 0;'
-        : 'opacity: 1;'}"
+      class="material-symbols-rounded text-[14px] transition-opacity"
+      class:opacity-0={sortDirection == null}
     >
-      north
+      {sortDirection === 'desc' ? 'arrow_downward' : 'arrow_upward'}
     </span>
   {/if}
 </div>
-
-<style>
-  .header-cell {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    align-items: center;
-  }
-</style>

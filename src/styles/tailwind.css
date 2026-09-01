@@ -8,8 +8,15 @@
    custom properties so consumers can retheme at runtime, including across a
    shadow boundary (custom properties inherit through it). */
 @theme {
-  --color-primary: #1d4ed8;
+  /* Brand accent. The default is the production magenta the facelift was
+     designed against; hosts may override --color-primary at runtime. */
+  --color-primary: rgb(178, 24, 122);
+  --color-primary-hover: rgb(140, 18, 96);
   --color-on-primary: #ffffff;
+  /* Accent tints derive from --color-primary so a runtime retheme carries. */
+  --color-primary-tint: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  --color-primary-tint-subtle: color-mix(in srgb, var(--color-primary) 8%, transparent);
+
   --color-secondary: #a9377a;
   --color-on-secondary: #ffffff;
   --color-background: #eeeeee;
@@ -17,22 +24,63 @@
   --color-on-surface: #000000;
   --color-surface-border: #cccccc;
 
+  /* Text */
+  --color-ink: rgba(0, 0, 0, 0.86);
+  --color-ink-secondary: rgba(0, 0, 0, 0.58);
+  --color-ink-tertiary: rgba(0, 0, 0, 0.4);
+  --color-ink-disabled: rgba(0, 0, 0, 0.25);
+
+  /* Lines and surfaces */
+  --color-line: rgba(0, 0, 0, 0.12);
+  --color-line-strong: rgba(0, 0, 0, 0.3);
+  --color-row-line: rgba(0, 0, 0, 0.08);
+  --color-row-hover: rgba(0, 0, 0, 0.035);
+  --color-row-active: rgba(0, 0, 0, 0.08);
+  --color-neutral-hover: rgba(0, 0, 0, 0.045);
+  --color-muted: rgba(0, 0, 0, 0.035);
+
+  /* Selection is blue, never the accent: the accent marks the active tree
+     node, active toggles, chips, links and the primary button. */
+  --color-select: rgb(25, 118, 210);
+  --color-checkbox-border: rgba(0, 0, 0, 0.45);
+  --color-checkbox-border-disabled: rgba(0, 0, 0, 0.15);
+
+  --color-danger: rgb(198, 40, 40);
+  --color-danger-tint: rgba(198, 40, 40, 0.1);
+  --color-danger-border: rgba(198, 40, 40, 0.35);
+
+  --text-dialog-title: 18px;
+  --text-section: 17px;
+  --text-count: 15px;
+  --text-cell: 13.5px;
+  --text-meta: 12.5px;
+  --text-sub: 11.5px;
+  --text-label: 11px;
+  --text-badge: 10.5px;
+
+  --radius-dialog: 10px;
+  --radius-control: 8px;
+  --radius-button: 6px;
+
   --shadow-sm: 0px 0.3px 0.9px rgba(0, 0, 0, 0.1), 0px 1.6px 3.6px rgba(0, 0, 0, 0.13);
   --shadow-md: 0px 0.6px 1.8px rgba(0, 0, 0, 0.1), 0px 3.2px 7.2px rgba(0, 0, 0, 0.13);
   --shadow-lg: 0px 1.2px 3.6px rgba(0, 0, 0, 0.11), 0px 6.4px 14.4px rgba(0, 0, 0, 0.13);
   --shadow-xl: 0px 4.8px 14.4px rgba(0, 0, 0, 0.18), 0px 25.6px 57.6px rgba(0, 0, 0, 0.22);
+  --shadow-dialog: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14),
+    0 3px 14px 2px rgba(0, 0, 0, 0.12);
+  --shadow-panel: 0 8px 28px rgba(0, 0, 0, 0.16);
 }
 
 /* Tailwind 4 changed the default border colour from gray-200 to currentColor,
-   which turns every bare `border`/`border-t` black. Restore the v3 default so
-   the existing components keep their intended look. */
+   which turns every bare `border`/`border-t` black. Default to the design's
+   divider colour instead. */
 @layer base {
   *,
   ::after,
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
+    border-color: var(--color-line, currentColor);
   }
 }
 
@@ -44,7 +92,9 @@
 }
 
 .material-symbols-rounded {
-  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 100, 'opsz' 48;
+  /* Outlined by default - the facelift draws every icon unfilled. Add
+     `filled` alongside the class for the few that need a solid glyph. */
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   font-family: 'Material Symbols Rounded';
   font-weight: normal;
   font-style: normal;
@@ -56,4 +106,26 @@
   white-space: nowrap;
   word-wrap: normal;
   direction: ltr;
+}
+
+.material-symbols-rounded.filled {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Indeterminate loading bar shown under the table header while a query runs. */
+@keyframes indeterminateAnimation {
+  0% {
+    transform: translateX(0) scaleX(0);
+  }
+  40% {
+    transform: translateX(0) scaleX(0.4);
+  }
+  100% {
+    transform: translateX(100%) scaleX(0.5);
+  }
+}
+
+.audako-indeterminate-bar {
+  animation: indeterminateAnimation 1s infinite linear;
+  transform-origin: 0% 50%;
 }

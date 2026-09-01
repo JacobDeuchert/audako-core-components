@@ -1,18 +1,22 @@
 <script lang="ts">
-import EntitySelectSidebar from './EntitySelectSidebar.svelte';
-import { onDestroy } from 'svelte';
-import EntitySelectTable from './EntitySelectTable.svelte';
-import EntitySelectFilter from './EntitySelectFilter.svelte';
-import { EntitySelectGlobalStore, EntitySelectSelectionStore, EntitySelectTypeStore } from './entity-select-stores';
 import { ConfigurationEntity, EntityHttpService, EntityType, TenantHttpService, TenantView } from 'audako-core';
+import { onDestroy } from 'svelte';
+
+import IconButton from '../../shared/components/icon-button/IconButton.svelte';
 import { resolveService } from '../../utils/service-functions';
 import TenantSelect from '../tenant-select/TenantSelect.svelte';
+import { getEntityMeta } from './entity-select-meta';
+import { EntitySelectGlobalStore, EntitySelectSelectionStore, EntitySelectTypeStore } from './entity-select-stores';
+import EntitySelectSidebar from './EntitySelectSidebar.svelte';
+import EntitySelectTable from './EntitySelectTable.svelte';
+import EntitySelectToolbar from './EntitySelectToolbar.svelte';
 
 interface Props {
   entityType?: EntityType;
   selectMultiple?: boolean;
   additionalFilter?: Record<string, any>;
   onselectedEntities?: (entities: Partial<ConfigurationEntity> | Partial<ConfigurationEntity>[]) => void;
+  onclose?: () => void;
 }
 
 let {
@@ -20,6 +24,7 @@ let {
   selectMultiple = false,
   additionalFilter = null,
   onselectedEntities,
+  onclose,
 }: Props = $props();
 
 let httpService: EntityHttpService = resolveService(EntityHttpService);
@@ -27,8 +32,12 @@ let tenantHttpService: TenantHttpService = resolveService(TenantHttpService);
 
 let selectedTenant: TenantView = $state();
 let inTenantSelect: boolean = $state(false);
+let totalCount: number = $state(0);
+let selectionCount: number = $state(0);
 
 let selectedEntities: Partial<ConfigurationEntity>[] = [];
+
+const meta = $derived(getEntityMeta(entityType));
 
 let globalSubscription = EntitySelectGlobalStore.subscribe((state) => {
   if (state.selectedTenant) {
@@ -40,11 +49,12 @@ let globalSubscription = EntitySelectGlobalStore.subscribe((state) => {
 });
 
 let selectionSubscription = EntitySelectSelectionStore.subscribe((state) => {
+  selectedEntities = state.selectedEntities ?? [];
+  selectionCount = selectedEntities.length;
+
   if (state.selectedEntities && !selectMultiple) {
     setLastSelectedEntities(state.selectedEntities);
     onselectedEntities?.(state.selectedEntities[0]);
-  } else {
-    selectedEntities = state.selectedEntities;
   }
 });
 
@@ -93,26 +103,59 @@ onDestroy(() => {
 });
 </script>
 
-<div class="flex w-full h-full">
-  {#if inTenantSelect}
-    <TenantSelect
-      allowBack={!!selectedTenant}
-      onback={() => (inTenantSelect = false)}
-      ontenantSelected={(tenant) => onTenantSelected(tenant)}
-    />
-  {:else}
-    <div class="flex-1 border-r border-slate-400 overflow-hidden">
-      <EntitySelectSidebar {selectMultiple} {entityType} {selectedTenant} onchangeTenant={() => onTenantChange()} />
+<div class="flex h-full w-full flex-col overflow-hidden bg-surface">
+  <div class="flex flex-none items-center gap-3 border-b border-line py-3 pl-[18px] pr-3">
+    <div class="flex h-10 w-10 flex-none items-center justify-center rounded-dialog bg-primary-tint">
+      <span class="material-symbols-rounded select-none text-[20px] text-primary">{meta.icon}</span>
     </div>
+    <div class="flex-1 truncate text-dialog-title text-ink">{meta.singular} auswählen</div>
+    <IconButton size={36} iconSize={20} icon="close" onclick={() => onclose?.()} />
+  </div>
 
-    <div class="flex-[2] pl-4 pt-1 h-full overflow-hidden">
-      <div class="flex flex-col h-full overflow-hidden">
-        <EntitySelectFilter {entityType} {selectMultiple} onacceptSelection={() => acceptSelection()} />
+  <div class="flex min-h-0 flex-1">
+    {#if inTenantSelect}
+      <TenantSelect
+        allowBack={!!selectedTenant}
+        onback={() => (inTenantSelect = false)}
+        ontenantSelected={(tenant) => onTenantSelected(tenant)}
+      />
+    {:else}
+      <EntitySelectSidebar {selectMultiple} {entityType} {selectedTenant} onchangeTenant={() => onTenantChange()} />
 
-        <div class="flex-1 overflow-hidden mt-3">
-          <EntitySelectTable {selectMultiple} {entityType} {additionalFilter} />
+      <div class="flex min-w-0 flex-1 flex-col overflow-hidden px-5 py-[14px]">
+        <EntitySelectToolbar {entityType} {totalCount} />
+
+        <div class="min-h-0 flex-1">
+          <EntitySelectTable {selectMultiple} {entityType} {additionalFilter} bind:totalCount />
         </div>
       </div>
+    {/if}
+  </div>
+
+  <div class="flex flex-none items-center gap-3 border-t border-line px-[18px] py-3">
+    <div class="flex-1 text-count text-ink-secondary">
+      {#if selectMultiple}
+        {selectionCount} Ausgewählt
+      {/if}
     </div>
-  {/if}
+
+    <button
+      type="button"
+      class="h-9 cursor-pointer rounded-button border border-line px-4 text-cell font-medium text-ink transition-colors hover:bg-neutral-hover"
+      onclick={() => onclose?.()}
+    >
+      Abbrechen
+    </button>
+
+    {#if selectMultiple}
+      <button
+        type="button"
+        class="flex h-9 cursor-pointer items-center gap-2 rounded-button bg-primary px-4 text-cell font-medium text-on-primary transition-colors hover:bg-primary-hover"
+        onclick={() => acceptSelection()}
+      >
+        <span class="material-symbols-rounded select-none text-[18px]">check</span>
+        Übernehmen
+      </button>
+    {/if}
+  </div>
 </div>

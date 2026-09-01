@@ -2,15 +2,33 @@
 import type { Snippet } from 'svelte';
 
 interface Props {
+  // Marks the current row (grey background). Selection itself is shown by the
+  // checkbox alone - it is never tinted with the accent colour.
+  active?: boolean;
+  // No permission: red tint, not clickable.
+  blocked?: boolean;
   flexrow$class?: string;
   onclick?: (event: MouseEvent) => void;
   children?: Snippet;
 }
 
-let { flexrow$class = '', onclick, children }: Props = $props();
+let { active = false, blocked = false, flexrow$class = '', onclick, children }: Props = $props();
+
+function onClickRow(event: MouseEvent): void {
+  if (blocked) {
+    return;
+  }
+
+  onclick?.(event);
+}
 </script>
 
-<div class="audako-tablebody-flexrow {flexrow$class}" onclick={(event) => onclick?.(event)}>
+<div
+  class="audako-tablebody-flexrow {flexrow$class}"
+  class:audako-tablebody-flexrow-active={active && !blocked}
+  class:audako-tablebody-flexrow-blocked={blocked}
+  onclick={(event) => onClickRow(event)}
+>
   {@render children?.()}
 </div>
 
@@ -22,25 +40,48 @@ let { flexrow$class = '', onclick, children }: Props = $props();
 :global {
   .audako-tablebody-flexrow {
     display: flex;
-    height: 40px;
+    height: 38px;
     width: 100%;
+    cursor: pointer;
+    border-bottom: 1px solid var(--color-row-line);
+    font-size: var(--text-cell);
+    color: var(--color-ink);
   }
-  
+
+  .audako-tablebody-flexrow:hover {
+    background: var(--color-row-hover);
+  }
+
+  .audako-tablebody-flexrow-active,
+  .audako-tablebody-flexrow-active:hover {
+    background: var(--color-row-active);
+  }
+
+  .audako-tablebody-flexrow-blocked,
+  .audako-tablebody-flexrow-blocked:hover {
+    background: var(--color-danger-tint);
+    color: var(--color-danger);
+    cursor: default;
+  }
+
   .audako-tablebody-flexrow > * {
     flex: 1;
     height: 100%;
-    padding: 4px 0;
+    min-width: 0;
     display: flex;
     align-items: center;
-    padding: 0 4px;
   }
-  
-  .audako-tablebody-flexrow > *:first-child {
+
+  .audako-tablebody-flexrow > * + * {
     padding-left: 12px;
   }
-  
+
+  .audako-tablebody-flexrow > *:first-child {
+    padding-left: 16px;
+  }
+
   .audako-tablebody-flexrow > *:last-child {
-    padding-right: 12px;
+    padding-right: 16px;
   }
 }
 </style>

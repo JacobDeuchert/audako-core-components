@@ -3,41 +3,34 @@ import type { Snippet } from 'svelte';
 
 interface Props {
   icon?: string;
-  size?: 'small' | 'medium' | 'large';
+  // Named sizes match the design's round buttons: inline 26px, dialog close
+  // 36px, toolbar 40px. A number sets the diameter directly.
+  size?: 'small' | 'medium' | 'large' | number;
+  iconSize?: number;
+  variant?: 'neutral' | 'primary';
   className?: string;
+  title?: string;
   disabled?: boolean;
   onclick?: (event: MouseEvent) => void;
   children?: Snippet;
 }
 
-let { icon = null, size = 'medium', className = '', disabled = false, onclick, children }: Props = $props();
+let {
+  icon = null,
+  size = 'medium',
+  iconSize = null,
+  variant = 'neutral',
+  className = '',
+  title = null,
+  disabled = false,
+  onclick,
+  children,
+}: Props = $props();
 
-const absoluteSizes = { small: 24, medium: 40, large: 56 } as const;
+const namedSizes = { small: 26, medium: 36, large: 40 } as const;
 
-const absoluteSize = $derived(absoluteSizes[size]);
-
-let active = $state(false);
-let activeTimestamp: number;
-
-function onMouseDown(event: MouseEvent): void {
-  if (disabled) {
-    return;
-  }
-  active = true;
-  activeTimestamp = event.timeStamp;
-}
-
-function onMouseUp(event: MouseEvent): void {
-  const timeDiff = event.timeStamp - activeTimestamp;
-
-  if (timeDiff < 300) {
-    setTimeout(() => {
-      active = false;
-    }, 300 - timeDiff);
-  } else {
-    active = false;
-  }
-}
+const absoluteSize = $derived(typeof size === 'number' ? size : namedSizes[size]);
+const absoluteIconSize = $derived(iconSize ?? Math.round(absoluteSize * 0.55));
 
 function onClickButton(mouseEvent: MouseEvent): void {
   if (disabled) {
@@ -48,40 +41,22 @@ function onClickButton(mouseEvent: MouseEvent): void {
 }
 </script>
 
+<!-- Hover feedback is background-only: the design asks that nothing moves or
+     resizes on hover, so the previous ripple is gone. -->
 <div
-  class="container group {className}"
-  style="height: {absoluteSize}px; width: {absoluteSize}px; {disabled ? 'cursor: default !important; opacity: 0.4;' : ''}"
-  onmousedown={(event) => onMouseDown(event)}
-  onmouseup={(event) => onMouseUp(event)}
-  onmouseout={(event) => onMouseUp(event)}
+  {title}
+  class="flex shrink-0 flex-col items-center justify-center rounded-full transition-colors {className}"
+  class:cursor-pointer={!disabled}
+  class:cursor-default={disabled}
+  class:text-primary={variant === 'primary' && !disabled}
+  class:text-ink-secondary={variant === 'neutral' && !disabled}
+  class:text-ink-disabled={disabled}
+  class:hover:bg-primary-tint={variant === 'primary' && !disabled}
+  class:hover:bg-neutral-hover={variant === 'neutral' && !disabled}
+  style="height: {absoluteSize}px; width: {absoluteSize}px;"
   onclick={(event) => onClickButton(event)}
-  onblur={() => {}}
 >
-  <div class="ripple bg-gray-200 bg-opacity-50" style={active ? 'width: 100% !important; height: 100% !important' : ''}></div>
-  <span class="material-symbols-rounded z-[1] select-none">
+  <span class="material-symbols-rounded select-none" style="font-size: {absoluteIconSize}px;">
     {#if children}{@render children()}{:else}{icon}{/if}
   </span>
 </div>
-
-<style>
-.container {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-}
-
-.ripple {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  height: 0;
-  width: 0;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  transition: all 0.125s ease-in-out;
-  z-index: 0;
-}
-</style>

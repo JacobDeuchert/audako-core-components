@@ -97,7 +97,7 @@ onDestroy(() => {
 </script>
 
 <div
-  class="flex items-center w-full focus-within:border-primary border-gray-500 border-b-2 relative cursor-pointer {container$class}"
+  class="relative flex w-full cursor-pointer items-center rounded-control border border-line px-2 text-cell text-ink transition-colors focus-within:border-primary {container$class}"
   onclick={openMenu}
 >
   {@render prefix?.()}
@@ -109,7 +109,7 @@ onDestroy(() => {
     bind:this={textfield}
     class="w-full outline-none cursor-pointer {textfield$class}"
   />
-  <div class="material-symbols-rounded pointer-events-none cursor-pointer text-md {suffixIcon$class} select-none">
+  <div class="material-symbols-rounded pointer-events-none select-none text-[16px] text-ink-secondary {suffixIcon$class}">
     arrow_drop_down
   </div>
 </div>

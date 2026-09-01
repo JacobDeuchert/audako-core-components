@@ -1,9 +1,9 @@
 <script lang="ts">
 import { ConfigurationEntity, EntityType } from 'audako-core';
 
-import EntitySelect from './EntitySelect.svelte';
-import { resolveService } from '../../utils/service-functions';
 import { type PopupRef, PopupService } from '../../shared/services/popup.service';
+import { resolveService } from '../../utils/service-functions';
+import EntitySelect from './EntitySelect.svelte';
 
 interface Props {
   // Driven by `setOpen` below as well as by the parent, so it must be bindable.
@@ -12,6 +12,9 @@ interface Props {
   selectMultiple?: boolean;
   additionalFilter?: Record<string, any>;
   onselectedEntities?: (entities: Partial<ConfigurationEntity> | Partial<ConfigurationEntity>[]) => void;
+  // Fired when the dialog closes without a selection (close button, Abbrechen,
+  // Escape or a click on the backdrop).
+  oncancel?: () => void;
 }
 
 let {
@@ -20,6 +23,7 @@ let {
   selectMultiple = false,
   additionalFilter = null,
   onselectedEntities,
+  oncancel,
 }: Props = $props();
 
 let popupService = resolveService<PopupService>('PopupService', new PopupService(document.body));
@@ -52,6 +56,8 @@ function toggleDialog(open: boolean, dialogElement: HTMLElement) {
 
     popupRef.afterClosed.then(() => {
       popupRef = null;
+      open = false;
+      oncancel?.();
     });
   } else {
     closeDialog();
@@ -72,7 +78,7 @@ function onKeyDown(event: KeyboardEvent) {
 <div
   onkeydown={onKeyDown}
   bind:this={dialogElement}
-  class="bg-surface rounded-md shadow-lg w-[80vw] h-[70vh] md:w-[80vw] lg:w-[60vw] flex 2xl:w-[50vw] py-2 px-4"
+  class="flex h-[660px] max-h-[90vh] w-[1280px] max-w-[95vw] overflow-hidden rounded-dialog bg-surface shadow-dialog"
   onclick={(event) => event.stopPropagation()}
 >
   <div class="h-full w-full">
@@ -81,6 +87,7 @@ function onKeyDown(event: KeyboardEvent) {
       {entityType}
       {additionalFilter}
       onselectedEntities={(entities) => onselectedEntities?.(entities)}
+      onclose={() => closeDialog()}
     />
   </div>
 </div>

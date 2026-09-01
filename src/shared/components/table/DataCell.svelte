@@ -1,5 +1,5 @@
 <script lang="ts">
-import { getContext, type Snippet } from 'svelte';
+import type { Snippet } from 'svelte';
 
 interface Props {
   container$class?: string;
@@ -9,6 +9,7 @@ interface Props {
 let { container$class = '', children }: Props = $props();
 </script>
 
-<div class="border-t overflow-hidden {container$class}">
+<!-- The row draws the separator; the cell only clips its content. -->
+<div class="overflow-hidden {container$class}">
   {@render children?.()}
 </div>

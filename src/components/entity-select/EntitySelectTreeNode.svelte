@@ -1,8 +1,9 @@
 <script lang="ts">
 import { EntityHttpService, EntityType, Group } from 'audako-core';
 import { distinctUntilKeyChanged, Subject, takeUntil } from 'rxjs';
-import { resolveService } from '../../utils/service-functions';
 import { onDestroy } from 'svelte';
+
+import { resolveService } from '../../utils/service-functions';
 import { EntitySelectTypeStore, type EntityTypeState } from './entity-select-stores';
 import Self from './EntitySelectTreeNode.svelte';
 
@@ -12,11 +13,13 @@ interface Props {
   group: Partial<Group>;
   // Expanded automatically when the selected group lies below this node.
   expanded?: boolean;
-  level?: number;
   entityType: EntityType;
+  // Tree search from the left panel. Filters the child lists of the levels
+  // that are currently rendered; it does not load collapsed branches.
+  search?: string;
 }
 
-let { group, expanded = $bindable(false), level = 1, entityType }: Props = $props();
+let { group, expanded = $bindable(false), entityType, search = '' }: Props = $props();
 
 let children: Partial<Group>[] = $state([]);
 let selected: boolean = $state(false);
@@ -25,17 +28,25 @@ let unsub: Subject<void> = new Subject();
 
 let typeStore = EntitySelectTypeStore(entityType);
 
-typeStore.pipe(takeUntil(unsub), distinctUntilKeyChanged<EntityTypeState>('selectedGroup')).subscribe((state: EntityTypeState) => {
-  selected = state.selectedGroup?.Id === group?.Id;
+const visibleChildren = $derived(
+  search
+    ? children.filter((child) => child.Name?.Value?.toLowerCase().includes(search.toLowerCase()))
+    : children
+);
 
-  if (group && state.selectedGroup?.Path?.includes(group.Id)) {
-    expanded = true;
-  }
-});
+typeStore
+  .pipe(takeUntil(unsub), distinctUntilKeyChanged<EntityTypeState>('selectedGroup'))
+  .subscribe((state: EntityTypeState) => {
+    selected = state.selectedGroup?.Id === group?.Id;
+
+    if (group && state.selectedGroup?.Path?.includes(group.Id)) {
+      expanded = true;
+    }
+  });
 
 async function getChildren(): Promise<void> {
   try {
-    children = await (await httpService.queryConfiguration<Group>(EntityType.Group, { GroupId: group.Id })).data;
+    children = (await httpService.queryConfiguration<Group>(EntityType.Group, { GroupId: group.Id })).data;
   } catch (error) {
     console.error(error);
   }
@@ -47,7 +58,9 @@ $effect(() => {
   }
 });
 
-function toggleExpanded(): void {
+function toggleExpanded(event: MouseEvent): void {
+  // The chevron only expands; selecting the group is the row's job.
+  event.stopPropagation();
   expanded = !expanded;
 }
 
@@ -57,38 +70,40 @@ function selectGroup(): void {
     selectedGroup: group,
   }));
 }
-
-onDestroy(() => {
-  unsub.next();
-  unsub.complete();
-});
 </script>
 
-<div class="group cursor-pointer">
-  <div class="flex items-center hover:bg-slate-100 w-full {selected ? '!bg-slate-300' : ''}" onclick={() => selectGroup()}>
-    <div></div>
+<div>
+  <!-- The transparent left border keeps labels from shifting when a node
+       becomes active and gains its 3px accent bar. -->
+  <div
+    class="flex cursor-pointer items-center gap-[6px] rounded-control border-l-[3px] border-transparent py-2 pr-[10px] text-cell transition-colors"
+    class:pl-[10px]={children.length > 0}
+    class:pl-[26px]={children.length === 0}
+    class:text-ink-secondary={!selected}
+    class:hover:bg-neutral-hover={!selected}
+    class:bg-primary-tint={selected}
+    class:!border-primary={selected}
+    class:text-ink={selected}
+    class:font-medium={selected}
+    onclick={() => selectGroup()}
+  >
     {#if children.length > 0}
-      <div class="flex items-center">
-        {#if expanded}
-          <span onclick={() => toggleExpanded()} class="material-symbols-rounded text-[20px] w-[20px] cursor-pointer">expand_more</span>
-        {:else}
-          <span onclick={() => toggleExpanded()} class="material-symbols-rounded text-[20px] w-[20px] cursor-pointer">chevron_right</span>
-        {/if}
-      </div>
-    {:else}
-      <div class="p-[10px]"></div>
+      <span
+        onclick={(event) => toggleExpanded(event)}
+        class="material-symbols-rounded w-4 select-none text-[16px]"
+      >
+        {expanded ? 'expand_more' : 'chevron_right'}
+      </span>
     {/if}
-    <div class="overflow-hidden whitespace-nowrap text-ellipsis w-full">{group?.Name?.Value}</div>
+
+    <div class="flex-1 truncate">{group?.Name?.Value}</div>
   </div>
 
   {#if expanded}
-    <div class="flex w-full">
-      <div class="border-r group-hover:border-gray-300 border-transparent pl-1 mb-2" style="padding-right: {level * 4}px"></div>
-      <div class="w-full">
-        {#each children as child}
-          <Self group={child} level={level + 1} {entityType} />
-        {/each}
-      </div>
+    <div class="pl-3">
+      {#each visibleChildren as child (child.Id)}
+        <Self group={child} {entityType} {search} />
+      {/each}
     </div>
   {/if}
 </div>
