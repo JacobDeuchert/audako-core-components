@@ -125,7 +125,7 @@ onDestroy(() => {
 });
 </script>
 
-<div class="flex h-full w-[280px] flex-none flex-col overflow-hidden border-r border-line">
+<div class="flex h-full min-h-0 w-[280px] flex-none flex-col overflow-hidden border-r border-line">
   <div class="flex-none px-3 pb-[10px] pt-3">
     <div class="flex gap-2">
       <button
@@ -164,7 +164,7 @@ onDestroy(() => {
   </div>
 
   {#if rootGroup}
-    <div class="flex-1 overflow-auto px-[10px] pb-[10px] pt-[2px]">
+    <div class="min-h-0 flex-1 overflow-auto px-[10px] pb-[10px] pt-[2px]">
       <EntitySelectTreeNode group={rootGroup} expanded {entityType} {search} />
     </div>
   {:else}
@@ -172,7 +172,7 @@ onDestroy(() => {
   {/if}
 
   {#if recentEntries.length > 0}
-    <div class="flex-none border-t border-line px-[10px] pb-3 pt-[10px]">
+    <div class="max-h-[45%] flex-none overflow-y-auto border-t border-line px-[10px] pb-3 pt-[10px]">
       <div class="mb-1 flex items-center justify-between">
         <div class="text-meta text-ink-secondary">Zuletzt ausgewählt</div>
         {#if selectMultiple}

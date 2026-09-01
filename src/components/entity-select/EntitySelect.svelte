@@ -103,7 +103,7 @@ onDestroy(() => {
 });
 </script>
 
-<div class="flex h-full w-full flex-col overflow-hidden bg-surface">
+<div class="flex h-full max-h-full min-h-0 w-full flex-col overflow-hidden bg-surface">
   <div class="flex flex-none items-center gap-3 border-b border-line py-3 pl-[18px] pr-3">
     <div class="flex h-10 w-10 flex-none items-center justify-center rounded-dialog bg-primary-tint">
       <span class="material-symbols-rounded select-none text-[20px] text-primary">{meta.icon}</span>
@@ -112,7 +112,7 @@ onDestroy(() => {
     <IconButton size={36} iconSize={20} icon="close" onclick={() => onclose?.()} />
   </div>
 
-  <div class="flex min-h-0 flex-1">
+  <div class="flex min-h-0 flex-1 overflow-hidden">
     {#if inTenantSelect}
       <TenantSelect
         allowBack={!!selectedTenant}
@@ -122,7 +122,7 @@ onDestroy(() => {
     {:else}
       <EntitySelectSidebar {selectMultiple} {entityType} {selectedTenant} onchangeTenant={() => onTenantChange()} />
 
-      <div class="flex min-w-0 flex-1 flex-col overflow-hidden px-5 py-[14px]">
+      <div class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden px-5 py-[14px]">
         <EntitySelectToolbar {entityType} {totalCount} />
 
         <div class="min-h-0 flex-1">

@@ -76,7 +76,7 @@ function selectTenant(event: MouseEvent, tenant: TenantView): void {
 setupBrowser();
 </script>
 
-<div class="flex h-full w-full flex-col overflow-hidden px-5 py-[14px]">
+<div class="flex h-full min-h-0 w-full flex-col overflow-hidden px-5 py-[14px]">
   <div class="mb-3 flex items-start gap-2">
     {#if allowBack}
       <IconButton size={36} iconSize={20} icon="arrow_back" onclick={() => onback?.()} />

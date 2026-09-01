@@ -292,7 +292,7 @@ entitiesRequested
           />
         </HeaderCell>
       {/if}
-      <HeaderCell container$class="flex-1" id="Name" sortable>Name</HeaderCell>
+      <HeaderCell container$class="flex-1 min-w-[160px]" id="Name" sortable>Name</HeaderCell>
       <HeaderCell container$class="!flex-none w-[200px]" id="Group">Gruppe</HeaderCell>
       {#if showSignalColumns}
         <HeaderCell container$class="!flex-none w-[110px]" id="Type">Typ</HeaderCell>
@@ -315,7 +315,7 @@ entitiesRequested
           </DataCell>
         {/if}
 
-        <DataCell container$class="flex-1">
+        <DataCell container$class="flex-1 min-w-[160px]">
           <div class="truncate">{entity.Name?.Value}</div>
         </DataCell>
 

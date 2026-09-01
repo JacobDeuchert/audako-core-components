@@ -21,6 +21,7 @@ let { children }: Props = $props();
   .audako-tableheader-flexrow {
     display: flex;
     height: 40px;
+    min-width: fit-content;
     position: sticky;
     top: 0;
     z-index: 1;

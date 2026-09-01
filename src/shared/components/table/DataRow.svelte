@@ -42,6 +42,7 @@ function onClickRow(event: MouseEvent): void {
     display: flex;
     height: 38px;
     width: 100%;
+    min-width: fit-content;
     cursor: pointer;
     border-bottom: 1px solid var(--color-row-line);
     font-size: var(--text-cell);
