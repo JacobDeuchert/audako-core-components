@@ -9,35 +9,38 @@ import { registerCustomElements } from '../src/main';
 // roots separately via withShadowStyles.
 import '../src/styles/tailwind.css';
 
+// Mirrors https://staging.test.audako.net/assets/conf/application.config
 let httpConfig = {
   Services: {
-    BaseUri: 'https://water.audako.net/api',
-    Structure: '/structure',
-    Driver: '/driver',
+    BaseUri: 'https://staging.test.audako.net/api',
+    Structure: '/v1/structure',
+    Driver: '/v1/driver',
     Live: '/live',
-    Historian: '/historian',
+    Historian: '/v1/historian',
     Maintenance: '/maintenance',
-
-    Event: '/event',
-    Camera: '/camera',
-    Reporting: '/reporting',
+    Event: '/v1/event',
+    Camera: '/v1/camera',
+    Reporting: '/v1/reporting',
     Messenger: '/messenger',
     Ticket: '/tickets',
-    Calendar: '/calendar',
+    Calendar: '/v1/calendar',
     Manufacturing: '/manufacturing',
+    Runtime: '/runtime',
+    ExternalApi: '/ext',
   },
   Authentication: {
-    BaseUri: 'https://login.audako.net/auth/realms/master',
-    ClientId: 'water-ui',
+    BaseUri: 'https://staging.test.audako.net/auth/realms/master',
+    ClientId: 'webapp',
   },
   Configuration: {
     MaintenanceEnabled: 'true',
-    WikiUrl: 'https://docs.audako.net',
+    WikiUrl: 'https://docs.audako.net/',
     MultiCopyEnabled: 'false',
     CloudSystem: 'false',
     ExperimentalFeatures: null,
     GatewayMqttEndpoint: null,
     GatewayImage: null,
+    LeafletTileUrl: null,
   },
 };
 const TOKEN_STORAGE_KEY = 'audako:access-token';
