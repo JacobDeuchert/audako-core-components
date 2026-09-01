@@ -5,6 +5,7 @@ import { onDestroy } from 'svelte';
 
 import IconButton from '../../shared/components/icon-button/IconButton.svelte';
 import { resolveService } from '../../utils/service-functions';
+import { resolveTenantIcon, sortTenantsByPosition, toMaterialLigature } from './tenant-view-utils';
 
 // Matches the main UI's tenant browser (adk-tenant-browser).
 const SEARCH_DEBOUNCE_MS = 300;
@@ -75,7 +76,7 @@ async function searchTenants(term: string): Promise<void> {
   searching = true;
 
   try {
-    setTenants(await tenantHttpService.filterTenantsByName(term));
+    setTenants(await tenantHttpService.filterTenantsByName(term), false);
   } catch (error) {
     console.error(error);
     setTenants([]);
@@ -97,8 +98,8 @@ async function getChildren(tenantId: string): Promise<TenantView[]> {
   }
 }
 
-function setTenants(list: TenantView[]): void {
-  tenants = list;
+function setTenants(list: TenantView[], sorted: boolean = true): void {
+  tenants = sorted ? sortTenantsByPosition(list) : list;
   loadSubTenantCounts(list);
 }
 
@@ -239,7 +240,9 @@ onDestroy(() => {
         onclick={() => !disabled && onRowClick(tenant)}
       >
         <div class="flex h-9 w-9 flex-none items-center justify-center rounded-control bg-muted">
-          <span class="material-symbols-rounded select-none text-[20px] text-ink-secondary">domain</span>
+          <span class="material-symbols-rounded select-none text-[20px] text-ink-secondary">
+            {toMaterialLigature(resolveTenantIcon(tenant))}
+          </span>
         </div>
 
         <div class="min-w-0 flex-1">
