@@ -14,8 +14,10 @@ import Paginator from '../../shared/components/table/Paginator.svelte';
 import Table from '../../shared/components/table/Table.svelte';
 import type { PageEvent, Sort } from '../../shared/components/table/table.types';
 import { resolveService, tryResolveService } from '../../utils/service-functions';
+import ValueView from '../../shared/components/value-view/ValueView.svelte';
+import { createSignalValueViewSettings, type DateValuePair } from '../../shared/components/value-view/value-view.types';
 import { getEntityMeta } from './entity-select-meta';
-import { formatSignalType, formatSignalValue } from './signal-format';
+import { formatSignalType } from './signal-format';
 import { EntitySelectGlobalStore, EntitySelectSelectionStore, EntitySelectTypeStore } from './entity-select-stores';
 
 let httpService: EntityHttpService = resolveService(EntityHttpService);
@@ -56,7 +58,8 @@ let stateInitialized = false;
 
 let loading: boolean = $state(true);
 
-let liveValues: Record<string, unknown> = $state({});
+// Keyed by signal id; the timestamp drives the value's tooltip.
+let liveValues: Record<string, DateValuePair> = $state({});
 let liveValueSubscription: Subscription;
 
 let unsub = new Subject<void>();
@@ -227,7 +230,10 @@ async function subscribeToLiveValues(signals: Partial<ConfigurationEntity>[]): P
       const next = { ...liveValues };
 
       for (const liveValue of values) {
-        next[liveValue.identifier.replace('S:', '')] = liveValue.value;
+        next[liveValue.identifier.replace('S:', '')] = {
+          value: liveValue.value,
+          timestamp: liveValue.timestamp,
+        };
       }
 
       liveValues = next;
@@ -333,7 +339,7 @@ entitiesRequested
           </DataCell>
 
           <DataCell container$class="!flex-none w-[120px]">
-            <span class="truncate">{formatSignalValue(entity, liveValues[entity.Id])}</span>
+            <ValueView settings={createSignalValueViewSettings(entity)} value={liveValues[entity.Id]} />
           </DataCell>
         {/if}
       </DataRow>
