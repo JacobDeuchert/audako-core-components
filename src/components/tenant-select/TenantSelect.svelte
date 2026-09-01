@@ -135,23 +135,41 @@ async function selectTenantInPath(tenant: TenantView): Promise<void> {
   setTenants(await getChildren(tenant.Id));
 }
 
-// A tenant with sub-tenants opens; a leaf with a root group is picked
-// directly, so leaves never navigate into an empty list.
 function onRowClick(tenant: TenantView): void {
-  if (subTenantCounts[tenant.Id] > 0) {
-    browseTenant(tenant);
+  if (tenant.Root) {
+    ontenantSelected?.(tenant);
     return;
   }
 
-  if (tenant.Root) {
-    ontenantSelected?.(tenant);
+  if (subTenantCounts[tenant.Id] > 0) {
+    browseTenant(tenant);
   }
 }
 
-function selectTenant(event: MouseEvent, tenant: TenantView): void {
-  // Stop the click from also browsing into the tenant.
+function onChevronClick(event: MouseEvent, tenant: TenantView): void {
+  // Stop the click from also selecting the tenant.
   event.stopPropagation();
-  ontenantSelected?.(tenant);
+  browseTenant(tenant);
+}
+
+// Second line of a row: description if the tenant has one, otherwise what can
+// be said about its structure.
+function getTenantMeta(tenant: TenantView, subTenants: number): string {
+  const parts: string[] = [];
+
+  if (tenant.Description) {
+    parts.push(tenant.Description);
+  }
+
+  if (subTenants > 0) {
+    parts.push(`${subTenants} ${subTenants === 1 ? 'Untermandant' : 'Untermandanten'}`);
+  }
+
+  if (!tenant.Root && parts.length === 0) {
+    parts.push('nur Untermandanten');
+  }
+
+  return parts.join(' · ');
 }
 
 setupBrowser();
@@ -197,7 +215,7 @@ onDestroy(() => {
       class="flex h-10 w-[280px] flex-none items-center rounded-control border border-line pl-3 pr-[10px] transition-colors focus-within:border-primary"
     >
       <input
-        placeholder="Mandant finden"
+        placeholder="Filter"
         class="w-full bg-transparent text-cell text-ink outline-none placeholder:text-ink-tertiary"
         bind:value={filter}
       />
@@ -213,6 +231,7 @@ onDestroy(() => {
     {#each tenants as tenant (tenant.Id)}
       {@const disabled = tenant.Enabled === false || tenant.Locked}
       {@const subTenants = subTenantCounts[tenant.Id] ?? 0}
+      {@const meta = getTenantMeta(tenant, subTenants)}
       <div
         class="flex items-center gap-3 border-b border-row-line px-4 py-[10px] transition-colors last:border-b-0 hover:bg-row-hover"
         class:cursor-pointer={!disabled}
@@ -225,10 +244,8 @@ onDestroy(() => {
 
         <div class="min-w-0 flex-1">
           <div class="truncate text-cell text-ink">{tenant?.Name}</div>
-          {#if tenant.Description}
-            <div class="truncate text-sub text-ink-tertiary">{tenant.Description}</div>
-          {:else if !tenant.Root}
-            <div class="truncate text-sub text-ink-tertiary">nur Untermandanten</div>
+          {#if meta}
+            <div class="truncate text-sub text-ink-tertiary">{meta}</div>
           {/if}
         </div>
 
@@ -238,26 +255,14 @@ onDestroy(() => {
           </span>
         {/if}
 
-        {#if subTenants > 0}
-          <span class="flex-none rounded-full bg-muted px-2 py-[2px] text-meta text-ink-secondary">
-            {subTenants}
-            {subTenants === 1 ? 'Mandant' : 'Mandanten'}
-          </span>
-        {/if}
-
-        {#if tenant.Root && !disabled}
+        {#if subTenants > 0 && !disabled}
           <IconButton
             size={36}
             iconSize={20}
-            variant="primary"
-            icon="check"
-            title="Mandant übernehmen"
-            onclick={(event) => selectTenant(event, tenant)}
+            icon="chevron_right"
+            title="Untermandanten anzeigen"
+            onclick={(event) => onChevronClick(event, tenant)}
           />
-        {/if}
-
-        {#if subTenants > 0}
-          <span class="material-symbols-rounded select-none text-[20px] text-ink-tertiary">chevron_right</span>
         {/if}
       </div>
     {/each}
