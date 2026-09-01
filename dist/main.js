@@ -13465,7 +13465,7 @@ function OS(e, t) {
 	$y(v, () => i() ?? Fh);
 	var y = W(v, 2);
 	{
-		let e = /* @__PURE__ */ R(() => J(o) ? "primary" : "neutral"), t = /* @__PURE__ */ R(() => J(o) ? "Untergruppen einbezogen" : "Nur diese Gruppe"), n = /* @__PURE__ */ R(() => J(o) ? "layers" : "folder");
+		let e = /* @__PURE__ */ R(() => J(o) ? "primary" : "neutral"), t = /* @__PURE__ */ R(() => J(o) ? "Untergruppen einbezogen" : "Nur diese Gruppe");
 		qb(y, {
 			size: 40,
 			iconSize: 22,
@@ -13475,9 +13475,7 @@ function OS(e, t) {
 			get title() {
 				return J(t);
 			},
-			get icon() {
-				return J(n);
-			},
+			icon: "account_tree",
 			onclick: () => d()
 		});
 	}

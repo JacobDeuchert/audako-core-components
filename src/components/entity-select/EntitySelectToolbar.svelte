@@ -77,7 +77,7 @@ onDestroy(() => {
     iconSize={22}
     variant={withSubGroups ? 'primary' : 'neutral'}
     title={withSubGroups ? 'Untergruppen einbezogen' : 'Nur diese Gruppe'}
-    icon={withSubGroups ? 'layers' : 'folder'}
+    icon="account_tree"
     onclick={() => toggleSubGroups()}
   />
 </div>
