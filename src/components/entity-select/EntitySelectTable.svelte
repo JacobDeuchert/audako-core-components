@@ -1,7 +1,7 @@
 <script lang="ts">
-import { ConfigurationEntity, EntityHttpService, EntityNameService, EntityType, Group } from 'audako-core';
+import { ConfigurationEntity, EntityHttpService, EntityNameService, EntityType, Group, LiveValueService } from 'audako-core';
 import type { PaginationResponse } from 'audako-core';
-import { filter, from, Observable, Subject, switchMap, takeUntil, tap, throttleTime } from 'rxjs';
+import { filter, from, Observable, Subject, Subscription, switchMap, takeUntil, tap, throttleTime } from 'rxjs';
 import { combineLatest } from 'rxjs';
 import { onDestroy } from 'svelte';
 
@@ -13,12 +13,15 @@ import HeaderRow from '../../shared/components/table/HeaderRow.svelte';
 import Paginator from '../../shared/components/table/Paginator.svelte';
 import Table from '../../shared/components/table/Table.svelte';
 import type { PageEvent, Sort } from '../../shared/components/table/table.types';
-import { resolveService } from '../../utils/service-functions';
+import { resolveService, tryResolveService } from '../../utils/service-functions';
 import { getEntityMeta } from './entity-select-meta';
+import { formatSignalType, formatSignalValue } from './signal-format';
 import { EntitySelectGlobalStore, EntitySelectSelectionStore, EntitySelectTypeStore } from './entity-select-stores';
 
 let httpService: EntityHttpService = resolveService(EntityHttpService);
 let nameService: EntityNameService = resolveService(EntityNameService);
+// Optional: hosts that do not provide it simply get an empty Signalwert column.
+let liveValueService: LiveValueService = tryResolveService(LiveValueService);
 
 interface Props {
   entityType: EntityType;
@@ -53,11 +56,14 @@ let stateInitialized = false;
 
 let loading: boolean = $state(true);
 
+let liveValues: Record<string, unknown> = $state({});
+let liveValueSubscription: Subscription;
+
 let unsub = new Subject<void>();
 
 const meta = $derived(getEntityMeta(entityType));
-// The only entity with a type worth a column of its own so far.
-const showTypeColumn = $derived(entityType === EntityType.Signal);
+// Type and live value are signal-specific columns.
+const showSignalColumns = $derived(entityType === EntityType.Signal);
 
 // The backend has no sort parameter, so ordering applies to the loaded page.
 const sortedEntities = $derived.by(() => {
@@ -195,6 +201,39 @@ function setupSelectedPageLookup(): void {
   });
 }
 
+// Live values are per page: the previous page's subscription is dropped as
+// soon as new rows arrive.
+async function subscribeToLiveValues(signals: Partial<ConfigurationEntity>[]): Promise<void> {
+  liveValueSubscription?.unsubscribe();
+  liveValues = {};
+
+  if (!liveValueService || entityType !== EntityType.Signal || signals.length === 0) {
+    return;
+  }
+
+  const signalIds = signals.map((signal) => signal.Id);
+
+  try {
+    await liveValueService.connect();
+  } catch (error) {
+    console.error(error);
+    return;
+  }
+
+  liveValueSubscription = liveValueService
+    .subscribeToSignalValues(signalIds)
+    .pipe(takeUntil(unsub))
+    .subscribe((values) => {
+      const next = { ...liveValues };
+
+      for (const liveValue of values) {
+        next[liveValue.identifier.replace('S:', '')] = liveValue.value;
+      }
+
+      liveValues = next;
+    });
+}
+
 function resetFilter(): void {
   typeStore.update((state) => ({ ...state, filter: null }));
 }
@@ -210,6 +249,7 @@ $effect(() => {
 });
 
 onDestroy(() => {
+  liveValueSubscription?.unsubscribe();
   unsub.next();
   unsub.complete();
 });
@@ -235,6 +275,8 @@ entitiesRequested
     }
 
     totalCount = response.total;
+
+    subscribeToLiveValues(entities);
   });
 </script>
 
@@ -252,8 +294,9 @@ entitiesRequested
       {/if}
       <HeaderCell container$class="flex-1" id="Name" sortable>Name</HeaderCell>
       <HeaderCell container$class="!flex-none w-[200px]" id="Group">Gruppe</HeaderCell>
-      {#if showTypeColumn}
+      {#if showSignalColumns}
         <HeaderCell container$class="!flex-none w-[110px]" id="Type">Typ</HeaderCell>
+        <HeaderCell container$class="!flex-none w-[120px]" id="Value">Signalwert</HeaderCell>
       {/if}
     </HeaderRow>
 
@@ -284,9 +327,13 @@ entitiesRequested
           </span>
         </DataCell>
 
-        {#if showTypeColumn}
+        {#if showSignalColumns}
           <DataCell container$class="!flex-none w-[110px] text-ink-secondary">
-            <span class="truncate">{(entity as any).Type?.Value ?? ''}</span>
+            <span class="truncate">{formatSignalType(entity)}</span>
+          </DataCell>
+
+          <DataCell container$class="!flex-none w-[120px]">
+            <span class="truncate">{formatSignalValue(entity, liveValues[entity.Id])}</span>
           </DataCell>
         {/if}
       </DataRow>

@@ -40,10 +40,10 @@ onDestroy(sortUnsubscribe);
 </script>
 
 <div
-  class="flex h-full w-full items-center gap-1 {sortable ? 'cursor-pointer' : 'cursor-default'} {container$class}"
+  class="flex h-full items-center gap-1 {sortable ? 'cursor-pointer' : 'cursor-default'} {container$class}"
   onclick={() => toggleSort()}
 >
-  <div class="truncate">
+  <div class="min-w-0 truncate">
     {@render children?.()}
   </div>
 

@@ -1,5 +1,5 @@
 import type { Preview } from '@storybook/svelte-vite';
-import { EntityHttpService, TenantHttpService, EntityNameService } from 'audako-core';
+import { EntityHttpService, TenantHttpService, EntityNameService, LiveValueService } from 'audako-core';
 import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { PopupService } from '../src/shared/services/popup.service';
@@ -60,6 +60,7 @@ let entityHttpService = new EntityHttpService(httpConfig, getAccessToken);
 container.register('TenantHttpService', { useValue: new TenantHttpService(httpConfig, getAccessToken) });
 container.register('EntityHttpService', { useValue: entityHttpService });
 container.register('EntityNameService', { useValue: new EntityNameService(entityHttpService) });
+container.register('LiveValueService', { useValue: new LiveValueService(httpConfig, getAccessToken) });
 container.register('PopupContainerService', { useValue: new PopupService(document.body) });
 
 registerCustomElements();
