@@ -153,24 +153,8 @@ function onChevronClick(event: MouseEvent, tenant: TenantView): void {
   browseTenant(tenant);
 }
 
-// Second line of a row: description if the tenant has one, otherwise what can
-// be said about its structure.
-function getTenantMeta(tenant: TenantView, subTenants: number): string {
-  const parts: string[] = [];
-
-  if (tenant.Description) {
-    parts.push(tenant.Description);
-  }
-
-  if (subTenants > 0) {
-    parts.push(`${subTenants} ${subTenants === 1 ? 'Untermandant' : 'Untermandanten'}`);
-  }
-
-  if (!tenant.Root && parts.length === 0) {
-    parts.push('nur Untermandanten');
-  }
-
-  return parts.join(' · ');
+function subTenantLabel(count: number): string {
+  return `${count} ${count === 1 ? 'Mandant' : 'Mandanten'}`;
 }
 
 setupBrowser();
@@ -181,86 +165,95 @@ onDestroy(() => {
 });
 </script>
 
-<div class="flex h-full min-h-0 w-full flex-col overflow-hidden px-5 py-[14px]">
-  <div class="mb-3 flex items-start gap-2">
-    {#if allowBack}
-      <IconButton size={36} iconSize={20} icon="arrow_back" onclick={() => onback?.()} />
-    {/if}
+<!-- Layout and row look follow the main UI's adk-tenant-browser and the row
+     variant of adk-tenant-card. -->
+<div class="flex h-full min-h-0 w-full flex-col gap-[14px] overflow-hidden px-5 py-[14px]">
+  <div class="flex flex-col gap-[14px]">
+    <div class="flex items-center gap-3">
+      {#if allowBack}
+        <IconButton size={36} iconSize={20} icon="arrow_back" onclick={() => onback?.()} />
+      {/if}
 
-    <div class="min-w-0 flex-1">
-      <div class="text-section text-ink">Mandant auswählen</div>
+      <div class="flex-none text-section font-semibold text-ink">Mandant auswählen</div>
 
+      <div
+        class="ml-auto flex h-10 min-w-0 max-w-[420px] flex-1 items-center gap-2 rounded-[10px] border border-line bg-surface pl-3 pr-[6px] transition-colors focus-within:border-primary"
+      >
+        <span class="material-symbols-rounded select-none text-[20px] text-ink-tertiary">search</span>
+        <input
+          placeholder="Mandant suchen"
+          class="w-full bg-transparent text-cell text-ink outline-none placeholder:text-ink-tertiary"
+          bind:value={filter}
+        />
+        {#if filter}
+          <IconButton size={28} iconSize={18} icon="close" title="Suche leeren" onclick={() => (filter = '')} />
+        {/if}
+      </div>
+    </div>
+
+    <div class="flex min-h-6 min-w-0 flex-wrap items-center text-[15px] text-ink">
       {#if !searching}
-        <div class="mt-[2px] flex flex-wrap items-center text-meta text-ink-secondary">
-          {#each tenantPath as tenant, i}
-            <span
-              class="cursor-pointer rounded-[4px] px-1 py-[2px] transition-colors hover:bg-neutral-hover {i ===
-              tenantPath.length - 1
-                ? 'font-medium text-ink'
-                : ''}"
+        {#each tenantPath as tenant, i}
+          {#if i < tenantPath.length - 1}
+            <button
+              type="button"
+              class="cursor-pointer whitespace-nowrap opacity-70 hover:underline focus-visible:underline"
               onclick={() => selectTenantInPath(tenant)}
             >
               {tenant.Name}
-            </span>
-            {#if i < tenantPath.length - 1}
-              <span class="text-ink-tertiary">/</span>
-            {/if}
-          {/each}
-        </div>
+            </button>
+            <span class="material-symbols-rounded select-none text-[18px] opacity-70">chevron_right</span>
+          {:else}
+            <span class="truncate font-medium">{tenant.Name}</span>
+          {/if}
+        {/each}
       {:else}
-        <div class="mt-[2px] text-meta text-ink-tertiary">Suchergebnisse</div>
-      {/if}
-    </div>
-
-    <div
-      class="flex h-10 w-[280px] flex-none items-center rounded-control border border-line pl-3 pr-[10px] transition-colors focus-within:border-primary"
-    >
-      <input
-        placeholder="Filter"
-        class="w-full bg-transparent text-cell text-ink outline-none placeholder:text-ink-tertiary"
-        bind:value={filter}
-      />
-      {#if filter}
-        <IconButton size={26} iconSize={16} icon="close" onclick={() => (filter = '')} />
-      {:else}
-        <span class="material-symbols-rounded ml-2 select-none text-[18px] text-ink-tertiary">search</span>
+        <span class="opacity-70">Suchergebnisse</span>
       {/if}
     </div>
   </div>
 
-  <div class="min-h-0 flex-1 overflow-auto rounded-dialog border border-line">
+  <!-- The padding gives the hover shadows room inside the scroll clip; the
+       negative margin keeps the rows aligned with the header. -->
+  <div class="-mx-3 -mb-3 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto px-3 pb-3 pt-[2px]">
     {#each tenants as tenant (tenant.Id)}
       {@const disabled = tenant.Enabled === false || tenant.Locked}
       {@const subTenants = subTenantCounts[tenant.Id] ?? 0}
-      {@const meta = getTenantMeta(tenant, subTenants)}
       <div
-        class="flex items-center gap-3 border-b border-row-line px-4 py-[10px] transition-colors last:border-b-0 hover:bg-row-hover"
+        class="tenant-row flex flex-none items-center gap-3 rounded-[12px] border border-line bg-surface p-2"
         class:cursor-pointer={!disabled}
-        class:opacity-50={disabled}
+        class:tenant-row--disabled={disabled}
         onclick={() => !disabled && onRowClick(tenant)}
       >
-        <div class="flex h-9 w-9 flex-none items-center justify-center rounded-control bg-muted">
-          <span class="material-symbols-rounded select-none text-[20px] text-ink-secondary">
+        <span class="grid h-9 w-9 flex-none place-items-center rounded-[10px] bg-primary-tint-subtle text-primary">
+          <span class="material-symbols-rounded select-none text-[18px]">
             {toMaterialLigature(resolveTenantIcon(tenant))}
           </span>
-        </div>
+        </span>
 
         <div class="min-w-0 flex-1">
-          <div class="truncate text-cell text-ink">{tenant?.Name}</div>
-          {#if meta}
-            <div class="truncate text-sub text-ink-tertiary">{meta}</div>
+          <div class="truncate text-[14px] font-semibold text-ink">{tenant?.Name}</div>
+          {#if tenant.Description}
+            <div class="mt-px truncate text-[12px] text-ink-secondary">{tenant.Description}</div>
           {/if}
         </div>
 
         {#if disabled}
-          <span class="material-symbols-rounded select-none text-[18px] text-ink-tertiary" title="Mandant ist deaktiviert">
+          <span
+            class="material-symbols-rounded flex-none select-none text-[20px] text-ink-secondary"
+            title="Mandant ist deaktiviert"
+          >
             lock
           </span>
         {/if}
 
+        {#if subTenants > 0}
+          <span class="flex-none whitespace-nowrap text-[12px] text-ink-secondary">{subTenantLabel(subTenants)}</span>
+        {/if}
+
         {#if subTenants > 0 && !disabled}
           <IconButton
-            size={36}
+            size={32}
             iconSize={20}
             icon="chevron_right"
             title="Untermandanten anzeigen"
@@ -278,3 +271,21 @@ onDestroy(() => {
     {/if}
   </div>
 </div>
+
+<style>
+/* Same hover lift as the UI's .tenant-row. */
+.tenant-row {
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+
+.tenant-row:not(.tenant-row--disabled):hover {
+  border-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.tenant-row--disabled {
+  opacity: 0.65;
+}
+</style>
