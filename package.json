@@ -12,8 +12,8 @@
     "build": "vite build && tsc --project tsconfig.build.json --emitDeclarationOnly --outDir dist",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
-    "storybook": "storybook dev -p 6006 --host 0.0.0.0",
     "update-core": "npm i @audako/core@^2",
+    "storybook": "node .storybook/dev.mjs",
     "build-storybook": "storybook build",
     "prettier": "prettier --write ."
   },

@@ -1,7 +1,11 @@
 import type { Preview } from '@storybook/svelte-vite';
-import { EntityHttpService, TenantHttpService, EntityNameService, LiveValueService } from 'audako-core';
+import { ApiContext, EntityHttpService, TenantHttpService, EntityNameService, LiveValueService } from '@audako/core';
 import 'reflect-metadata';
 import { container } from 'tsyringe';
+import { addons } from 'storybook/preview-api';
+import { completeLogin, createAccessTokenGetter, hasSession, logout, startLogin, type AuthConfig } from './auth';
+import { loadHttpConfig, recentSystems, resolveSystem, selectSystem } from './system';
+import { CONNECT_EVENTS, type ConnectState, type ConnectStatus } from './connect';
 import { PopupService } from '../src/shared/services/popup.service';
 import { registerCustomElements } from '../src/main';
 // Stories render plain Svelte components into the document, so the Tailwind
@@ -9,64 +13,75 @@ import { registerCustomElements } from '../src/main';
 // roots separately via withShadowStyles.
 import '../src/styles/tailwind.css';
 
-// Mirrors https://staging.test.audako.net/assets/conf/application.config
-let httpConfig = {
-  Services: {
-    BaseUri: 'https://staging.test.audako.net/api',
-    Structure: '/v1/structure',
-    Driver: '/v1/driver',
-    Live: '/live',
-    Historian: '/v1/historian',
-    Maintenance: '/maintenance',
-    Event: '/v1/event',
-    Camera: '/v1/camera',
-    Reporting: '/v1/reporting',
-    Messenger: '/messenger',
-    Ticket: '/tickets',
-    Calendar: '/v1/calendar',
-    Manufacturing: '/manufacturing',
-    Runtime: '/runtime',
-    ExternalApi: '/ext',
-  },
-  Authentication: {
-    BaseUri: 'https://staging.test.audako.net/auth/realms/master',
-    ClientId: 'webapp',
-  },
-  Configuration: {
-    MaintenanceEnabled: 'true',
-    WikiUrl: 'https://docs.audako.net/',
-    MultiCopyEnabled: 'false',
-    CloudSystem: 'false',
-    ExperimentalFeatures: null,
-    GatewayMqttEndpoint: null,
-    GatewayImage: null,
-    LeafletTileUrl: null,
-  },
-};
-const TOKEN_STORAGE_KEY = 'audako:access-token';
+// Pick a system with ?system=<url> or the audako system tool in the toolbar;
+// its config is loaded from the system itself (see system.ts) and the
+// first API call without a session redirects to its Keycloak login (auth.ts).
+const system = resolveSystem();
+const connection = system ? connect(system) : undefined;
+// Failures are shown in the toolbar tool; keep them out of the console noise.
+connection?.catch(() => {});
 
-// audako-core accepts a getter for AsyncValue (Lazy<T> = () => T), so the token
-// is read per request rather than captured at startup. That means you can drop
-// in a fresh one without restarting Storybook:
-//
-//   localStorage.setItem('audako:access-token', '<jwt>')
-//
-// and reload the story. Otherwise it falls back to VITE_ACCESS_TOKEN from
-// .env.local, which is gitignored - do not hardcode a token here.
-function getAccessToken(): string {
-  const stored = typeof localStorage !== 'undefined' ? localStorage.getItem(TOKEN_STORAGE_KEY) : null;
-  return stored ?? import.meta.env.VITE_ACCESS_TOKEN ?? '';
+async function connect(system: string) {
+  const httpConfig = await loadHttpConfig(system);
+  if (!httpConfig.Authentication) {
+    throw new Error(`${system} has no Authentication section in its application.config`);
+  }
+  const auth: AuthConfig = { baseUri: httpConfig.Authentication.BaseUri, clientId: httpConfig.Authentication.ClientId };
+
+  let loginError: string | undefined;
+  try {
+    await completeLogin(system, auth);
+  } catch (error) {
+    loginError = (error as Error).message;
+  }
+
+  const getAccessToken = createAccessTokenGetter(system, auth, { autoLogin: !loginError });
+  return { system, httpConfig, auth, getAccessToken, loginError };
 }
 
-let entityHttpService = new EntityHttpService(httpConfig, getAccessToken);
+function requireConnection() {
+  return connection ?? Promise.reject(new Error('[storybook] No audako system selected, use the audako system tool in the toolbar.'));
+}
 
-container.register('TenantHttpService', { useValue: new TenantHttpService(httpConfig, getAccessToken) });
+// One context for all services; it detects the platform version on the first request.
+const ctx = new ApiContext(
+  () => requireConnection().then((c) => c.httpConfig),
+  () => requireConnection().then((c) => c.getAccessToken()),
+);
+let entityHttpService = new EntityHttpService(ctx);
+
+container.register('TenantHttpService', { useValue: new TenantHttpService(ctx) });
 container.register('EntityHttpService', { useValue: entityHttpService });
 container.register('EntityNameService', { useValue: new EntityNameService(entityHttpService) });
-container.register('LiveValueService', { useValue: new LiveValueService(httpConfig, getAccessToken) });
+container.register('LiveValueService', { useValue: new LiveValueService(ctx) });
 container.register('PopupContainerService', { useValue: new PopupService(document.body) });
 
 registerCustomElements();
+
+// State and actions for the connect tool in the toolbar (manager.tsx).
+const channel = addons.getChannel();
+let connectState: ConnectState = { system, recent: recentSystems(), status: system ? 'loading' : 'none' };
+const publishConnectState = () => channel.emit(CONNECT_EVENTS.STATE, connectState);
+
+connection?.then(
+  (c) => {
+    const status: ConnectStatus = c.loginError
+      ? { status: 'error', message: c.loginError }
+      : { status: 'ready', loggedIn: hasSession(c.system) };
+    connectState = { ...connectState, ...status };
+    publishConnectState();
+  },
+  (error) => {
+    connectState = { ...connectState, status: 'error', message: String(error?.message ?? error) };
+    publishConnectState();
+  },
+);
+
+channel.on(CONNECT_EVENTS.REQUEST_STATE, publishConnectState);
+channel.on(CONNECT_EVENTS.SELECT, (url: string) => selectSystem(url));
+channel.on(CONNECT_EVENTS.LOGIN, () => connection?.then((c) => startLogin(c.system, c.auth)));
+channel.on(CONNECT_EVENTS.LOGOUT, () => connection?.then((c) => logout(c.system, c.auth)));
+publishConnectState();
 
 const preview: Preview = {
   parameters: {

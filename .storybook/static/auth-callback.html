@@ -1,0 +1,13 @@
+<!doctype html>
+<!-- Keycloak redirect target for the Storybook login, see .storybook/auth.ts.
+     Hands the code back to the preview, which does the token exchange. -->
+<meta charset="utf-8" />
+<title>Signing in…</title>
+<script>
+  sessionStorage.setItem('audako:login-callback', location.search);
+  let pending;
+  try {
+    pending = JSON.parse(sessionStorage.getItem('audako:login-pending'));
+  } catch {}
+  location.replace(pending?.returnUrl || '/');
+</script>
