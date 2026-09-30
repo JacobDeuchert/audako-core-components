@@ -1,6 +1,6 @@
 {
-  "name": "audako-core-components",
-  "version": "1.3.1",
+  "name": "@audako/core-components",
+  "version": "2.0.0",
   "type": "module",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
@@ -15,7 +15,8 @@
     "update-core": "npm i @audako/core@^2",
     "storybook": "node .storybook/dev.mjs",
     "build-storybook": "storybook build",
-    "prettier": "prettier --write ."
+    "prettier": "prettier --write .",
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@storybook/addon-docs": "10.5.10",
@@ -53,5 +54,12 @@
     }
   },
   "author": "Jacob Deuchert",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JacobDeuchert/audako-core-components.git"
+  },
+  "publishConfig": {
+    "registry": "https://git.dev.audako.net/api/packages/audako/npm/"
+  }
 }

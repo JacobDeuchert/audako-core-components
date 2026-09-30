@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { registerCustomElements } from 'audako-core-components';
+import { registerCustomElements } from '@audako/core-components';
 import { ApiContext, EntityHttpService, EntityNameService, TenantHttpService } from '@audako/core';
 import { container } from 'tsyringe';
 
