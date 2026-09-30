@@ -1,19 +1,19 @@
 import { container, type DependencyContainer, type InjectionToken} from 'tsyringe';
 import {
-  BaseHttpService,
+  ApiContext,
   EntityHttpService,
   EntityNameService,
   TenantHttpService,
   LiveValueService,
   DataSourceHttpService,
-} from 'audako-core';
+} from '@audako/core';
 
 const SERVICE_TOKEN_LOOKUP = {
+  [ApiContext.toString()]: 'ApiContext',
   [TenantHttpService.toString()]: 'TenantHttpService',
   [DataSourceHttpService.toString()]: 'DataSourceHttpService',
   [EntityHttpService.toString()]: 'EntityHttpService',
   [EntityNameService.toString()]: 'EntityNameService',
-  [BaseHttpService.toString()]: 'BaseHttpService',
   [LiveValueService.toString()]: 'LiveValueService',
 };
 

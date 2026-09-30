@@ -1,4 +1,11 @@
-import { type ConfigurationEntity, type Signal, SignalType } from 'audako-core';
+import {
+  type ConfigurationEntity,
+  type Signal,
+  type SignalAnalogSettings,
+  type SignalCounterSettings,
+  type SignalDigitalSettings,
+  SignalType,
+} from '@audako/core';
 
 // Mirrors AudakoValueViewSettings in the main UI
 // (shared/components/audako-value-view/audako-value-view.component.ts).
@@ -25,17 +32,27 @@ const digitalTypes = [SignalType.DigitalInput, SignalType.DigitalInOut];
 export function createSignalValueViewSettings(entity: Partial<ConfigurationEntity>): ValueViewSettings {
   const signal = entity as Partial<Signal>;
   const type = signal?.Type?.Value;
-  const settings = (signal?.Settings ?? {}) as any;
 
-  const isNumber = analogTypes.includes(type) || type === SignalType.Counter;
+  if (analogTypes.includes(type) || type === SignalType.Counter) {
+    // A projected or partial read may omit Settings or single fields.
+    const settings = signal.Settings as Partial<SignalAnalogSettings | SignalCounterSettings>;
+    return {
+      viewType: 'number',
+      decimalPlaces: settings?.DecimalPlaces?.Value ?? 0,
+      unit: settings?.Unit?.Value ?? null,
+    };
+  }
 
-  return {
-    viewType: isNumber ? 'number' : digitalTypes.includes(type) ? 'led' : 'text',
-    decimalPlaces: settings['DecimalPlaces'] ? settings['DecimalPlaces'].Value : 0,
-    unit: settings['Unit'] ? settings['Unit'].Value : null,
-    ledOnCaption: settings['DigitalTrueCaption'] ? settings['DigitalTrueCaption'].Value : null,
-    ledOffCaption: settings['DigitalFalseCaption'] ? settings['DigitalFalseCaption'].Value : null,
-    ledOnColor: settings['DigitalTrueColor'] ? settings['DigitalTrueColor'].Value : null,
-    ledOffColor: settings['DigitalFalseColor'] ? settings['DigitalFalseColor'].Value : null,
-  };
+  if (digitalTypes.includes(type)) {
+    const settings = signal.Settings as Partial<SignalDigitalSettings>;
+    return {
+      viewType: 'led',
+      ledOnCaption: settings?.DigitalTrueCaption?.Value ?? null,
+      ledOffCaption: settings?.DigitalFalseCaption?.Value ?? null,
+      ledOnColor: settings?.DigitalTrueColor?.Value ?? null,
+      ledOffColor: settings?.DigitalFalseColor?.Value ?? null,
+    };
+  }
+
+  return { viewType: 'text' };
 }

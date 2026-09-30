@@ -12,8 +12,8 @@
     "build": "vite build && tsc --project tsconfig.build.json --emitDeclarationOnly --outDir dist",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
-    "update-core": "npm i https://github.com/JacobDeuchert/audako-core",
     "storybook": "storybook dev -p 6006 --host 0.0.0.0",
+    "update-core": "npm i @audako/core@^2",
     "build-storybook": "storybook build",
     "prettier": "prettier --write ."
   },
@@ -38,9 +38,9 @@
     "vite": "^8.2.2"
   },
   "dependencies": {
+    "@audako/core": "^2.0.1",
     "@ngneat/elf": "^2.1.0",
     "@ngneat/elf-persist-state": "^1.1.2",
-    "audako-core": "github:JacobDeuchert/audako-core",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.5.6",
     "tsyringe": "^4.7.0",

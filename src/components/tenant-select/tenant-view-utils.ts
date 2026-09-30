@@ -1,4 +1,4 @@
-import type { TenantView } from 'audako-core';
+import type { TenantView } from '@audako/core';
 
 /**
  * `mat-<name>` resolves to the Material icon `<name>`; the fallback when a
@@ -6,14 +6,8 @@ import type { TenantView } from 'audako-core';
  */
 export const DEFAULT_TENANT_ICON = 'mat-domain';
 
-// The wire format carries fields core's TenantView does not declare.
-type TenantViewPayload = TenantView & {
-  Position?: number;
-  ApplicationSettings?: { AdditionalSettings?: Record<string, any> };
-};
-
 export function resolveTenantIcon(tenant: TenantView): string {
-  return (tenant as TenantViewPayload)?.ApplicationSettings?.AdditionalSettings?.['Icon'] || DEFAULT_TENANT_ICON;
+  return tenant?.ApplicationSettings?.AdditionalSettings?.['Icon'] || DEFAULT_TENANT_ICON;
 }
 
 /**
@@ -46,7 +40,7 @@ export function toMaterialLigature(icon: string): string {
  * take their slot, the unpositioned ones fill the gaps in between.
  */
 export function sortTenantsByPosition(tenants: TenantView[]): TenantView[] {
-  const position = (tenant: TenantView): number => (tenant as TenantViewPayload).Position ?? 0;
+  const position = (tenant: TenantView): number => tenant.Position ?? 0;
 
   let tenantsWithoutPosition = tenants.filter((tenant) => !position(tenant));
   const tenantsWithPosition = tenants

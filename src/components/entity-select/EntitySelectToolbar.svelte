@@ -1,7 +1,7 @@
 <script lang="ts">
 import { debounceTime, Subject, takeUntil } from 'rxjs';
 import { onDestroy, onMount, type Snippet } from 'svelte';
-import type { EntityType } from 'audako-core';
+import type { EntityType } from '@audako/core';
 
 import IconButton from '../../shared/components/icon-button/IconButton.svelte';
 import { type EntitySelectGlobalState, EntitySelectGlobalStore, EntitySelectTypeStore } from './entity-select-stores';

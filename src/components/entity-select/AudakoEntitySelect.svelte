@@ -11,7 +11,7 @@
 />
 
 <script lang="ts">
-import { EntityType } from 'audako-core';
+import { EntityType } from '@audako/core';
 import EntitySelect from './EntitySelect.svelte';
 import { PopupService } from '../../shared/services/popup.service';
 import { tryRegisterService } from '../../utils/service-functions';

@@ -1,5 +1,5 @@
 <script lang="ts">
-import { ConfigurationEntity, EntityType } from 'audako-core';
+import { ConfigurationEntity, EntityType } from '@audako/core';
 
 import { type PopupRef, PopupService } from '../../shared/services/popup.service';
 import { resolveService } from '../../utils/service-functions';

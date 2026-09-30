@@ -1,5 +1,5 @@
 <script lang="ts">
-import { TenantHttpService, TenantView } from 'audako-core';
+import { TenantHttpService, TenantView } from '@audako/core';
 import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 import { onDestroy } from 'svelte';
 

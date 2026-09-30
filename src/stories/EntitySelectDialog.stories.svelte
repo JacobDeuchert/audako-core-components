@@ -10,7 +10,7 @@ const { Story } = defineMeta({
 
 <script>
 import { EntitySelectDialogService } from '../components/entity-select/entity-select-dialog.service';
-import { EntityType } from 'audako-core';
+import { EntityType } from '@audako/core';
 
 function openEntitySelect() {
   const entitySelectDialogService = new EntitySelectDialogService();

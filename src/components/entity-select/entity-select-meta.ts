@@ -1,4 +1,4 @@
-import { EntityType } from 'audako-core';
+import { EntityType } from '@audako/core';
 
 interface EntityMeta {
   // Material Symbols Rounded ligature shown in the dialog header tile.
@@ -26,7 +26,6 @@ const entityMeta: Partial<Record<EntityType, EntityMeta>> = {
   [EntityType.ReportTemplate]: { icon: 'description', singular: 'Berichtsvorlage', plural: 'Berichtsvorlagen' },
   [EntityType.Report]: { icon: 'summarize', singular: 'Bericht', plural: 'Berichte' },
   [EntityType.Document]: { icon: 'draft', singular: 'Dokument', plural: 'Dokumente' },
-  [EntityType.Storage]: { icon: 'inventory_2', singular: 'Speicher', plural: 'Speicher' },
   [EntityType.Camera]: { icon: 'photo_camera', singular: 'Kamera', plural: 'Kameras' },
   [EntityType.SwitchSchedule]: { icon: 'schedule', singular: 'Schaltplan', plural: 'Schaltpläne' },
   [EntityType.User]: { icon: 'person', singular: 'Benutzer', plural: 'Benutzer' },

@@ -5,14 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "update-core": "npm i https://github.com/JacobDeuchert/audako-core && npm i ../",
+    "update-core": "npm i @audako/core@^2 && npm i ../",
     "vite": "vite --config ./vite.config.js",
     "build": "vite build"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "audako-core": "github:JacobDeuchert/audako-core",
+    "@audako/core": "^2.0.0",
     "audako-core-components": "file:..",
     "reflect-metadata": "^0.1.13",
     "tsyringe": "^4.7.0",

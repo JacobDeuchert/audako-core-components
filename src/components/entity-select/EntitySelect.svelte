@@ -1,5 +1,5 @@
 <script lang="ts">
-import { ConfigurationEntity, EntityHttpService, EntityType, TenantHttpService, TenantView } from 'audako-core';
+import { ConfigurationEntity, EntityHttpService, EntityType, TenantHttpService, TenantView } from '@audako/core';
 import { onDestroy } from 'svelte';
 
 import IconButton from '../../shared/components/icon-button/IconButton.svelte';

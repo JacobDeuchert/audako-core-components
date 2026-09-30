@@ -1,4 +1,5 @@
 import {
+  ApiContext,
   DataSourceHttpService,
   EntityHttpService,
   EntityNameService,
@@ -8,7 +9,7 @@ import {
   LiveValueService,
   TenantHttpService,
   UserProfileHttpService,
-} from 'audako-core';
+} from '@audako/core';
 import type { Observable } from 'rxjs';
 import { container } from 'tsyringe';
 import { EntitySelectDialogService } from './components/entity-select/entity-select-dialog.service';
@@ -42,17 +43,26 @@ export function registerCustomElements() {
   _defineCustomElement('audako-menu', Menu);
 }
 
-export function registerCoreServices(httpConfig: HttpConfig, accessToken: AsyncValue<string>): void {
-  const entityHttpService = new EntityHttpService(httpConfig, accessToken);
+/**
+ * Registers core's services on one shared ApiContext. Pass a context you
+ * already hold, or the config and token to have one built here; the platform
+ * version is then detected on the first request.
+ */
+export function registerCoreServices(ctx: ApiContext): void;
+export function registerCoreServices(httpConfig: HttpConfig, accessToken: AsyncValue<string>): void;
+export function registerCoreServices(ctxOrConfig: ApiContext | HttpConfig, accessToken?: AsyncValue<string>): void {
+  const ctx = ctxOrConfig instanceof ApiContext ? ctxOrConfig : new ApiContext(ctxOrConfig, accessToken);
+  const entityHttpService = new EntityHttpService(ctx);
 
-  tryRegisterService(LiveValueService, new LiveValueService(httpConfig, accessToken));
+  tryRegisterService(ApiContext, ctx);
+  tryRegisterService(LiveValueService, new LiveValueService(ctx));
   tryRegisterService(EntityHttpService, entityHttpService);
-  tryRegisterService(TenantHttpService, new TenantHttpService(httpConfig, accessToken));
+  tryRegisterService(TenantHttpService, new TenantHttpService(ctx));
   tryRegisterService(EntityNameService, new EntityNameService(entityHttpService));
-  tryRegisterService(DataSourceHttpService, new DataSourceHttpService(httpConfig, accessToken));
+  tryRegisterService(DataSourceHttpService, new DataSourceHttpService(ctx));
   tryRegisterService(EntitySelectDialogService, new EntitySelectDialogService());
-  tryRegisterService(HistoricalValueService, new HistoricalValueService(httpConfig, accessToken));
-  tryRegisterService(UserProfileHttpService, new UserProfileHttpService(httpConfig, accessToken));
+  tryRegisterService(HistoricalValueService, new HistoricalValueService(ctx));
+  tryRegisterService(UserProfileHttpService, new UserProfileHttpService(ctx));
 }
 
 function _defineCustomElement(tagName: string, component: any, options?: ElementDefinitionOptions) {
@@ -63,5 +73,5 @@ function _defineCustomElement(tagName: string, component: any, options?: Element
   customElements.define(tagName, component, options);
 }
 
-// export all from audako-core
-export * from 'audako-core';
+// export all from @audako/core
+export * from '@audako/core';

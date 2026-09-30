@@ -9,7 +9,7 @@ const { Story } = defineMeta({
 </script>
 
 <script>
-import { EntityType } from 'audako-core';
+import { EntityType } from '@audako/core';
 
 const entityTypes = Object.keys(EntityType);
 const options = [

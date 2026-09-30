@@ -1,4 +1,4 @@
-import { type ConfigurationEntity, type Signal, SignalType } from 'audako-core';
+import { type ConfigurationEntity, type Signal, SignalType } from '@audako/core';
 
 const signalTypeLabels: Record<SignalType, string> = {
   [SignalType.AnalogInput]: 'Analog',

@@ -1,6 +1,6 @@
 <script lang="ts">
-import { ConfigurationEntity, EntityHttpService, EntityNameService, EntityType, Group, LiveValueService } from 'audako-core';
-import type { PaginationResponse } from 'audako-core';
+import { ConfigurationEntity, EntityHttpService, EntityNameService, EntityType, Group, LiveValueService } from '@audako/core';
+import type { PaginationResponse } from '@audako/core';
 import { filter, from, Observable, Subject, Subscription, switchMap, takeUntil, tap, throttleTime } from 'rxjs';
 import { combineLatest } from 'rxjs';
 import { onDestroy } from 'svelte';

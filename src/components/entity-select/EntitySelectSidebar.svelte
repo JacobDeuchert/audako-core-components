@@ -1,5 +1,5 @@
 <script lang="ts">
-import { ConfigurationEntity, EntityHttpService, EntityNameService, EntityType, Group, TenantView } from 'audako-core';
+import { ConfigurationEntity, EntityHttpService, EntityNameService, EntityType, Group, TenantView } from '@audako/core';
 import { Subject, takeUntil } from 'rxjs';
 import { onDestroy } from 'svelte';
 

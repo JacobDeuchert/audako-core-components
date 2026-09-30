@@ -1,4 +1,4 @@
-import type { ConfigurationEntity, EntityType } from 'audako-core';
+import type { ConfigurationEntity, EntityType } from '@audako/core';
 import { mount, unmount } from 'svelte';
 
 import EntitySelectDialog from './EntitySelectDialog.svelte';

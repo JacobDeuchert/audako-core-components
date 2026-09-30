@@ -1,6 +1,6 @@
 import { createState, createStore, getRegistry, Store, withProps } from '@ngneat/elf';
 import { localStorageStrategy, persistState } from '@ngneat/elf-persist-state';
-import { ConfigurationEntity, EntityType, Group } from 'audako-core';
+import { ConfigurationEntity, EntityType, Group } from '@audako/core';
 import { writable } from 'svelte/store';
 
 export const entitySelectEntityType = writable<EntityType>(EntityType.Signal);
