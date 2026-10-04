@@ -39,7 +39,7 @@
     "vite": "^8.2.2"
   },
   "dependencies": {
-    "@audako/core": "^2.0.1",
+    "@audako/core": "^2.0.2",
     "@ngneat/elf": "^2.1.0",
     "@ngneat/elf-persist-state": "^1.1.2",
     "reflect-metadata": "^0.1.13",
