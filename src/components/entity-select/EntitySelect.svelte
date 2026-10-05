@@ -48,11 +48,15 @@ let globalSubscription = EntitySelectGlobalStore.subscribe((state) => {
   }
 });
 
+// The selection store is global, so a picker opened again would otherwise
+// start with (and in single mode immediately re-emit) the previous pick.
+EntitySelectSelectionStore.update((state) => ({ ...state, selectedEntities: [] }));
+
 let selectionSubscription = EntitySelectSelectionStore.subscribe((state) => {
   selectedEntities = state.selectedEntities ?? [];
   selectionCount = selectedEntities.length;
 
-  if (state.selectedEntities && !selectMultiple) {
+  if (selectedEntities.length > 0 && !selectMultiple) {
     setLastSelectedEntities(state.selectedEntities);
     onselectedEntities?.(state.selectedEntities[0]);
   }
