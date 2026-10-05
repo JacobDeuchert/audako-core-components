@@ -1,8 +1,7 @@
 <script lang="ts">
 import { ConfigurationEntity, EntityType } from '@audako/core';
+import { fade, scale } from 'svelte/transition';
 
-import { type PopupRef, PopupService } from '../../shared/services/popup.service';
-import { resolveService } from '../../utils/service-functions';
 import EntitySelect from './EntitySelect.svelte';
 
 interface Props {
@@ -26,68 +25,52 @@ let {
   oncancel,
 }: Props = $props();
 
-let popupService = resolveService<PopupService>('PopupService', new PopupService(document.body));
-
-let dialogElement: HTMLElement = $state();
-
-let popupRef: PopupRef;
-
-$effect(() => {
-  toggleDialog(open, dialogElement);
-});
-
 // Imperative handle for consumers that mount this component directly, since
 // Svelte 5 removed the `$set` API used to drive the open/close animation.
 export function setOpen(value: boolean): void {
   open = value;
 }
 
-function toggleDialog(open: boolean, dialogElement: HTMLElement) {
-  if (open && !popupRef && dialogElement) {
-    popupRef = popupService.openPopup('entity-select-dialog', dialogElement, {
-      backdrop: true,
-      closeOnClickOutside: true,
-      positioning: 'center',
-      inTransitionClassList: 'scale-100',
-      inTransitionDuration: 125,
-      outTransitionClassList: '!scale-50',
-      outTransitionDuration: 125,
-    });
-
-    popupRef.afterClosed.then(() => {
-      popupRef = null;
-      open = false;
-      oncancel?.();
-    });
-  } else {
-    closeDialog();
+function cancel(): void {
+  if (!open) {
+    return;
   }
+  open = false;
+  oncancel?.();
 }
 
-function closeDialog(): void {
-  popupRef?.close();
-}
-
-function onKeyDown(event: KeyboardEvent) {
-  if (event.key === 'Escape') {
-    closeDialog();
+function onWindowKeyDown(event: KeyboardEvent) {
+  if (open && event.key === 'Escape') {
+    cancel();
   }
 }
 </script>
 
-<div
-  onkeydown={onKeyDown}
-  bind:this={dialogElement}
-  class="flex h-[660px] max-h-[90vh] w-[1280px] max-w-[95vw] overflow-hidden rounded-dialog bg-surface shadow-dialog"
-  onclick={(event) => event.stopPropagation()}
->
-  <div class="h-full w-full">
-    <EntitySelect
-      {selectMultiple}
-      {entityType}
-      {additionalFilter}
-      onselectedEntities={(entities) => onselectedEntities?.(entities)}
-      onclose={() => closeDialog()}
-    />
+<svelte:window onkeydown={onWindowKeyDown} />
+
+{#if open}
+  <!-- The backdrop is a mouse-only affordance; Escape covers the keyboard. -->
+  <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
+  <div
+    class="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50"
+    transition:fade={{ duration: 125 }}
+    onclick={(event) => event.target === event.currentTarget && cancel()}
+  >
+    <div
+      role="dialog"
+      aria-modal="true"
+      class="flex h-[660px] max-h-[90vh] w-[1280px] max-w-[95vw] overflow-hidden rounded-dialog bg-surface shadow-dialog"
+      transition:scale={{ duration: 125, start: 0.95 }}
+    >
+      <div class="h-full w-full">
+        <EntitySelect
+          {selectMultiple}
+          {entityType}
+          {additionalFilter}
+          onselectedEntities={(entities) => onselectedEntities?.(entities)}
+          onclose={() => cancel()}
+        />
+      </div>
+    </div>
   </div>
-</div>
+{/if}

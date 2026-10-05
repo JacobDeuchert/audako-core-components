@@ -13,8 +13,6 @@
 <script lang="ts">
 import { EntityType } from '@audako/core';
 import EntitySelect from './EntitySelect.svelte';
-import { PopupService } from '../../shared/services/popup.service';
-import { tryRegisterService } from '../../utils/service-functions';
 import { withShadowStyles } from '../../styles/shadow-styles';
 
 interface Props {
@@ -25,7 +23,6 @@ interface Props {
 
 let { entityType = undefined, multiple = false, filter = undefined }: Props = $props();
 
-tryRegisterService(PopupService, new PopupService(document.body));
 
 const isValidEntityType = $derived(Object.values(EntityType).includes(entityType as EntityType));
 

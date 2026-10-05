@@ -1,6 +1,7 @@
 import type { ConfigurationEntity, EntityType } from '@audako/core';
 import { mount, unmount } from 'svelte';
 
+import { createStyledShadowHost } from '../../styles/shadow-styles';
 import EntitySelectDialog from './EntitySelectDialog.svelte';
 
 export class EntitySelectDialogService {
@@ -31,14 +32,18 @@ export class EntitySelectDialogService {
     return new Promise((resolve) => {
       let settled = false;
 
+      // The dialog lives outside any custom element, so it gets a shadow root
+      // of its own: the component styles reach it, the host app's do not.
+      const { host, root } = createStyledShadowHost('data-audako-entity-select-dialog');
+
       const entitySelectDialog = mount(EntitySelectDialog, {
-        target: document.body,
+        target: root,
         props: {
           entityType,
           open: false,
           selectMultiple: selectMultiple,
           additionalFilter: additionalFilter,
-          onselectedEntities: (entities: T[]) => {
+          onselectedEntities: (entities: T | T[]) => {
             finish(Array.isArray(entities) ? entities : [entities].filter((entity) => entity != null));
           },
           // Cancelling (close button, Abbrechen, Escape, backdrop) has to settle
@@ -58,14 +63,14 @@ export class EntitySelectDialogService {
         // destroy component after close animation is finished
         setTimeout(() => {
           unmount(entitySelectDialog);
+          host.remove();
         }, 200);
 
         resolve(entities);
       }
 
-      setTimeout(() => {
-        entitySelectDialog.setOpen(true);
-      }, 50);
+      // Opened after mounting so the in transition plays.
+      entitySelectDialog.setOpen(true);
     });
   }
 }

@@ -1,6 +1,7 @@
 <script lang="ts">
 import { type PopupOptions, type PopupRef, PopupService } from '@/shared/services/popup.service';
 import { resolveService } from '@/utils/service-functions';
+import { getPopupRoot } from '@/styles/shadow-styles';
 import type { Snippet } from 'svelte';
 
 interface Props {
@@ -29,7 +30,7 @@ let {
   children,
 }: Props = $props();
 
-let popupContainerService = resolveService<PopupService>('PopupContainerService', new PopupService(document.body));
+let popupContainerService = resolveService<PopupService>('PopupContainerService', new PopupService(getPopupRoot()));
 
 let popupElement: HTMLDivElement;
 let popupRef: PopupRef;
@@ -47,7 +48,8 @@ export function openPopup() {
     anchorVertical: preferedVerticalAlignment,
   };
 
-  document.body.appendChild(popupElement);
+  // Measured inside the popup root so it is sized with the component styles.
+  getPopupRoot().appendChild(popupElement);
   popupElement.style.display = 'block';
 
   const anchorWidth = anchorElement?.offsetWidth;

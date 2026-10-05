@@ -6,7 +6,6 @@ import { addons } from 'storybook/preview-api';
 import { completeLogin, createAccessTokenGetter, hasSession, logout, startLogin, type AuthConfig } from './auth';
 import { loadHttpConfig, recentSystems, resolveSystem, selectSystem } from './system';
 import { CONNECT_EVENTS, type ConnectState, type ConnectStatus } from './connect';
-import { PopupService } from '../src/shared/services/popup.service';
 import { registerCustomElements } from '../src/main';
 // Stories render plain Svelte components into the document, so the Tailwind
 // sheet is loaded globally here. Custom elements adopt it into their shadow
@@ -54,7 +53,6 @@ container.register('TenantHttpService', { useValue: new TenantHttpService(ctx) }
 container.register('EntityHttpService', { useValue: entityHttpService });
 container.register('EntityNameService', { useValue: new EntityNameService(entityHttpService) });
 container.register('LiveValueService', { useValue: new LiveValueService(ctx) });
-container.register('PopupContainerService', { useValue: new PopupService(document.body) });
 
 registerCustomElements();
 

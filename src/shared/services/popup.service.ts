@@ -50,9 +50,9 @@ export class PopupService {
 
   private _popupContainer: {[id: string]: HTMLDivElement};
 
-  private rootElement: HTMLElement;
+  private rootElement: HTMLElement | ShadowRoot;
 
-  constructor(rootElement: HTMLElement) {
+  constructor(rootElement: HTMLElement | ShadowRoot) {
     this.rootElement = rootElement;
     this._popupContainer = {};
   }
@@ -61,7 +61,6 @@ export class PopupService {
     
     options = { ...defaultOptions, ...options };
 
-    console.log('openPopup', options);
 
     const popupId = uuidv4();
 
@@ -80,7 +79,6 @@ export class PopupService {
     let closeOnEscapeRef = null;
 
     const close = () => {
-      console.log('close');
       this._removePopupWrapper(popupWrapper, options);
       popupClosed.next(null);
       popupClosed.complete();
@@ -89,7 +87,6 @@ export class PopupService {
 
 
     closeOnEscapeRef = (e: KeyboardEvent) => {
-      console.log('closeOnEscapeRef', e);
       if (e.key === 'Escape') {
         close();
       }
@@ -121,7 +118,7 @@ export class PopupService {
 
     const popupRef = {
       popupId: popupId,
-      afterClosed: firstValueFrom(popupClosed).then(()=> console.log('afterClosed')),
+      afterClosed: firstValueFrom(popupClosed),
       close: close
     }
 
@@ -153,8 +150,7 @@ export class PopupService {
   }
 
   private _removeContainer(id: string): void {
-    const container = document.getElementById(id);
-    container.remove();
+    this._popupContainer[id]?.remove();
 
     this._popupContainer[id] = undefined;
   }
@@ -198,7 +194,6 @@ export class PopupService {
     const containerRect = containerElement.getBoundingClientRect();
     const popupRect  = popupWrapper.getBoundingClientRect();
 
-    console.log('popupRect', popupRect, popupWrapper.style, options);
     const anchorRect = options.anchorElement?.getBoundingClientRect();
     
     popupStyle.position = 'absolute';
@@ -233,7 +228,6 @@ export class PopupService {
   }
   
   private _getLeftPosition(x: number, popupWidth: number, containerWidth: number, anchorHorizontal: 'left' | 'right' = 'right') {
-    console.log(arguments);
     if (anchorHorizontal == 'left') {
       return Math.min(x, containerWidth - popupWidth - 10);
     } else {

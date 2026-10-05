@@ -8,6 +8,10 @@
    custom properties so consumers can retheme at runtime, including across a
    shadow boundary (custom properties inherit through it). */
 @theme {
+  /* Spacing in px rather than rem: the components are embedded in host apps
+     whose root font-size we do not control. */
+  --spacing: 4px;
+
   /* Brand accent. The default is the production magenta the facelift was
      designed against; hosts may override --color-primary at runtime. */
   --color-primary: rgb(178, 24, 122);
@@ -82,13 +86,32 @@
   ::file-selector-button {
     border-color: var(--color-line, currentColor);
   }
+
+  /* Inherited text properties cross the shadow boundary, so reset the ones a
+     host app commonly sets on body. */
+  :host {
+    font-family: var(--default-font-family);
+    font-size: 14px;
+    font-weight: 400;
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: normal;
+    text-align: left;
+    text-transform: none;
+    white-space: normal;
+    color: var(--color-ink);
+  }
 }
 
+/* Fallback only: shadow-styles.ts inserts this ahead of the host's styles, so
+   a host that declares the same family (e.g. from a local file) wins. */
 @font-face {
   font-family: 'Material Symbols Rounded';
   font-style: normal;
   font-weight: 100 700;
-  src: url(https://fonts.gstatic.com/s/materialsymbolsrounded/v34/sykg-zNym6YjUruM-QrEh7-nyTnjDwKNJ_190Fjzag.woff2) format('woff2');
+  src:
+    local('Material Symbols Rounded'),
+    url(https://fonts.gstatic.com/s/materialsymbolsrounded/v34/sykg-zNym6YjUruM-QrEh7-nyTnjDwKNJ_190Fjzag.woff2) format('woff2');
 }
 
 .material-symbols-rounded {

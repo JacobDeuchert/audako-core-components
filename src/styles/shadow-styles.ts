@@ -7,9 +7,15 @@
 import tailwindCss from './tailwind.css?inline';
 
 let sharedSheet: CSSStyleSheet | null = null;
+let documentRulesHoisted = false;
+let popupRoot: ShadowRoot | null = null;
+
+function supportsConstructableSheets(): boolean {
+  return typeof CSSStyleSheet !== 'undefined' && 'replaceSync' in CSSStyleSheet.prototype;
+}
 
 function getSharedSheet(): CSSStyleSheet | null {
-  if (typeof CSSStyleSheet === 'undefined' || !('replaceSync' in CSSStyleSheet.prototype)) {
+  if (!supportsConstructableSheets()) {
     return null;
   }
 
@@ -23,10 +29,54 @@ function getSharedSheet(): CSSStyleSheet | null {
   return sharedSheet;
 }
 
+// Browsers ignore `@property` and `@font-face` inside shadow roots. Tailwind 4
+// relies on `@property` for the initial values of its `--tw-*` variables, so
+// without them every border, shadow, ring and transform utility resolves to an
+// invalid value, and the icon font never loads. Both kinds of rule only
+// register something globally, so they are copied to the document once.
+function hoistDocumentRules(): void {
+  if (documentRulesHoisted || typeof document === 'undefined') {
+    return;
+  }
+  documentRulesHoisted = true;
+
+  const rules: string[] = [];
+  const collect = (list: CSSRuleList) => {
+    for (const rule of Array.from(list)) {
+      if (rule instanceof CSSFontFaceRule || rule.cssText.startsWith('@property')) {
+        rules.push(rule.cssText);
+      } else if ('cssRules' in rule) {
+        collect((rule as CSSGroupingRule).cssRules);
+      }
+    }
+  };
+
+  const source = getSharedSheet();
+  if (source) {
+    collect(source.cssRules);
+  } else {
+    const parsed = document.createElement('style');
+    parsed.textContent = tailwindCss;
+    document.head.appendChild(parsed);
+    collect(parsed.sheet.cssRules);
+    parsed.remove();
+  }
+
+  const style = document.createElement('style');
+  style.setAttribute('data-audako-document-styles', '');
+  style.textContent = rules.join('\n');
+  // First in <head>: of several @font-face rules for one family the last
+  // declared wins, so a host app's own declaration (e.g. a local copy of the
+  // icon font for offline use) takes precedence over ours.
+  document.head.prepend(style);
+}
+
 export function adoptShadowStyles(root: ShadowRoot | null | undefined): void {
   if (!root) {
     return;
   }
+
+  hoistDocumentRules();
 
   const sheet = getSharedSheet();
 
@@ -44,6 +94,28 @@ export function adoptShadowStyles(root: ShadowRoot | null | undefined): void {
     style.textContent = tailwindCss;
     root.prepend(style);
   }
+}
+
+/**
+ * Creates a host element on `document.body` with a styled shadow root, for
+ * content rendered outside any custom element (dialogs, popups). Remove the
+ * returned host to tear it down.
+ */
+export function createStyledShadowHost(name: string): { host: HTMLElement; root: ShadowRoot } {
+  const host = document.createElement('div');
+  host.setAttribute(name, '');
+  const root = host.attachShadow({ mode: 'open' });
+  adoptShadowStyles(root);
+  document.body.appendChild(host);
+  return { host, root };
+}
+
+/** Shared styled root that popups (select options, menus) are rendered into. */
+export function getPopupRoot(): ShadowRoot {
+  if (!popupRoot?.host.isConnected) {
+    popupRoot = createStyledShadowHost('data-audako-popup-root').root;
+  }
+  return popupRoot;
 }
 
 /**
