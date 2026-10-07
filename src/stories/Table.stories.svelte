@@ -25,10 +25,10 @@ const data = new Array(100).fill(0).map(() => ({ Name: 'abc', Age: Math.random()
     <Table onsort={(sort) => console.log('table - sort', sort)}>
       <HeaderRow>
         <HeaderCell id="Name" sortable>
-          <div class="bg-red-500">Test</div>
+          <div style="background-color: oklch(63.7% 0.237 25.331)">Test</div>
         </HeaderCell>
         <HeaderCell id="Age" sortable>
-          <div class="bg-green-500 w-full">Test</div>
+          <div style="width: 100%; background-color: oklch(72.3% 0.219 149.579)">Test</div>
         </HeaderCell>
       </HeaderRow>
       {#each data as row}

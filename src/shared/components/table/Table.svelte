@@ -25,12 +25,30 @@ const sortUnsubscribe = sort.subscribe((value) => {
 onDestroy(sortUnsubscribe);
 </script>
 
-<div class="flex h-full flex-col">
+<div class="table">
   <!-- The scroll container carries the card border: the header row sticks to
        its top edge, so the rounded corner must clip the rows, not the page. -->
-  <div class="relative w-full flex-1 overflow-auto rounded-dialog border border-line bg-surface {container$class}">
+  <div class="scroll {container$class}">
     {@render children?.()}
   </div>
 
   {@render pagination?.()}
 </div>
+
+<style>
+.table {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+}
+
+.scroll {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  overflow: auto;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-dialog);
+  background-color: var(--color-surface);
+}
+</style>

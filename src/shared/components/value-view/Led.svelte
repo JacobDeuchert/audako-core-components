@@ -10,6 +10,13 @@ let { color = '#c1c1c1', size = '14px', title = null }: Props = $props();
 
 <div
   {title}
-  class="shrink-0 rounded-full"
+  class="led"
   style="height: {size}; width: {size}; background-color: {color || '#c1c1c1'}; box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 12px inset;"
 ></div>
+
+<style>
+.led {
+  flex-shrink: 0;
+  border-radius: 9999px;
+}
+</style>

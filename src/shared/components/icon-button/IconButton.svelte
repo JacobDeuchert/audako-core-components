@@ -45,18 +45,46 @@ function onClickButton(mouseEvent: MouseEvent): void {
      resizes on hover, so the previous ripple is gone. -->
 <div
   {title}
-  class="flex shrink-0 flex-col items-center justify-center rounded-full transition-colors {className}"
-  class:cursor-pointer={!disabled}
-  class:cursor-default={disabled}
-  class:text-primary={variant === 'primary' && !disabled}
-  class:text-ink-secondary={variant === 'neutral' && !disabled}
-  class:text-ink-disabled={disabled}
-  class:hover:bg-primary-tint={variant === 'primary' && !disabled}
-  class:hover:bg-neutral-hover={variant === 'neutral' && !disabled}
+  class="icon-button {className}"
+  class:primary={variant === 'primary'}
+  class:disabled
   style="height: {absoluteSize}px; width: {absoluteSize}px;"
   onclick={(event) => onClickButton(event)}
 >
-  <span class="material-symbols-rounded select-none" style="font-size: {absoluteIconSize}px;">
+  <span class="material-symbols-rounded" style="font-size: {absoluteIconSize}px;">
     {#if children}{@render children()}{:else}{icon}{/if}
   </span>
 </div>
+
+<style>
+.icon-button {
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  color: var(--color-ink-secondary);
+  cursor: pointer;
+  transition: var(--transition-colors);
+}
+
+.icon-button.primary {
+  color: var(--color-primary);
+}
+
+.icon-button.disabled {
+  color: var(--color-ink-disabled);
+  cursor: default;
+}
+
+@media (hover: hover) {
+  .icon-button:not(.disabled):hover {
+    background-color: var(--color-neutral-hover);
+  }
+
+  .icon-button.primary:not(.disabled):hover {
+    background-color: var(--color-primary-tint);
+  }
+}
+</style>

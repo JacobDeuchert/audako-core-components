@@ -1,7 +1,7 @@
 <script lang="ts">
 import { type PopupOptions, type PopupRef, PopupService } from '@/shared/services/popup.service';
 import { resolveService } from '@/utils/service-functions';
-import { getPopupRoot } from '@/styles/shadow-styles';
+import { getPopupRoot, shareComponentStyles } from '@/styles/shadow-styles';
 import type { Snippet } from 'svelte';
 
 interface Props {
@@ -48,7 +48,9 @@ export function openPopup() {
     anchorVertical: preferedVerticalAlignment,
   };
 
-  // Measured inside the popup root so it is sized with the component styles.
+  // Measured inside the popup root so it is sized with the component styles,
+  // which have to follow the content there.
+  shareComponentStyles(popupElementWrapper, getPopupRoot());
   getPopupRoot().appendChild(popupElement);
   popupElement.style.display = 'block';
 
@@ -81,11 +83,21 @@ function resetStyle() {
 </script>
 
 <div class="popup-element-wrapper" style="position: absolute" bind:this={popupElementWrapper}>
-  <div
-    style="display: none"
-    class="absolute p-1 flex-col max-h-[400px] shadow-lg overflow-y-auto overflow-x-hidden bg-surface rounded-md border-surface-border border {popupClass}"
-    bind:this={popupElement}
-  >
+  <div style="display: none" class="popup {popupClass}" bind:this={popupElement}>
     {@render children?.()}
   </div>
 </div>
+
+<style>
+.popup {
+  position: absolute;
+  max-height: 400px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 4px;
+  border: 1px solid var(--color-surface-border);
+  border-radius: 6px;
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+}
+</style>

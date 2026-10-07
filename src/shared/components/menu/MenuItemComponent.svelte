@@ -11,20 +11,42 @@ interface Props {
 let { icon = null, label = null, onclick, children }: Props = $props();
 </script>
 
-<div onclick={(e) => onclick?.(e)} class="hover-highlight flex items-center pl-3 pb-2 pt-2 pr-3 cursor-pointer relative rounded-md">
+<div onclick={(e) => onclick?.(e)} class="menu-item hover-highlight">
   {#if icon}
-    <div class="mr-2 flex item-center">
-      <span class="material-symbols-rounded z-[1] select-none flex items-center">
+    <div class="icon-wrapper">
+      <span class="material-symbols-rounded icon">
         {#if children}{@render children()}{:else}{icon}{/if}
       </span>
     </div>
   {/if}
-  <div class="flex-grow">
+  <div class="label">
     {label}
   </div>
 </div>
 
 <style>
+.menu-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.icon-wrapper {
+  display: flex;
+  margin-right: 8px;
+}
+
+.icon {
+  z-index: 1;
+}
+
+.label {
+  flex-grow: 1;
+}
+
   .hover-highlight:hover {
   background: rgba(0, 0, 0, 0.1) !important;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;

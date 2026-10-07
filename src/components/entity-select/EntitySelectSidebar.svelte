@@ -125,82 +125,257 @@ onDestroy(() => {
 });
 </script>
 
-<div class="flex h-full min-h-0 w-[280px] flex-none flex-col overflow-hidden border-r border-line">
-  <div class="flex-none px-3 pb-[10px] pt-3">
-    <div class="flex gap-2">
-      <button
-        type="button"
-        class="flex h-[44px] flex-1 items-center gap-2 overflow-hidden rounded-control border border-line pl-[10px] pr-2 text-left transition-colors hover:border-line-strong"
-        onclick={() => onchangeTenant?.()}
-      >
-        <span class="material-symbols-rounded select-none text-[18px] text-ink-secondary">domain</span>
-        <div class="min-w-0 flex-1">
-          <div class="text-label leading-[1.2] text-ink-tertiary">Mandant</div>
-          <div class="truncate text-cell leading-[1.2] text-ink">{selectedTenant?.Name ?? ''}</div>
+<div class="sidebar">
+  <div class="top">
+    <div class="tenant-row">
+      <button type="button" class="tenant" onclick={() => onchangeTenant?.()}>
+        <span class="material-symbols-rounded tenant-icon">domain</span>
+        <div class="tenant-text">
+          <div class="tenant-label">Mandant</div>
+          <div class="tenant-name">{selectedTenant?.Name ?? ''}</div>
         </div>
-        <span class="material-symbols-rounded select-none text-[16px] text-ink-secondary">unfold_more</span>
+        <span class="material-symbols-rounded tenant-icon">unfold_more</span>
       </button>
 
-      <button
-        type="button"
-        title="Mandant suchen"
-        class="flex h-[44px] w-[44px] flex-none items-center justify-center rounded-control border border-line transition-colors hover:bg-primary-tint-subtle"
-        onclick={() => onchangeTenant?.()}
-      >
-        <span class="material-symbols-rounded select-none text-[20px] text-primary">search</span>
+      <button type="button" title="Mandant suchen" class="tenant-search" onclick={() => onchangeTenant?.()}>
+        <span class="material-symbols-rounded">search</span>
       </button>
     </div>
 
-    <div
-      class="mt-[10px] flex h-10 items-center rounded-control border border-line pl-3 pr-[10px] transition-colors focus-within:border-primary"
-    >
-      <input
-        placeholder="Suche"
-        class="w-full bg-transparent text-cell text-ink outline-none placeholder:text-ink-tertiary"
-        bind:value={search}
-      />
-      <span class="material-symbols-rounded ml-2 select-none text-[18px] text-ink-tertiary">search</span>
+    <div class="search">
+      <input placeholder="Suche" bind:value={search} />
+      <span class="material-symbols-rounded">search</span>
     </div>
   </div>
 
   {#if rootGroup}
-    <div class="min-h-0 flex-1 overflow-auto px-[10px] pb-[10px] pt-[2px]">
+    <div class="tree">
       <EntitySelectTreeNode group={rootGroup} expanded {entityType} {search} />
     </div>
   {:else}
-    <div class="flex-1"></div>
+    <div class="spacer"></div>
   {/if}
 
   {#if recentEntries.length > 0}
-    <div class="max-h-[45%] flex-none overflow-y-auto border-t border-line px-[10px] pb-3 pt-[10px]">
-      <div class="mb-1 flex items-center justify-between">
-        <div class="text-meta text-ink-secondary">Zuletzt ausgewählt</div>
+    <div class="recent">
+      <div class="recent-header">
+        <div class="recent-title">Zuletzt ausgewählt</div>
         {#if selectMultiple}
-          <button
-            type="button"
-            class="cursor-pointer text-[12px] text-primary hover:underline"
-            onclick={() => selectAllRecent()}
-          >
-            alle übernehmen
-          </button>
+          <button type="button" class="select-all" onclick={() => selectAllRecent()}>alle übernehmen</button>
         {/if}
       </div>
 
       {#each recentEntries as entry (entry.id)}
-        <div
-          class="flex cursor-pointer items-center gap-[10px] rounded-control px-[10px] py-[7px] transition-colors hover:bg-neutral-hover"
-          onclick={() => toggleRecent(entry)}
-        >
+        <div class="recent-entry" onclick={() => toggleRecent(entry)}>
           {#if selectMultiple}
             <Checkbox readonly checked={selectedEntityLookup[entry.id]} />
           {/if}
 
-          <div class="min-w-0 flex-1">
-            <div class="truncate text-cell text-ink">{entry.name}</div>
-            <div class="truncate text-sub text-ink-tertiary">{entry.group}</div>
+          <div class="recent-text">
+            <div class="recent-name">{entry.name}</div>
+            <div class="recent-group">{entry.group}</div>
           </div>
         </div>
       {/each}
     </div>
   {/if}
 </div>
+
+<style>
+.sidebar {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  width: 280px;
+  flex: none;
+  flex-direction: column;
+  overflow: hidden;
+  border-right: 1px solid var(--color-line);
+}
+
+.top {
+  flex: none;
+  padding: 12px 12px 10px;
+}
+
+.tenant-row {
+  display: flex;
+  gap: 8px;
+}
+
+.tenant {
+  display: flex;
+  height: 44px;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  padding-left: 10px;
+  padding-right: 8px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-control);
+  text-align: left;
+  transition: var(--transition-colors);
+}
+
+.tenant-icon {
+  color: var(--color-ink-secondary);
+}
+
+.tenant-text {
+  min-width: 0;
+  flex: 1;
+}
+
+.tenant-label {
+  font-size: var(--text-label);
+  line-height: 1.2;
+  color: var(--color-ink-tertiary);
+}
+
+.tenant-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-cell);
+  line-height: 1.2;
+  color: var(--color-ink);
+}
+
+.tenant-search {
+  display: flex;
+  height: 44px;
+  width: 44px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-control);
+  transition: var(--transition-colors);
+}
+
+.tenant-search .material-symbols-rounded {
+  color: var(--color-primary);
+}
+
+@media (hover: hover) {
+  .tenant:hover {
+    border-color: var(--color-line-strong);
+  }
+
+  .tenant-search:hover {
+    background-color: var(--color-primary-tint-subtle);
+  }
+}
+
+.search {
+  display: flex;
+  height: 40px;
+  align-items: center;
+  margin-top: 10px;
+  padding-left: 12px;
+  padding-right: 10px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-control);
+  transition: var(--transition-colors);
+}
+
+.search:focus-within {
+  border-color: var(--color-primary);
+}
+
+.search input {
+  width: 100%;
+  font-size: var(--text-cell);
+  color: var(--color-ink);
+  outline: none;
+}
+
+.search input::placeholder {
+  color: var(--color-ink-tertiary);
+}
+
+.search .material-symbols-rounded {
+  margin-left: 8px;
+  color: var(--color-ink-tertiary);
+}
+
+.tree {
+  min-height: 0;
+  flex: 1;
+  overflow: auto;
+  padding: 2px 10px 10px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.recent {
+  max-height: 45%;
+  flex: none;
+  overflow-y: auto;
+  padding: 10px 10px 12px;
+  border-top: 1px solid var(--color-line);
+}
+
+.recent-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.recent-title {
+  font-size: var(--text-meta);
+  color: var(--color-ink-secondary);
+}
+
+.select-all {
+  font-size: 12px;
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.recent-entry {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: var(--radius-control);
+  cursor: pointer;
+  transition: var(--transition-colors);
+}
+
+@media (hover: hover) {
+  .select-all:hover {
+    text-decoration-line: underline;
+  }
+
+  .recent-entry:hover {
+    background-color: var(--color-neutral-hover);
+  }
+}
+
+.recent-text {
+  min-width: 0;
+  flex: 1;
+}
+
+.recent-name,
+.recent-group {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recent-name {
+  font-size: var(--text-cell);
+  color: var(--color-ink);
+}
+
+.recent-group {
+  font-size: var(--text-sub);
+  color: var(--color-ink-tertiary);
+}
+</style>

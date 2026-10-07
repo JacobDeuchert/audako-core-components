@@ -75,35 +75,70 @@ function selectGroup(): void {
 <div>
   <!-- The transparent left border keeps labels from shifting when a node
        becomes active and gains its 3px accent bar. -->
-  <div
-    class="flex cursor-pointer items-center gap-[6px] rounded-control border-l-[3px] border-transparent py-2 pr-[10px] text-cell transition-colors"
-    class:pl-[10px]={children.length > 0}
-    class:pl-[26px]={children.length === 0}
-    class:text-ink-secondary={!selected}
-    class:hover:bg-neutral-hover={!selected}
-    class:bg-primary-tint={selected}
-    class:!border-primary={selected}
-    class:text-ink={selected}
-    class:font-medium={selected}
-    onclick={() => selectGroup()}
-  >
+  <div class="node" class:leaf={children.length === 0} class:selected onclick={() => selectGroup()}>
     {#if children.length > 0}
-      <span
-        onclick={(event) => toggleExpanded(event)}
-        class="material-symbols-rounded w-4 select-none text-[16px]"
-      >
+      <span onclick={(event) => toggleExpanded(event)} class="material-symbols-rounded chevron">
         {expanded ? 'expand_more' : 'chevron_right'}
       </span>
     {/if}
 
-    <div class="flex-1 truncate">{group?.Name?.Value}</div>
+    <div class="name">{group?.Name?.Value}</div>
   </div>
 
   {#if expanded}
-    <div class="pl-3">
+    <div class="children">
       {#each visibleChildren as child (child.Id)}
         <Self group={child} {entityType} {search} />
       {/each}
     </div>
   {/if}
 </div>
+
+<style>
+.node {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-left-width: 3px;
+  border-color: transparent;
+  border-radius: var(--radius-control);
+  font-size: var(--text-cell);
+  color: var(--color-ink-secondary);
+  cursor: pointer;
+  transition: var(--transition-colors);
+}
+
+/* Leaves have no chevron; the padding keeps their labels aligned with it. */
+.node.leaf {
+  padding-left: 26px;
+}
+
+.node.selected {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-tint);
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+@media (hover: hover) {
+  .node:not(.selected):hover {
+    background-color: var(--color-neutral-hover);
+  }
+}
+
+.chevron {
+  width: 16px;
+}
+
+.name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.children {
+  padding-left: 12px;
+}
+</style>

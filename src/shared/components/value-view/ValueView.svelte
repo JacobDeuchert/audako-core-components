@@ -39,9 +39,7 @@ const ledIsOn = $derived(Number.isFinite(numericValue) && numericValue >= 1);
 
 {#if settings && value}
   {#if !hasValue}
-    <span class="material-symbols-rounded select-none text-[18px] text-danger" title="Keine Werte verfügbar">
-      warning
-    </span>
+    <span class="material-symbols-rounded no-value" title="Keine Werte verfügbar">warning</span>
   {:else if settings.viewType === 'led'}
     <Led
       size={ledSize}
@@ -49,10 +47,22 @@ const ledIsOn = $derived(Number.isFinite(numericValue) && numericValue >= 1);
       title={(ledIsOn ? settings.ledOnCaption : settings.ledOffCaption) || timestampTitle}
     />
   {:else if settings.viewType === 'number'}
-    <span class="truncate" title={timestampTitle}>
+    <span class="value" title={timestampTitle}>
       {numberText}{settings.unit ? ` ${settings.unit}` : ''}
     </span>
   {:else}
-    <span class="truncate" title={timestampTitle}>{value.value}</span>
+    <span class="value" title={timestampTitle}>{value.value}</span>
   {/if}
 {/if}
+
+<style>
+.no-value {
+  color: var(--color-danger);
+}
+
+.value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+</style>

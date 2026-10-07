@@ -286,11 +286,11 @@ entitiesRequested
   });
 </script>
 
-<div class="flex h-full flex-col overflow-hidden">
+<div class="entity-table">
   <Table startSort={{ active: 'Name', direction: 'asc' }} onsort={(value) => (sort = value)}>
     <HeaderRow>
       {#if selectMultiple}
-        <HeaderCell container$class="!flex-none w-[46px]" id="select">
+        <HeaderCell container$class="col-select" id="select">
           <Checkbox
             checked={masterToggleState === 'checked'}
             indeterminate={masterToggleState === 'indeterminate'}
@@ -298,34 +298,34 @@ entitiesRequested
           />
         </HeaderCell>
       {/if}
-      <HeaderCell container$class="flex-1 min-w-[160px]" id="Name" sortable>Name</HeaderCell>
-      <HeaderCell container$class="!flex-none w-[200px]" id="Group">Gruppe</HeaderCell>
+      <HeaderCell id="Name" sortable>Name</HeaderCell>
+      <HeaderCell container$class="col-group" id="Group">Gruppe</HeaderCell>
       {#if showSignalColumns}
-        <HeaderCell container$class="!flex-none w-[110px]" id="Type">Typ</HeaderCell>
-        <HeaderCell container$class="!flex-none w-[120px]" id="Value">Signalwert</HeaderCell>
+        <HeaderCell container$class="col-type" id="Type">Typ</HeaderCell>
+        <HeaderCell container$class="col-value" id="Value">Signalwert</HeaderCell>
       {/if}
     </HeaderRow>
 
     <!-- 2px indeterminate bar directly under the sticky header. -->
-    <div class="sticky top-10 z-[1] h-[2px] w-full overflow-hidden {loading ? 'bg-primary-tint' : ''}">
+    <div class="loading-track" class:loading>
       {#if loading}
-        <div class="audako-indeterminate-bar h-full w-full bg-primary"></div>
+        <div class="loading-bar"></div>
       {/if}
     </div>
 
     {#each sortedEntities as entity (entity.Id)}
       <DataRow onclick={() => onEntitySelected(entity)}>
         {#if selectMultiple}
-          <DataCell container$class="!flex-none w-[46px]">
+          <DataCell container$class="col-select">
             <Checkbox readonly checked={selectedEntitiesInPageLookup[entity.Id]} />
           </DataCell>
         {/if}
 
-        <DataCell container$class="flex-1 min-w-[160px]">
+        <DataCell>
           <div class="truncate">{entity.Name?.Value}</div>
         </DataCell>
 
-        <DataCell container$class="!flex-none w-[200px] text-ink-secondary">
+        <DataCell container$class="col-group col-muted">
           <span class="truncate">
             {#await nameService.resolveName(EntityType.Group, entity.GroupId) then name}
               {name ?? ''}
@@ -334,11 +334,11 @@ entitiesRequested
         </DataCell>
 
         {#if showSignalColumns}
-          <DataCell container$class="!flex-none w-[110px] text-ink-secondary">
+          <DataCell container$class="col-type col-muted">
             <span class="truncate">{formatSignalType(entity)}</span>
           </DataCell>
 
-          <DataCell container$class="!flex-none w-[120px]">
+          <DataCell container$class="col-value">
             <ValueView settings={createSignalValueViewSettings(entity)} value={liveValues[entity.Id]} />
           </DataCell>
         {/if}
@@ -346,13 +346,11 @@ entitiesRequested
     {/each}
 
     {#if !loading && entities.length === 0}
-      <div class="flex flex-col items-center gap-2 py-10">
-        <span class="material-symbols-rounded select-none text-[24px] text-ink-tertiary">search_off</span>
-        <div class="text-cell text-ink-secondary">Keine {meta.plural} für diese Filter</div>
+      <div class="empty">
+        <span class="material-symbols-rounded empty-icon">search_off</span>
+        <div class="empty-text">Keine {meta.plural} für diese Filter</div>
         {#if filterString}
-          <button type="button" class="cursor-pointer text-meta text-primary hover:underline" onclick={() => resetFilter()}>
-            Filter zurücksetzen
-          </button>
+          <button type="button" class="reset-filter" onclick={() => resetFilter()}>Filter zurücksetzen</button>
         {/if}
       </div>
     {/if}
@@ -362,3 +360,106 @@ entitiesRequested
     {/snippet}
   </Table>
 </div>
+
+<style>
+.entity-table {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Column widths. The cells are rendered by HeaderCell/DataCell, so the classes
+   passed to them are global here; the row rules give every cell flex: 1. */
+.entity-table :global(.col-select) {
+  flex: none;
+  width: 46px;
+}
+
+.entity-table :global(.col-group) {
+  flex: none;
+  width: 200px;
+}
+
+.entity-table :global(.col-type) {
+  flex: none;
+  width: 110px;
+}
+
+.entity-table :global(.col-value) {
+  flex: none;
+  width: 120px;
+}
+
+.entity-table :global(.col-muted) {
+  color: var(--color-ink-secondary);
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.loading-track {
+  position: sticky;
+  top: 40px;
+  z-index: 1;
+  height: 2px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.loading-track.loading {
+  background-color: var(--color-primary-tint);
+}
+
+.loading-bar {
+  height: 100%;
+  width: 100%;
+  background-color: var(--color-primary);
+  transform-origin: 0% 50%;
+  animation: indeterminate 1s infinite linear;
+}
+
+@keyframes indeterminate {
+  0% {
+    transform: translateX(0) scaleX(0);
+  }
+  40% {
+    transform: translateX(0) scaleX(0.4);
+  }
+  100% {
+    transform: translateX(100%) scaleX(0.5);
+  }
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding-block: 40px;
+}
+
+.empty-icon {
+  color: var(--color-ink-tertiary);
+}
+
+.empty-text {
+  font-size: var(--text-cell);
+  color: var(--color-ink-secondary);
+}
+
+.reset-filter {
+  font-size: var(--text-meta);
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .reset-filter:hover {
+    text-decoration-line: underline;
+  }
+}
+</style>

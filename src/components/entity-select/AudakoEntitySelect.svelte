@@ -37,7 +37,7 @@ function onSelectedEntities(entities: unknown) {
 }
 </script>
 
-<div class="w-full h-full overflow-hidden">
+<div class="entity-select">
   {#if isValidEntityType}
     <EntitySelect
       {entityType}
@@ -47,3 +47,11 @@ function onSelectedEntities(entities: unknown) {
     />
   {/if}
 </div>
+
+<style>
+.entity-select {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+</style>

@@ -55,19 +55,12 @@ onDestroy(() => {
 });
 </script>
 
-<div class="mb-[10px] flex items-center gap-3">
-  <div class="flex-none text-section text-ink">Einträge gesamt: {totalCount}</div>
+<div class="toolbar">
+  <div class="total">Einträge gesamt: {totalCount}</div>
 
-  <div
-    class="flex h-10 min-w-[120px] flex-1 items-center rounded-control border border-line pl-3 pr-[10px] transition-colors focus-within:border-primary"
-  >
-    <input
-      placeholder="Filter"
-      class="w-full bg-transparent text-cell text-ink outline-none placeholder:text-ink-tertiary"
-      bind:this={filterInput}
-      bind:value={filter}
-    />
-    <span class="material-symbols-rounded ml-2 select-none text-[18px] text-ink-tertiary">search</span>
+  <div class="filter">
+    <input placeholder="Filter" bind:this={filterInput} bind:value={filter} />
+    <span class="material-symbols-rounded">search</span>
   </div>
 
   {@render filterControl?.()}
@@ -81,3 +74,51 @@ onDestroy(() => {
     onclick={() => toggleSubGroups()}
   />
 </div>
+
+<style>
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.total {
+  flex: none;
+  font-size: var(--text-section);
+  color: var(--color-ink);
+}
+
+.filter {
+  display: flex;
+  height: 40px;
+  min-width: 120px;
+  flex: 1;
+  align-items: center;
+  padding-left: 12px;
+  padding-right: 10px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-control);
+  transition: var(--transition-colors);
+}
+
+.filter:focus-within {
+  border-color: var(--color-primary);
+}
+
+.filter input {
+  width: 100%;
+  font-size: var(--text-cell);
+  color: var(--color-ink);
+  outline: none;
+}
+
+.filter input::placeholder {
+  color: var(--color-ink-tertiary);
+}
+
+.filter .material-symbols-rounded {
+  margin-left: 8px;
+  color: var(--color-ink-tertiary);
+}
+</style>

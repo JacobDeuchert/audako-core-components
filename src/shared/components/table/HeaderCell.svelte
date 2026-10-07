@@ -39,20 +39,43 @@ function toggleSort(): void {
 onDestroy(sortUnsubscribe);
 </script>
 
-<div
-  class="flex h-full items-center gap-1 {sortable ? 'cursor-pointer' : 'cursor-default'} {container$class}"
-  onclick={() => toggleSort()}
->
-  <div class="min-w-0 truncate">
+<div class="header-cell {container$class}" class:sortable onclick={() => toggleSort()}>
+  <div class="label">
     {@render children?.()}
   </div>
 
   {#if sortable}
-    <span
-      class="material-symbols-rounded text-[14px] transition-opacity"
-      class:opacity-0={sortDirection == null}
-    >
+    <span class="material-symbols-rounded sort-icon" class:unsorted={sortDirection == null}>
       {sortDirection === 'desc' ? 'arrow_downward' : 'arrow_upward'}
     </span>
   {/if}
 </div>
+
+<style>
+.header-cell {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  gap: 4px;
+  cursor: default;
+}
+
+.header-cell.sortable {
+  cursor: pointer;
+}
+
+.label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sort-icon {
+  transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sort-icon.unsorted {
+  opacity: 0;
+}
+</style>

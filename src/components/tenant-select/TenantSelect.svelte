@@ -167,88 +167,68 @@ onDestroy(() => {
 
 <!-- Layout and row look follow the main UI's adk-tenant-browser and the row
      variant of adk-tenant-card. -->
-<div class="flex h-full min-h-0 w-full flex-col gap-[14px] overflow-hidden px-5 py-[14px]">
-  <div class="flex flex-col gap-[14px]">
-    <div class="flex items-center gap-3">
+<div class="tenant-select">
+  <div class="head">
+    <div class="title-row">
       {#if allowBack}
         <IconButton size={36} iconSize={20} icon="arrow_back" onclick={() => onback?.()} />
       {/if}
 
-      <div class="flex-none text-section font-semibold text-ink">Mandant auswählen</div>
+      <div class="title">Mandant auswählen</div>
 
-      <div
-        class="ml-auto flex h-10 min-w-0 max-w-[420px] flex-1 items-center gap-2 rounded-[10px] border border-line bg-surface pl-3 pr-[6px] transition-colors focus-within:border-primary"
-      >
-        <span class="material-symbols-rounded select-none text-[20px] text-ink-tertiary">search</span>
-        <input
-          placeholder="Mandant suchen"
-          class="w-full bg-transparent text-cell text-ink outline-none placeholder:text-ink-tertiary"
-          bind:value={filter}
-        />
+      <div class="search">
+        <span class="material-symbols-rounded search-icon">search</span>
+        <input placeholder="Mandant suchen" bind:value={filter} />
         {#if filter}
           <IconButton size={28} iconSize={18} icon="close" title="Suche leeren" onclick={() => (filter = '')} />
         {/if}
       </div>
     </div>
 
-    <div class="flex min-h-6 min-w-0 flex-wrap items-center text-[15px] text-ink">
+    <div class="path">
       {#if !searching}
         {#each tenantPath as tenant, i}
           {#if i < tenantPath.length - 1}
-            <button
-              type="button"
-              class="cursor-pointer whitespace-nowrap opacity-70 hover:underline focus-visible:underline"
-              onclick={() => selectTenantInPath(tenant)}
-            >
+            <button type="button" class="path-link" onclick={() => selectTenantInPath(tenant)}>
               {tenant.Name}
             </button>
-            <span class="material-symbols-rounded select-none text-[18px] opacity-70">chevron_right</span>
+            <span class="material-symbols-rounded dimmed">chevron_right</span>
           {:else}
-            <span class="truncate font-medium">{tenant.Name}</span>
+            <span class="path-current">{tenant.Name}</span>
           {/if}
         {/each}
       {:else}
-        <span class="opacity-70">Suchergebnisse</span>
+        <span class="dimmed">Suchergebnisse</span>
       {/if}
     </div>
   </div>
 
   <!-- The padding gives the hover shadows room inside the scroll clip; the
        negative margin keeps the rows aligned with the header. -->
-  <div class="-mx-3 -mb-3 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto px-3 pb-3 pt-[2px]">
+  <div class="list">
     {#each tenants as tenant (tenant.Id)}
       {@const disabled = tenant.Enabled === false || tenant.Locked}
       {@const subTenants = subTenantCounts[tenant.Id] ?? 0}
-      <div
-        class="tenant-row flex flex-none items-center gap-3 rounded-[12px] border border-line bg-surface p-2"
-        class:cursor-pointer={!disabled}
-        class:tenant-row--disabled={disabled}
-        onclick={() => !disabled && onRowClick(tenant)}
-      >
-        <span class="grid h-9 w-9 flex-none place-items-center rounded-[10px] bg-primary-tint-subtle text-primary">
-          <span class="material-symbols-rounded select-none text-[18px]">
+      <div class="tenant-row" class:tenant-row--disabled={disabled} onclick={() => !disabled && onRowClick(tenant)}>
+        <span class="tenant-tile">
+          <span class="material-symbols-rounded">
             {toMaterialLigature(resolveTenantIcon(tenant))}
           </span>
         </span>
 
-        <div class="min-w-0 flex-1">
-          <div class="truncate text-[14px] font-semibold text-ink">{tenant?.Name}</div>
+        <div class="tenant-text">
+          <div class="tenant-name">{tenant?.Name}</div>
           {#if tenant.Description}
-            <div class="mt-px truncate text-[12px] text-ink-secondary">{tenant.Description}</div>
+            <div class="tenant-description">{tenant.Description}</div>
           {/if}
         </div>
 
         {#if disabled}
-          <span
-            class="material-symbols-rounded flex-none select-none text-[20px] text-ink-secondary"
-            title="Mandant ist deaktiviert"
-          >
-            lock
-          </span>
+          <span class="material-symbols-rounded secondary" title="Mandant ist deaktiviert">lock</span>
         {/if}
 
         {#if subTenants > 0}
-          <span class="flex-none whitespace-nowrap text-[12px] text-ink-secondary">{subTenantLabel(subTenants)}</span>
+          <span class="sub-tenants secondary">{subTenantLabel(subTenants)}</span>
         {/if}
 
         {#if subTenants > 0 && !disabled}
@@ -264,20 +244,146 @@ onDestroy(() => {
     {/each}
 
     {#if tenants.length === 0}
-      <div class="flex flex-col items-center gap-2 py-10">
-        <span class="material-symbols-rounded select-none text-[24px] text-ink-tertiary">search_off</span>
-        <div class="text-cell text-ink-secondary">Keine Mandanten gefunden</div>
+      <div class="empty">
+        <span class="material-symbols-rounded empty-icon">search_off</span>
+        <div class="empty-text">Keine Mandanten gefunden</div>
       </div>
     {/if}
   </div>
 </div>
 
 <style>
+.tenant-select {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  width: 100%;
+  flex-direction: column;
+  gap: 14px;
+  overflow: hidden;
+  padding: 14px 20px;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.title {
+  flex: none;
+  font-size: var(--text-section);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.search {
+  display: flex;
+  height: 40px;
+  min-width: 0;
+  max-width: 420px;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  padding-left: 12px;
+  padding-right: 6px;
+  border: 1px solid var(--color-line);
+  border-radius: 10px;
+  background-color: var(--color-surface);
+  transition: var(--transition-colors);
+}
+
+.search:focus-within {
+  border-color: var(--color-primary);
+}
+
+.search-icon {
+  color: var(--color-ink-tertiary);
+}
+
+.search input {
+  width: 100%;
+  font-size: var(--text-cell);
+  color: var(--color-ink);
+  outline: none;
+}
+
+.search input::placeholder {
+  color: var(--color-ink-tertiary);
+}
+
+.path {
+  display: flex;
+  min-height: 24px;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 15px;
+  color: var(--color-ink);
+}
+
+.dimmed {
+  opacity: 0.7;
+}
+
+.path-link {
+  white-space: nowrap;
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+.path-link:focus-visible {
+  text-decoration-line: underline;
+}
+
+@media (hover: hover) {
+  .path-link:hover {
+    text-decoration-line: underline;
+  }
+}
+
+.path-current {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.list {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  margin: 0 -12px -12px;
+  padding: 2px 12px 12px;
+}
+
 /* Same hover lift as the UI's .tenant-row. */
 .tenant-row {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border: 1px solid var(--color-line);
+  border-radius: 12px;
+  background-color: var(--color-surface);
   transition:
     border-color 0.15s,
     box-shadow 0.15s;
+}
+
+.tenant-row:not(.tenant-row--disabled) {
+  cursor: pointer;
 }
 
 .tenant-row:not(.tenant-row--disabled):hover {
@@ -287,5 +393,67 @@ onDestroy(() => {
 
 .tenant-row--disabled {
   opacity: 0.65;
+}
+
+.tenant-tile {
+  display: grid;
+  height: 36px;
+  width: 36px;
+  flex: none;
+  place-items: center;
+  border-radius: 10px;
+  background-color: var(--color-primary-tint-subtle);
+  color: var(--color-primary);
+}
+
+.tenant-text {
+  min-width: 0;
+  flex: 1;
+}
+
+.tenant-name,
+.tenant-description {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tenant-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.tenant-description {
+  margin-top: 1px;
+  font-size: 12px;
+  color: var(--color-ink-secondary);
+}
+
+.secondary {
+  flex: none;
+  color: var(--color-ink-secondary);
+}
+
+.sub-tenants {
+  white-space: nowrap;
+  font-size: 12px;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding-block: 40px;
+}
+
+.empty-icon {
+  color: var(--color-ink-tertiary);
+}
+
+.empty-text {
+  font-size: var(--text-cell);
+  color: var(--color-ink-secondary);
 }
 </style>

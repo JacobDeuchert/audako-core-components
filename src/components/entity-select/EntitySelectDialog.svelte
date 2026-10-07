@@ -52,17 +52,12 @@ function onWindowKeyDown(event: KeyboardEvent) {
   <!-- The backdrop is a mouse-only affordance; Escape covers the keyboard. -->
   <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
   <div
-    class="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50"
+    class="backdrop"
     transition:fade={{ duration: 125 }}
     onclick={(event) => event.target === event.currentTarget && cancel()}
   >
-    <div
-      role="dialog"
-      aria-modal="true"
-      class="flex h-[660px] max-h-[90vh] w-[1280px] max-w-[95vw] overflow-hidden rounded-dialog bg-surface shadow-dialog"
-      transition:scale={{ duration: 125, start: 0.95 }}
-    >
-      <div class="h-full w-full">
+    <div role="dialog" aria-modal="true" class="dialog" transition:scale={{ duration: 125, start: 0.95 }}>
+      <div class="content">
         <EntitySelect
           {selectMultiple}
           {entityType}
@@ -74,3 +69,32 @@ function onWindowKeyDown(event: KeyboardEvent) {
     </div>
   </div>
 {/if}
+
+<style>
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.dialog {
+  display: flex;
+  height: 660px;
+  max-height: 90vh;
+  width: 1280px;
+  max-width: 95vw;
+  overflow: hidden;
+  border-radius: var(--radius-dialog);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-dialog);
+}
+
+.content {
+  height: 100%;
+  width: 100%;
+}
+</style>

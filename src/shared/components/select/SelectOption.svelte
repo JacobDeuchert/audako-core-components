@@ -81,12 +81,9 @@ function setDisplayValue() {
 
 </script>
 
-<div
-  class="relative flex cursor-pointer items-center gap-[10px] rounded-control px-[10px] py-2 text-cell hover:bg-neutral-hover {isSelected && !multiple ? 'bg-neutral-hover' : ''}"
-  onclick={onClickOption}
->
+<div class="option" class:selected={isSelected && !multiple} onclick={onClickOption}>
   {#if isSelected && !multiple}
-    <div class="absolute left-0 top-[50%] h-[20px] w-[3px] translate-y-[-50%] rounded-full bg-primary"></div>
+    <div class="marker"></div>
   {/if}
   {#if multiple}
     <Checkbox readonly checked={isSelected} />
@@ -95,4 +92,38 @@ function setDisplayValue() {
     {@render children?.()}
   </span>
 </div>
+
+<style>
+.option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--radius-control);
+  font-size: var(--text-cell);
+  cursor: pointer;
+}
+
+.option.selected {
+  background-color: var(--color-neutral-hover);
+}
+
+@media (hover: hover) {
+  .option:hover {
+    background-color: var(--color-neutral-hover);
+  }
+}
+
+.marker {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 20px;
+  width: 3px;
+  translate: 0 -50%;
+  border-radius: 9999px;
+  background-color: var(--color-primary);
+}
+</style>
 

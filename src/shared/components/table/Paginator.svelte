@@ -52,13 +52,13 @@ function publishPageEvent(): void {
 }
 </script>
 
-<div class="flex h-[44px] w-full items-center justify-end gap-[10px] text-[13px] text-ink-secondary">
+<div class="paginator">
   <div>Zeilen</div>
 
-  <div class="w-[70px]">
+  <div class="page-size">
     <Select
-      container$class="!h-[30px]"
-      textfield$class="text-[13px] text-ink-secondary"
+      container$class="page-size-select"
+      textfield$class="page-size-input"
       bind:value={pageSize}
       onvalueChanged={(value) => changePageSize(value)}
     >
@@ -68,21 +68,13 @@ function publishPageEvent(): void {
     </Select>
   </div>
 
-  <div class="whitespace-nowrap">{firstShown}&nbsp;-&nbsp;{lastShown} / {totalCount}</div>
+  <div class="range">{firstShown}&nbsp;-&nbsp;{lastShown} / {totalCount}</div>
 
   <!-- One bordered group with hairline dividers, as in the production table. -->
-  <div class="flex h-[30px] items-stretch overflow-hidden rounded-control border border-line">
+  <div class="pager">
     {#snippet pagerButton(icon: string, disabled: boolean, onclick: () => void)}
-      <div
-        class="flex w-[34px] items-center justify-center border-l border-row-line first:border-l-0 transition-colors"
-        class:cursor-pointer={!disabled}
-        class:cursor-default={disabled}
-        class:text-ink-secondary={!disabled}
-        class:text-ink-disabled={disabled}
-        class:hover:bg-neutral-hover={!disabled}
-        onclick={() => !disabled && onclick()}
-      >
-        <span class="material-symbols-rounded select-none text-[18px]">{icon}</span>
+      <div class="pager-button" class:disabled onclick={() => !disabled && onclick()}>
+        <span class="material-symbols-rounded">{icon}</span>
       </div>
     {/snippet}
 
@@ -92,3 +84,69 @@ function publishPageEvent(): void {
     {@render pagerButton('last_page', onLastPage, () => goToPage(lastPageIndex))}
   </div>
 </div>
+
+<style>
+.paginator {
+  display: flex;
+  height: 44px;
+  width: 100%;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--color-ink-secondary);
+}
+
+.page-size {
+  width: 70px;
+}
+
+.page-size :global(.page-size-select) {
+  height: 30px;
+}
+
+.page-size :global(.page-size-input) {
+  font-size: 13px;
+  color: var(--color-ink-secondary);
+}
+
+.range {
+  white-space: nowrap;
+}
+
+.pager {
+  display: flex;
+  height: 30px;
+  align-items: stretch;
+  overflow: hidden;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-control);
+}
+
+.pager-button {
+  display: flex;
+  width: 34px;
+  align-items: center;
+  justify-content: center;
+  border-left-width: 1px;
+  border-color: var(--color-row-line);
+  color: var(--color-ink-secondary);
+  cursor: pointer;
+  transition: var(--transition-colors);
+}
+
+.pager-button:first-child {
+  border-left-width: 0;
+}
+
+.pager-button.disabled {
+  color: var(--color-ink-disabled);
+  cursor: default;
+}
+
+@media (hover: hover) {
+  .pager-button:not(.disabled):hover {
+    background-color: var(--color-neutral-hover);
+  }
+}
+</style>

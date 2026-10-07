@@ -1,10 +1,8 @@
-// Tailwind is a build-time tool: its output lands in the document, which an
-// open shadow root cannot see. So the compiled sheet is imported as a string
-// and adopted into each custom element's shadow root instead.
-//
-// Tailwind 4 emits its theme variables on `:root, :host`, so the `--color-*`
-// custom properties resolve correctly once the sheet is adopted.
-import tailwindCss from './tailwind.css?inline';
+// Component styles are scoped <style> blocks that Svelte injects into the root
+// a component renders in, shadow roots included. What remains here is the
+// shared base sheet (tokens, reset, icon font), adopted into each shadow root
+// the components own.
+import baseCss from './base.css?inline';
 
 let sharedSheet: CSSStyleSheet | null = null;
 let documentRulesHoisted = false;
@@ -21,7 +19,7 @@ function getSharedSheet(): CSSStyleSheet | null {
 
   if (!sharedSheet) {
     sharedSheet = new CSSStyleSheet();
-    sharedSheet.replaceSync(tailwindCss);
+    sharedSheet.replaceSync(baseCss);
   }
 
   // One sheet instance shared by every shadow root: `adoptedStyleSheets` is
@@ -29,36 +27,29 @@ function getSharedSheet(): CSSStyleSheet | null {
   return sharedSheet;
 }
 
-// Browsers ignore `@property` and `@font-face` inside shadow roots. Tailwind 4
-// relies on `@property` for the initial values of its `--tw-*` variables, so
-// without them every border, shadow, ring and transform utility resolves to an
-// invalid value, and the icon font never loads. Both kinds of rule only
-// register something globally, so they are copied to the document once.
+// Browsers ignore `@font-face` inside shadow roots, so the icon font would
+// never load. Font faces only register something globally, so they are copied
+// to the document once.
 function hoistDocumentRules(): void {
   if (documentRulesHoisted || typeof document === 'undefined') {
     return;
   }
   documentRulesHoisted = true;
 
-  const rules: string[] = [];
-  const collect = (list: CSSRuleList) => {
-    for (const rule of Array.from(list)) {
-      if (rule instanceof CSSFontFaceRule || rule.cssText.startsWith('@property')) {
-        rules.push(rule.cssText);
-      } else if ('cssRules' in rule) {
-        collect((rule as CSSGroupingRule).cssRules);
-      }
-    }
-  };
+  const collect = (list: CSSRuleList) =>
+    Array.from(list)
+      .filter((rule) => rule instanceof CSSFontFaceRule)
+      .map((rule) => rule.cssText);
 
+  let rules: string[];
   const source = getSharedSheet();
   if (source) {
-    collect(source.cssRules);
+    rules = collect(source.cssRules);
   } else {
     const parsed = document.createElement('style');
-    parsed.textContent = tailwindCss;
+    parsed.textContent = baseCss;
     document.head.appendChild(parsed);
-    collect(parsed.sheet.cssRules);
+    rules = collect(parsed.sheet.cssRules);
     parsed.remove();
   }
 
@@ -91,8 +82,25 @@ export function adoptShadowStyles(root: ShadowRoot | null | undefined): void {
   if (!root.querySelector('style[data-audako-styles]')) {
     const style = document.createElement('style');
     style.setAttribute('data-audako-styles', '');
-    style.textContent = tailwindCss;
+    style.textContent = baseCss;
     root.prepend(style);
+  }
+}
+
+/**
+ * Copies the component styles Svelte injected into the root of `source` over
+ * to `target`. Svelte only injects them where a component first renders, so
+ * markup moved into another root (popups) would otherwise lose them.
+ */
+export function shareComponentStyles(source: Node, target: ShadowRoot): void {
+  const root = source.getRootNode();
+  const container = root instanceof ShadowRoot ? root : document.head;
+
+  // Svelte names each injected <style> after the component's scoping hash.
+  for (const style of Array.from(container.querySelectorAll<HTMLStyleElement>('style[id^="svelte-"]'))) {
+    if (!target.getElementById(style.id)) {
+      target.appendChild(style.cloneNode(true));
+    }
   }
 }
 
@@ -120,7 +128,7 @@ export function getPopupRoot(): ShadowRoot {
 
 /**
  * `extend` hook for `<svelte:options customElement={{ extend: withShadowStyles }} />`.
- * Adopts the Tailwind sheet into the shadow root as the element connects.
+ * Adopts the base sheet into the shadow root as the element connects.
  */
 export function withShadowStyles<T extends new (...args: any[]) => HTMLElement>(CustomElementClass: T): T {
   return class extends CustomElementClass {

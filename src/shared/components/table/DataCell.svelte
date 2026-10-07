@@ -10,6 +10,12 @@ let { container$class = '', children }: Props = $props();
 </script>
 
 <!-- The row draws the separator; the cell only clips its content. -->
-<div class="overflow-hidden {container$class}">
+<div class="data-cell {container$class}">
   {@render children?.()}
 </div>
+
+<style>
+.data-cell {
+  overflow: hidden;
+}
+</style>

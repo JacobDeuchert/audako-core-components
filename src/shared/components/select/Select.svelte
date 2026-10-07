@@ -96,10 +96,7 @@ onDestroy(() => {
 });
 </script>
 
-<div
-  class="relative flex w-full cursor-pointer items-center rounded-control border border-line px-2 text-cell text-ink transition-colors focus-within:border-primary {container$class}"
-  onclick={openMenu}
->
+<div class="select {container$class}" onclick={openMenu}>
   {@render prefix?.()}
   <input
     {disabled}
@@ -107,14 +104,12 @@ onDestroy(() => {
     readonly
     bind:value={displayedValue}
     bind:this={textfield}
-    class="w-full outline-none cursor-pointer {textfield$class}"
+    class="input {textfield$class}"
   />
-  <div class="material-symbols-rounded pointer-events-none select-none text-[16px] text-ink-secondary {suffixIcon$class}">
-    arrow_drop_down
-  </div>
+  <div class="material-symbols-rounded suffix {suffixIcon$class}">arrow_drop_down</div>
 </div>
 
-<PopupContainer sizeToAnchor={true} popupClass="max-h-[400px] " anchorElement={textfield} bind:this={popupContainer}>
+<PopupContainer sizeToAnchor={true} anchorElement={textfield} bind:this={popupContainer}>
   {@render children?.()}
 
   {#each options as option}
@@ -123,3 +118,34 @@ onDestroy(() => {
     </SelectOption>
   {/each}
 </PopupContainer>
+
+<style>
+.select {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  padding-inline: 8px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-control);
+  font-size: var(--text-cell);
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: var(--transition-colors);
+}
+
+.select:focus-within {
+  border-color: var(--color-primary);
+}
+
+.input {
+  width: 100%;
+  outline: none;
+  cursor: pointer;
+}
+
+.suffix {
+  color: var(--color-ink-secondary);
+  pointer-events: none;
+}
+</style>

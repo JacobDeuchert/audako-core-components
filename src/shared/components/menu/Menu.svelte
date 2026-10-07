@@ -44,9 +44,17 @@ export function closeMenu(): void {
   {preferedVerticalAlignment}
   position={positionOffset}
 >
-  <div class="bg-white rounded shadow-lg {container$class}">
+  <div class="menu {container$class}">
     {#each items as item}
       <MenuItemComponent label={item.label} icon={item.icon} onclick={(e) => item.action(e)} />
     {/each}
   </div>
 </PopupContainer>
+
+<style>
+.menu {
+  border-radius: 4px;
+  background-color: #ffffff;
+  box-shadow: var(--shadow-lg);
+}
+</style>

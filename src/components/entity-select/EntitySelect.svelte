@@ -107,16 +107,16 @@ onDestroy(() => {
 });
 </script>
 
-<div class="flex h-full max-h-full min-h-0 w-full flex-col overflow-hidden bg-surface">
-  <div class="flex flex-none items-center gap-3 border-b border-line py-3 pl-[18px] pr-3">
-    <div class="flex h-10 w-10 flex-none items-center justify-center rounded-dialog bg-primary-tint">
-      <span class="material-symbols-rounded select-none text-[20px] text-primary">{meta.icon}</span>
+<div class="entity-select">
+  <div class="header">
+    <div class="header-tile">
+      <span class="material-symbols-rounded header-icon">{meta.icon}</span>
     </div>
-    <div class="flex-1 truncate text-dialog-title text-ink">{meta.singular} auswählen</div>
+    <div class="title">{meta.singular} auswählen</div>
     <IconButton size={36} iconSize={20} icon="close" onclick={() => onclose?.()} />
   </div>
 
-  <div class="flex min-h-0 flex-1 overflow-hidden">
+  <div class="body">
     {#if inTenantSelect}
       <TenantSelect
         allowBack={!!selectedTenant}
@@ -126,10 +126,10 @@ onDestroy(() => {
     {:else}
       <EntitySelectSidebar {selectMultiple} {entityType} {selectedTenant} onchangeTenant={() => onTenantChange()} />
 
-      <div class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden px-5 py-[14px]">
+      <div class="main">
         <EntitySelectToolbar {entityType} {totalCount} />
 
-        <div class="min-h-0 flex-1">
+        <div class="table">
           <EntitySelectTable {selectMultiple} {entityType} {additionalFilter} bind:totalCount />
         </div>
       </div>
@@ -137,19 +137,119 @@ onDestroy(() => {
   </div>
 
   {#if selectMultiple}
-    <div class="flex flex-none items-center gap-3 border-t border-line px-[18px] py-3">
-      <div class="flex-1 text-count text-ink-secondary">
+    <div class="footer">
+      <div class="selection-count">
         {selectionCount} Ausgewählt
       </div>
 
-      <button
-        type="button"
-        class="flex h-9 cursor-pointer items-center gap-2 rounded-button bg-primary px-4 text-cell font-medium text-on-primary transition-colors hover:bg-primary-hover"
-        onclick={() => acceptSelection()}
-      >
-        <span class="material-symbols-rounded select-none text-[18px]">check</span>
+      <button type="button" class="accept" onclick={() => acceptSelection()}>
+        <span class="material-symbols-rounded">check</span>
         Übernehmen
       </button>
     </div>
   {/if}
 </div>
+
+<style>
+.entity-select {
+  display: flex;
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+  width: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: var(--color-surface);
+}
+
+.header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 12px 12px 18px;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.header-tile {
+  display: flex;
+  height: 40px;
+  width: 40px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-dialog);
+  background-color: var(--color-primary-tint);
+}
+
+.header-icon {
+  color: var(--color-primary);
+}
+
+.title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-dialog-title);
+  color: var(--color-ink);
+}
+
+.body {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.main {
+  display: flex;
+  min-height: 0;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 14px 20px;
+}
+
+.table {
+  min-height: 0;
+  flex: 1;
+}
+
+.footer {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  border-top: 1px solid var(--color-line);
+}
+
+.selection-count {
+  flex: 1;
+  font-size: var(--text-count);
+  color: var(--color-ink-secondary);
+}
+
+.accept {
+  display: flex;
+  height: 36px;
+  align-items: center;
+  gap: 8px;
+  padding-inline: 16px;
+  border-radius: var(--radius-button);
+  background-color: var(--color-primary);
+  font-size: var(--text-cell);
+  font-weight: 500;
+  color: var(--color-on-primary);
+  cursor: pointer;
+  transition: var(--transition-colors);
+}
+
+@media (hover: hover) {
+  .accept:hover {
+    background-color: var(--color-primary-hover);
+  }
+}
+</style>

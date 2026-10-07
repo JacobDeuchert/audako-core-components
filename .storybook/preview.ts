@@ -7,10 +7,10 @@ import { completeLogin, createAccessTokenGetter, hasSession, logout, startLogin,
 import { loadHttpConfig, recentSystems, resolveSystem, selectSystem } from './system';
 import { CONNECT_EVENTS, type ConnectState, type ConnectStatus } from './connect';
 import { registerCustomElements } from '../src/main';
-// Stories render plain Svelte components into the document, so the Tailwind
-// sheet is loaded globally here. Custom elements adopt it into their shadow
-// roots separately via withShadowStyles.
-import '../src/styles/tailwind.css';
+// Stories render plain Svelte components into the document, so the base
+// sheet (tokens, reset, icon font) is loaded globally here. Custom elements
+// adopt it into their shadow roots separately via withShadowStyles.
+import '../src/styles/base.css';
 
 // Pick a system with ?system=<url> or the audako system tool in the toolbar;
 // its config is loaded from the system itself (see system.ts) and the

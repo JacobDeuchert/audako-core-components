@@ -37,27 +37,64 @@ function onClick(): void {
      exact box (2px border, 3px radius, blue fill, `check`/`remove` glyph) that
      no browser's default control renders, and the wrapper owns the click so
      `checked` stays the single source of truth. -->
-<div
-  class="flex items-center {readonly ? 'cursor-default' : 'cursor-pointer'} {container$class}"
-  onclick={() => onClick()}
->
-  <div
-    class="flex shrink-0 items-center justify-center rounded-[3px] transition-colors"
-    class:border-2={!filled}
-    class:border-checkbox-border={!filled && !readonly}
-    class:border-checkbox-border-disabled={!filled && readonly}
-    class:bg-select={filled && !readonly}
-    class:bg-ink-disabled={filled && readonly}
-    style="height: {size}px; width: {size}px;"
-  >
+<div class="checkbox {container$class}" class:readonly onclick={() => onClick()}>
+  <div class="box" class:filled style="height: {size}px; width: {size}px;">
     {#if filled}
-      <span class="material-symbols-rounded text-on-primary" style="font-size: {size - 2}px;">
+      <span class="material-symbols-rounded glyph" style="font-size: {size - 2}px;">
         {showIndeterminate ? 'remove' : 'check'}
       </span>
     {/if}
   </div>
 
   {#if label}
-    <div class="ml-2 text-cell text-ink">{label}</div>
+    <div class="label">{label}</div>
   {/if}
 </div>
+
+<style>
+.checkbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.checkbox.readonly {
+  cursor: default;
+}
+
+.box {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  transition: var(--transition-colors);
+}
+
+.box:not(.filled) {
+  border-width: 2px;
+  border-color: var(--color-checkbox-border);
+}
+
+.readonly .box:not(.filled) {
+  border-color: var(--color-checkbox-border-disabled);
+}
+
+.box.filled {
+  background-color: var(--color-select);
+}
+
+.readonly .box.filled {
+  background-color: var(--color-ink-disabled);
+}
+
+.glyph {
+  color: var(--color-on-primary);
+}
+
+.label {
+  margin-left: 8px;
+  font-size: var(--text-cell);
+  color: var(--color-ink);
+}
+</style>
