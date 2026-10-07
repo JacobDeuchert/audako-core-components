@@ -136,22 +136,12 @@ onDestroy(() => {
     {/if}
   </div>
 
-  <div class="flex flex-none items-center gap-3 border-t border-line px-[18px] py-3">
-    <div class="flex-1 text-count text-ink-secondary">
-      {#if selectMultiple}
+  {#if selectMultiple}
+    <div class="flex flex-none items-center gap-3 border-t border-line px-[18px] py-3">
+      <div class="flex-1 text-count text-ink-secondary">
         {selectionCount} Ausgewählt
-      {/if}
-    </div>
+      </div>
 
-    <button
-      type="button"
-      class="h-9 cursor-pointer rounded-button border border-line px-4 text-cell font-medium text-ink transition-colors hover:bg-neutral-hover"
-      onclick={() => onclose?.()}
-    >
-      Abbrechen
-    </button>
-
-    {#if selectMultiple}
       <button
         type="button"
         class="flex h-9 cursor-pointer items-center gap-2 rounded-button bg-primary px-4 text-cell font-medium text-on-primary transition-colors hover:bg-primary-hover"
@@ -160,6 +150,6 @@ onDestroy(() => {
         <span class="material-symbols-rounded select-none text-[18px]">check</span>
         Übernehmen
       </button>
-    {/if}
-  </div>
+    </div>
+  {/if}
 </div>

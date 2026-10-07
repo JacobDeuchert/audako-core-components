@@ -46,7 +46,7 @@ export class EntitySelectDialogService {
           onselectedEntities: (entities: T | T[]) => {
             finish(Array.isArray(entities) ? entities : [entities].filter((entity) => entity != null));
           },
-          // Cancelling (close button, Abbrechen, Escape, backdrop) has to settle
+          // Cancelling (close button, Escape, backdrop) has to settle
           // the promise as well, otherwise the caller waits forever.
           oncancel: () => finish([]),
         },

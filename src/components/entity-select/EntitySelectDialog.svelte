@@ -11,8 +11,8 @@ interface Props {
   selectMultiple?: boolean;
   additionalFilter?: Record<string, any>;
   onselectedEntities?: (entities: Partial<ConfigurationEntity> | Partial<ConfigurationEntity>[]) => void;
-  // Fired when the dialog closes without a selection (close button, Abbrechen,
-  // Escape or a click on the backdrop).
+  // Fired when the dialog closes without a selection (close button, Escape or
+  // a click on the backdrop).
   oncancel?: () => void;
 }
 
