@@ -98,7 +98,7 @@ onDestroy(() => {
 });
 </script>
 
-<div class="select {container$class}" onclick={openMenu} bind:this={field}>
+<div class="select {container$class}" part="select" onclick={openMenu} bind:this={field}>
   {@render prefix?.()}
   <input
     {disabled}

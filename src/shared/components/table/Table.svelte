@@ -28,7 +28,7 @@ onDestroy(sortUnsubscribe);
 <div class="table">
   <!-- The scroll container carries the card border: the header row sticks to
        its top edge, so the rounded corner must clip the rows, not the page. -->
-  <div class="scroll {container$class}">
+  <div class="scroll {container$class}" part="table">
     {@render children?.()}
   </div>
 

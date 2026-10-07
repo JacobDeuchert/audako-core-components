@@ -55,10 +55,10 @@ onDestroy(() => {
 });
 </script>
 
-<div class="toolbar">
+<div class="toolbar" part="toolbar">
   <div class="total">Einträge gesamt: {totalCount}</div>
 
-  <div class="filter">
+  <div class="filter" part="search-field">
     <input placeholder="Filter" bind:this={filterInput} bind:value={filter} />
     <span class="material-symbols-rounded">search</span>
   </div>

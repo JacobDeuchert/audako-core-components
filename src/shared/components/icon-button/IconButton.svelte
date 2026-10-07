@@ -46,6 +46,7 @@ function onClickButton(mouseEvent: MouseEvent): void {
 <div
   {title}
   class="icon-button {className}"
+  part="icon-button"
   class:primary={variant === 'primary'}
   class:disabled
   style="height: {absoluteSize}px; width: {absoluteSize}px;"

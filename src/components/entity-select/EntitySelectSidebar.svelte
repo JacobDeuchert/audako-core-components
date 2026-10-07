@@ -125,7 +125,7 @@ onDestroy(() => {
 });
 </script>
 
-<div class="sidebar">
+<div class="sidebar" part="sidebar">
   <div class="top">
     <div class="tenant-row">
       <button type="button" class="tenant" onclick={() => onchangeTenant?.()}>
@@ -142,7 +142,7 @@ onDestroy(() => {
       </button>
     </div>
 
-    <div class="search">
+    <div class="search" part="search-field">
       <input placeholder="Suche" bind:value={search} />
       <span class="material-symbols-rounded">search</span>
     </div>

@@ -75,7 +75,13 @@ function selectGroup(): void {
 <div>
   <!-- The transparent left border keeps labels from shifting when a node
        becomes active and gains its 3px accent bar. -->
-  <div class="node" class:leaf={children.length === 0} class:selected onclick={() => selectGroup()}>
+  <div
+    class="node"
+    class:leaf={children.length === 0}
+    class:selected
+    part="tree-node {selected ? 'tree-node-selected' : ''}"
+    onclick={() => selectGroup()}
+  >
     {#if children.length > 0}
       <span onclick={(event) => toggleExpanded(event)} class="material-symbols-rounded chevron">
         {expanded ? 'expand_more' : 'chevron_right'}

@@ -108,11 +108,11 @@ onDestroy(() => {
 </script>
 
 <div class="entity-select">
-  <div class="header">
+  <div class="header" part="header">
     <div class="header-tile">
       <span class="material-symbols-rounded header-icon">{meta.icon}</span>
     </div>
-    <div class="title">{meta.singular} auswählen</div>
+    <div class="title" part="title">{meta.singular} auswählen</div>
     <IconButton size={36} iconSize={20} icon="close" onclick={() => onclose?.()} />
   </div>
 
@@ -137,12 +137,12 @@ onDestroy(() => {
   </div>
 
   {#if selectMultiple}
-    <div class="footer">
+    <div class="footer" part="footer">
       <div class="selection-count">
         {selectionCount} Ausgewählt
       </div>
 
-      <button type="button" class="accept" onclick={() => acceptSelection()}>
+      <button type="button" class="accept" part="button-primary" onclick={() => acceptSelection()}>
         <span class="material-symbols-rounded">check</span>
         Übernehmen
       </button>

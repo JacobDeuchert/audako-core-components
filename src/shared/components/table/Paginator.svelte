@@ -52,7 +52,7 @@ function publishPageEvent(): void {
 }
 </script>
 
-<div class="paginator">
+<div class="paginator" part="paginator">
   <div>Zeilen</div>
 
   <div class="page-size">

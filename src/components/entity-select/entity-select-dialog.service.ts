@@ -34,7 +34,7 @@ export class EntitySelectDialogService {
 
       // The dialog lives outside any custom element, so it gets a shadow root
       // of its own: the component styles reach it, the host app's do not.
-      const { host, root } = createStyledShadowHost('data-audako-entity-select-dialog');
+      const { host, root } = createStyledShadowHost('audako-entity-select-dialog');
 
       const entitySelectDialog = mount(EntitySelectDialog, {
         target: root,

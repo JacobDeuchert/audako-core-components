@@ -25,6 +25,7 @@ function onClickRow(event: MouseEvent): void {
 
 <div
   class="audako-tablebody-flexrow {flexrow$class}"
+  part="row {active && !blocked ? 'row-active' : ''} {blocked ? 'row-blocked' : ''}"
   class:audako-tablebody-flexrow-active={active && !blocked}
   class:audako-tablebody-flexrow-blocked={blocked}
   onclick={(event) => onClickRow(event)}

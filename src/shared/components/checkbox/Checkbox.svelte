@@ -38,7 +38,7 @@ function onClick(): void {
      no browser's default control renders, and the wrapper owns the click so
      `checked` stays the single source of truth. -->
 <div class="checkbox {container$class}" class:readonly onclick={() => onClick()}>
-  <div class="box" class:filled style="height: {size}px; width: {size}px;">
+  <div class="box" class:filled part="checkbox {filled ? 'checkbox-checked' : ''}" style="height: {size}px; width: {size}px;">
     {#if filled}
       <span class="material-symbols-rounded glyph" style="font-size: {size - 2}px;">
         {showIndeterminate ? 'remove' : 'check'}

@@ -8,7 +8,7 @@ interface Props {
 let { children }: Props = $props();
 </script>
 
-<div class="audako-tableheader-flexrow">
+<div class="audako-tableheader-flexrow" part="header-row">
   {@render children?.()}
 </div>
 

@@ -11,7 +11,7 @@ interface Props {
 let { icon = null, label = null, onclick, children }: Props = $props();
 </script>
 
-<div onclick={(e) => onclick?.(e)} class="menu-item hover-highlight">
+<div onclick={(e) => onclick?.(e)} class="menu-item hover-highlight" part="menu-item">
   {#if icon}
     <div class="icon-wrapper">
       <span class="material-symbols-rounded icon">
@@ -47,16 +47,17 @@ let { icon = null, label = null, onclick, children }: Props = $props();
   flex-grow: 1;
 }
 
-  .hover-highlight:hover {
-  background: rgba(0, 0, 0, 0.1) !important;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
-  backdrop-filter: blur(19.2px) !important;
+/* No !important: inside a shadow root it would beat a host's ::part() rule. */
+.hover-highlight:hover {
+  background: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(19.2px);
 }
 
 .highlighted {
-  background: rgba(0, 0, 0, 0.1) !important;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
-  backdrop-filter: blur(19.2px) !important;
+  background: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(19.2px);
 }
 
 

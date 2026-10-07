@@ -106,12 +106,13 @@ export function shareComponentStyles(source: Node, target: ShadowRoot): void {
 
 /**
  * Creates a host element on `document.body` with a styled shadow root, for
- * content rendered outside any custom element (dialogs, popups). Remove the
+ * content rendered outside any custom element (dialogs, popups). The tag name
+ * is what hosts select for `::part()`, so it is public API. Remove the
  * returned host to tear it down.
  */
-export function createStyledShadowHost(name: string): { host: HTMLElement; root: ShadowRoot } {
-  const host = document.createElement('div');
-  host.setAttribute(name, '');
+export function createStyledShadowHost(tagName: string): { host: HTMLElement; root: ShadowRoot } {
+  // A valid custom element name takes a shadow root without being defined.
+  const host = document.createElement(tagName);
   const root = host.attachShadow({ mode: 'open' });
   adoptShadowStyles(root);
   document.body.appendChild(host);
@@ -121,7 +122,7 @@ export function createStyledShadowHost(name: string): { host: HTMLElement; root:
 /** Shared styled root that popups (select options, menus) are rendered into. */
 export function getPopupRoot(): ShadowRoot {
   if (!popupRoot?.host.isConnected) {
-    popupRoot = createStyledShadowHost('data-audako-popup-root').root;
+    popupRoot = createStyledShadowHost('audako-popup-layer').root;
   }
   return popupRoot;
 }

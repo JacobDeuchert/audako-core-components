@@ -53,10 +53,11 @@ function onWindowKeyDown(event: KeyboardEvent) {
   <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
   <div
     class="backdrop"
+    part="backdrop"
     transition:fade={{ duration: 125 }}
     onclick={(event) => event.target === event.currentTarget && cancel()}
   >
-    <div role="dialog" aria-modal="true" class="dialog" transition:scale={{ duration: 125, start: 0.95 }}>
+    <div role="dialog" aria-modal="true" class="dialog" part="dialog" transition:scale={{ duration: 125, start: 0.95 }}>
       <div class="content">
         <EntitySelect
           {selectMultiple}

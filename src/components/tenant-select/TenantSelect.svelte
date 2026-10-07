@@ -174,9 +174,9 @@ onDestroy(() => {
         <IconButton size={36} iconSize={20} icon="arrow_back" onclick={() => onback?.()} />
       {/if}
 
-      <div class="title">Mandant auswählen</div>
+      <div class="title" part="title">Mandant auswählen</div>
 
-      <div class="search">
+      <div class="search" part="search-field">
         <span class="material-symbols-rounded search-icon">search</span>
         <input placeholder="Mandant suchen" bind:value={filter} />
         {#if filter}
@@ -209,7 +209,12 @@ onDestroy(() => {
     {#each tenants as tenant (tenant.Id)}
       {@const disabled = tenant.Enabled === false || tenant.Locked}
       {@const subTenants = subTenantCounts[tenant.Id] ?? 0}
-      <div class="tenant-row" class:tenant-row--disabled={disabled} onclick={() => !disabled && onRowClick(tenant)}>
+      <div
+        class="tenant-row"
+        class:tenant-row--disabled={disabled}
+        part="tenant-row {disabled ? 'tenant-row-disabled' : ''}"
+        onclick={() => !disabled && onRowClick(tenant)}
+      >
         <span class="tenant-tile">
           <span class="material-symbols-rounded">
             {toMaterialLigature(resolveTenantIcon(tenant))}

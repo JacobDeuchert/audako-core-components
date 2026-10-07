@@ -10,7 +10,7 @@ let { children }: Props = $props();
 
 <!-- The card most popup content sits on. PopupContainer itself is invisible,
      so each popup decides whether to draw one. -->
-<div class="popup-surface">
+<div class="popup-surface" part="popup">
   {@render children?.()}
 </div>
 
@@ -22,8 +22,8 @@ let { children }: Props = $props();
   overflow-y: auto;
   padding: 4px;
   border: 1px solid var(--color-surface-border);
-  border-radius: 6px;
+  border-radius: var(--radius-popup);
   background-color: var(--color-surface);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-popup);
 }
 </style>

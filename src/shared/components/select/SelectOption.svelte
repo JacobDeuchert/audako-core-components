@@ -81,7 +81,12 @@ function setDisplayValue() {
 
 </script>
 
-<div class="option" class:selected={isSelected && !multiple} onclick={onClickOption}>
+<div
+  class="option"
+  class:selected={isSelected && !multiple}
+  part="option {isSelected && !multiple ? 'option-selected' : ''}"
+  onclick={onClickOption}
+>
   {#if isSelected && !multiple}
     <div class="marker"></div>
   {/if}

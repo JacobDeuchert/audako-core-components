@@ -2,35 +2,50 @@
    small reset and the icon font. Component styles live in each component's
    own <style> block, which Svelte injects into the root it renders in.
 
-   Tokens are set on :host, so they apply inside each shadow root, and on :root
-   for components rendered straight into a document (Storybook). They are
-   custom properties, so hosts can override them on the custom element. */
+   Theming: hosts set the public --audako-* variables, usually on :root. They
+   are never declared in here, so they inherit into every shadow root, the
+   dialog and popup layers on <body> included. Each internal token below
+   reads one with the default design as fallback. The internal tokens are
+   set on :host for the shadow roots and on :root for components rendered
+   straight into a document (Storybook). README.md lists the variables. */
 :root,
 :host {
-  --font-sans:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif,
-    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-family: var(
+    --audako-font-family,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    'Noto Sans',
+    Arial,
+    sans-serif,
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
+    'Noto Color Emoji'
+  );
 
   /* Brand accent. The default is the production magenta the facelift was
      designed against. */
-  --color-primary: rgb(178, 24, 122);
-  --color-primary-hover: rgb(140, 18, 96);
-  --color-on-primary: #ffffff;
-  /* Accent tints derive from --color-primary so a runtime retheme carries. */
+  --color-primary: var(--audako-color-primary, rgb(178, 24, 122));
+  --color-primary-hover: var(--audako-color-primary-hover, rgb(140, 18, 96));
+  --color-on-primary: var(--audako-color-on-primary, #ffffff);
+  /* Accent tints derive from --color-primary so a retheme carries. */
   --color-primary-tint: color-mix(in srgb, var(--color-primary) 10%, transparent);
   --color-primary-tint-subtle: color-mix(in srgb, var(--color-primary) 8%, transparent);
 
-  --color-surface: #ffffff;
-  --color-surface-border: #cccccc;
+  --color-surface: var(--audako-color-surface, #ffffff);
+  --color-surface-border: var(--audako-color-surface-border, #cccccc);
 
   /* Text */
-  --color-ink: rgba(0, 0, 0, 0.86);
-  --color-ink-secondary: rgba(0, 0, 0, 0.58);
-  --color-ink-tertiary: rgba(0, 0, 0, 0.4);
+  --color-ink: var(--audako-color-ink, rgba(0, 0, 0, 0.86));
+  --color-ink-secondary: var(--audako-color-ink-secondary, rgba(0, 0, 0, 0.58));
+  --color-ink-tertiary: var(--audako-color-ink-tertiary, rgba(0, 0, 0, 0.4));
   --color-ink-disabled: rgba(0, 0, 0, 0.25);
 
   /* Lines and surfaces */
-  --color-line: rgba(0, 0, 0, 0.12);
+  --color-line: var(--audako-color-line, rgba(0, 0, 0, 0.12));
   --color-line-strong: rgba(0, 0, 0, 0.3);
   --color-row-line: rgba(0, 0, 0, 0.08);
   --color-row-hover: rgba(0, 0, 0, 0.035);
@@ -39,12 +54,12 @@
 
   /* Selection is blue, never the accent: the accent marks the active tree
      node, active toggles, chips, links and the primary button. */
-  --color-select: rgb(25, 118, 210);
+  --color-select: var(--audako-color-select, rgb(25, 118, 210));
   --color-checkbox-border: rgba(0, 0, 0, 0.45);
   --color-checkbox-border-disabled: rgba(0, 0, 0, 0.15);
 
-  --color-danger: rgb(198, 40, 40);
-  --color-danger-tint: rgba(198, 40, 40, 0.1);
+  --color-danger: var(--audako-color-danger, rgb(198, 40, 40));
+  --color-danger-tint: color-mix(in srgb, var(--color-danger) 10%, transparent);
 
   /* Sizes are px rather than rem: the components are embedded in host apps
      whose root font-size we do not control. */
@@ -56,13 +71,18 @@
   --text-sub: 11.5px;
   --text-label: 11px;
 
-  --radius-dialog: 10px;
-  --radius-control: 8px;
-  --radius-button: 6px;
+  --radius-dialog: var(--audako-radius-dialog, 10px);
+  --radius-control: var(--audako-radius-control, 8px);
+  --radius-button: var(--audako-radius-button, 6px);
+  --radius-popup: var(--audako-radius-popup, 6px);
 
-  --shadow-lg: 0px 1.2px 3.6px rgba(0, 0, 0, 0.11), 0px 6.4px 14.4px rgba(0, 0, 0, 0.13);
-  --shadow-dialog:
-    0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+  --shadow-popup: var(--audako-shadow-popup, 0px 1.2px 3.6px rgba(0, 0, 0, 0.11), 0px 6.4px 14.4px rgba(0, 0, 0, 0.13));
+  --shadow-dialog: var(
+    --audako-shadow-dialog,
+    0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14),
+    0 3px 14px 2px rgba(0, 0, 0, 0.12)
+  );
 
   /* Hover and focus feedback on controls. */
   --transition-colors:
@@ -97,13 +117,13 @@
 
 :where(html) {
   line-height: 1.5;
-  font-family: var(--font-sans);
+  font-family: var(--font-family);
 }
 
 /* Inherited text properties cross the shadow boundary, so reset the ones a
    host app commonly sets on body. */
 :host {
-  font-family: var(--font-sans);
+  font-family: var(--font-family);
   font-size: 14px;
   font-weight: 400;
   font-style: normal;
@@ -130,7 +150,11 @@
 .material-symbols-rounded {
   /* Outlined by default - the facelift draws every icon unfilled. Add
      `filled` alongside the class for the few that need a solid glyph. */
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
   font-family: 'Material Symbols Rounded';
   font-weight: normal;
   font-style: normal;
@@ -147,5 +171,9 @@
 }
 
 .material-symbols-rounded.filled {
-  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-variation-settings:
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
 }
