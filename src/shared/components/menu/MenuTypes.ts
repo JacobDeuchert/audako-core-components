@@ -1,5 +1,7 @@
 export type MenuItem = {
     label: string;
     icon?: string;
-    action?: (event) => void;
+    // Receives the click. The menu closes afterwards unless the action calls
+    // event.stopPropagation().
+    action?: (event: MouseEvent) => void;
 }

@@ -19,12 +19,12 @@ const { Story } = defineMeta({
     preferedVerticalAlignment: {
       control: 'inline-radio',
       options: ['top', 'bottom'],
-      description: '`top` opens below the trigger and flips above it near the bottom edge; `bottom` opens above and flips below near the top edge.',
+      description: '`top` opens below the trigger, `bottom` above it. Either flips when the other side has more room; when neither fits, the menu shrinks and scrolls.',
     },
     preferedHorizontalAlignment: {
       control: 'inline-radio',
       options: ['left', 'right'],
-      description: '`left` starts at the trigger and shifts left to stay inside the right edge; `right` ends at the trigger, opening leftwards.',
+      description: '`left` lines up the left edges of menu and trigger, `right` the right edges. Near the viewport edge the menu shifts to stay 8px inside.',
     },
     onselect: { table: { disable: true } },
   },
@@ -47,7 +47,15 @@ let menus = $state({});
         anchorSelector={`#${anchorId}`}
         {preferedVerticalAlignment}
         {preferedHorizontalAlignment}
-        items={entityActions.map((item) => ({ ...item, action: () => onselect(item.label) }))}
+        items={entityActions.map((item) => ({
+          ...item,
+          action: (event) => {
+            if (item.keepOpen) {
+              event.stopPropagation();
+            }
+            onselect(item.label);
+          },
+        }))}
       />
     {/snippet}
   </ViewportEdges>

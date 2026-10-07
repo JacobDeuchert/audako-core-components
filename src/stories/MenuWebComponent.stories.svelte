@@ -17,7 +17,7 @@ const { Story } = defineMeta({
   argTypes: {
     items: {
       control: 'object',
-      description: 'Menu entries as `{ icon?: string; label: string }`. The story adds the `action` that reports the pick.',
+      description: 'Menu entries as `{ icon?: string; label: string; keepOpen?: boolean }`. The story adds the `action` that reports the pick; for `keepOpen` entries it stops the click propagation, so the menu stays open.',
     },
     placement: {
       control: 'inline-radio',
@@ -42,7 +42,10 @@ let lastPick = $state(null);
 function withActions(items, onselect) {
   return items.map((item) => ({
     ...item,
-    action: () => {
+    action: (event) => {
+      if (item.keepOpen) {
+        event.stopPropagation();
+      }
       lastPick = item.label;
       onselect(item.label);
     },

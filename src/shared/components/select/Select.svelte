@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 import { onDestroy, setContext, type Snippet } from 'svelte';
 import { type Writable, writable } from 'svelte/store';
 import PopupContainer from '../popup-container/PopupContainer.svelte';
+import PopupSurface from '../popup-container/PopupSurface.svelte';
 import SelectOption from './SelectOption.svelte';
 import type { TextOption } from './SelectTypes';
 
@@ -37,7 +38,8 @@ let {
 
 let displayedValue: string = $state('');
 
-let textfield: HTMLInputElement = $state(null);
+// The whole field, not just the input: the popup lines up with its edges.
+let field: HTMLDivElement = $state(null);
 let popupContainer: PopupContainer;
 
 let valueStore = writable(value);
@@ -96,27 +98,28 @@ onDestroy(() => {
 });
 </script>
 
-<div class="select {container$class}" onclick={openMenu}>
+<div class="select {container$class}" onclick={openMenu} bind:this={field}>
   {@render prefix?.()}
   <input
     {disabled}
     {placeholder}
     readonly
     bind:value={displayedValue}
-    bind:this={textfield}
     class="input {textfield$class}"
   />
   <div class="material-symbols-rounded suffix {suffixIcon$class}">arrow_drop_down</div>
 </div>
 
-<PopupContainer sizeToAnchor={true} anchorElement={textfield} bind:this={popupContainer}>
-  {@render children?.()}
+<PopupContainer sizeToAnchor={true} anchorElement={field} bind:this={popupContainer}>
+  <PopupSurface>
+    {@render children?.()}
 
-  {#each options as option}
-    <SelectOption value={option.value}>
-      {option.label}
-    </SelectOption>
-  {/each}
+    {#each options as option}
+      <SelectOption value={option.value}>
+        {option.label}
+      </SelectOption>
+    {/each}
+  </PopupSurface>
 </PopupContainer>
 
 <style>

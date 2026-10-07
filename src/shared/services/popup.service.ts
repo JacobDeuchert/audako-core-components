@@ -12,9 +12,14 @@ export type PopupOptions = {
   closeOnClickOutside: boolean;
   closeOnEscape?: boolean;
   positioning: 'center' | 'anchor' | 'custom';
+  // 'custom': the popup's top left corner. 'anchor': y is the gap between
+  // anchor and popup, x shifts the popup sideways.
   customPosition?: Position;
   anchorElement?: HTMLElement | null;
+  // 'top' puts the popup's top edge at the anchor, so it opens below it;
+  // 'bottom' opens above. Either flips when the other side has more room.
   anchorVertical?: 'top' | 'bottom';
+  // Which edges of popup and anchor line up.
   anchorHorizontal?: 'left' | 'right';
   defaultClassList?: string;
   inTransitionClassList?: string;
@@ -22,6 +27,9 @@ export type PopupOptions = {
   outTransitionClassList?: string;
   outTransitionDuration?: number;
 }
+
+// Distance popups keep from the viewport edges.
+const VIEWPORT_MARGIN = 8;
 
 const defaultOptions: PopupOptions = {
   backdrop: true,
@@ -77,8 +85,26 @@ export class PopupService {
     container.appendChild(popupWrapper);
 
     let closeOnEscapeRef = null;
+    let closed = false;
+
+    // Positioned again whenever its size changes (fonts and async content
+    // settle after opening) and when the anchor moves with the page.
+    const position = () => this._positionPopup(container, popupWrapper, options);
+    const repositionOnScroll = (event: Event) => {
+      if (!event.composedPath().includes(popupWrapper)) {
+        position();
+      }
+    };
+    const resizeObserver = new ResizeObserver(position);
 
     const close = () => {
+      if (closed) {
+        return;
+      }
+      closed = true;
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', position);
+      window.removeEventListener('scroll', repositionOnScroll, true);
       this._removePopupWrapper(popupWrapper, options);
       popupClosed.next(null);
       popupClosed.complete();
@@ -107,7 +133,10 @@ export class PopupService {
     }
 
 
-    this._positionPopup(container, popupWrapper, options);
+    position();
+    resizeObserver.observe(popupWrapper);
+    window.addEventListener('resize', position);
+    window.addEventListener('scroll', repositionOnScroll, true);
 
     popupElement.style.visibility = 'visible';
 
@@ -189,53 +218,62 @@ export class PopupService {
   }
 
   private _positionPopup(containerElement: HTMLElement, popupWrapper: HTMLElement, options: PopupOptions): void {
-    const popupStyle = popupWrapper.style;
-
-    const containerRect = containerElement.getBoundingClientRect();
-    const popupRect  = popupWrapper.getBoundingClientRect();
-
-    const anchorRect = options.anchorElement?.getBoundingClientRect();
-    
-    popupStyle.position = 'absolute';
+    const style = popupWrapper.style;
+    style.position = 'absolute';
 
     if (options.positioning === 'center') {
-      popupStyle.top = '50%';
-      popupStyle.left = '50%';
-      popupStyle.transform = 'translate(-50%, -50%)';
-    } else if (options.positioning === 'anchor') {
-      popupWrapper.style.top = `${this._getTopPosition(anchorRect.top, popupRect.height, containerRect.height, anchorRect.height, options.anchorVertical ?? 'bottom') + (options.customPosition?.y ?? 0)}px`;
-      popupWrapper.style.left = `${this._getLeftPosition(anchorRect.left - 4, popupRect.width, containerRect.width, options.anchorHorizontal ?? 'right') + (options.customPosition?.x ?? 0)}px`;
-    } else if (options.positioning === 'custom') {
-      popupWrapper.style.top = `${this._getTopPosition(options.customPosition.y, popupRect.height, containerRect.height) + (options.customPosition?.y ?? 0)}px`;
-      popupWrapper.style.left = `${this._getLeftPosition(options.customPosition.x, popupRect.width, containerRect.width) + (options.customPosition?.x ?? 0)}px`;
+      style.top = '50%';
+      style.left = '50%';
+      style.transform = 'translate(-50%, -50%)';
+      return;
     }
-  }
 
-  private _getTopPosition(y: number, popupHeight: number, containerHeight: number, anchorHeight: number = 0, anchorVertical: 'top' | 'bottom' = 'bottom') {
-    if (anchorVertical == 'top') {
-      if (y + popupHeight + 40 < containerHeight) {
-        return y + anchorHeight / 3;
-      } else {
-        return y - popupHeight + anchorHeight / 3;
+    const viewport = containerElement.getBoundingClientRect();
+
+    // Measured at the origin, where nothing narrows it.
+    style.top = '0px';
+    style.left = '0px';
+    style.removeProperty('--popup-max-height');
+    const { width } = popupWrapper.getBoundingClientRect();
+    let { height } = popupWrapper.getBoundingClientRect();
+
+    const offset = options.customPosition ?? { x: 0, y: 0 };
+    let top = offset.y;
+    let left = offset.x;
+
+    const anchor = options.positioning === 'anchor' ? options.anchorElement?.getBoundingClientRect() : null;
+
+    if (anchor) {
+      const gap = offset.y;
+      const spaceBelow = viewport.height - VIEWPORT_MARGIN - anchor.bottom - gap;
+      const spaceAbove = anchor.top - gap - VIEWPORT_MARGIN;
+
+      const preferBelow = options.anchorVertical !== 'bottom';
+      const preferredSpace = preferBelow ? spaceBelow : spaceAbove;
+      const otherSpace = preferBelow ? spaceAbove : spaceBelow;
+      // The preferred side when the popup fits there, else the roomier one.
+      const usePreferred = height <= preferredSpace || preferredSpace >= otherSpace;
+      const below = usePreferred ? preferBelow : !preferBelow;
+
+      // Too tall for either side: cap it at the room there is, so its own
+      // content scrolls (PopupSurface reads the variable).
+      const space = below ? spaceBelow : spaceAbove;
+      if (height > space) {
+        style.setProperty('--popup-max-height', `${Math.max(space, 0)}px`);
+        height = popupWrapper.getBoundingClientRect().height;
       }
-    } else {
-      if (y - popupHeight > 40) {
-        return y - popupHeight + anchorHeight / 3;
-      } else {
-        return y + anchorHeight / 3;
-      }
+
+      top = below ? anchor.bottom + gap : anchor.top - gap - height;
+      left = (options.anchorHorizontal === 'right' ? anchor.right - width : anchor.left) + offset.x;
     }
+
+    style.top = `${clamp(top, VIEWPORT_MARGIN, viewport.height - VIEWPORT_MARGIN - height)}px`;
+    style.left = `${clamp(left, VIEWPORT_MARGIN, viewport.width - VIEWPORT_MARGIN - width)}px`;
   }
-  
-  private _getLeftPosition(x: number, popupWidth: number, containerWidth: number, anchorHorizontal: 'left' | 'right' = 'right') {
-    if (anchorHorizontal == 'left') {
-      return Math.min(x, containerWidth - popupWidth - 10);
-    } else {
-      if (x - popupWidth > 40) {
-        return x - popupWidth;
-      } else {
-        return x + popupWidth;
-      }
-    }
-  }
+}
+
+// Keeps a popup inside the viewport; one larger than the viewport sticks to
+// the top or left edge.
+function clamp(value: number, min: number, max: number): number {
+  return Math.max(min, Math.min(value, max));
 }

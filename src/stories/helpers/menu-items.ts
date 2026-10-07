@@ -3,12 +3,14 @@ import { EntityType } from '@audako/core';
 import { getEntityMeta } from '../../components/entity-select/entity-select-meta';
 
 // Menu entries shared by the menu stories, as `{ icon?, label }`. The stories
-// add the `action` themselves.
+// add the `action` themselves; for entries marked `keepOpen` it stops the
+// click's propagation, which keeps the menu open.
 
 export const entityActions = [
   { icon: 'edit', label: 'Bearbeiten' },
   { icon: 'content_copy', label: 'Duplizieren' },
   { icon: 'history', label: 'Verlauf anzeigen' },
+  { icon: 'star', label: 'Favorit umschalten', keepOpen: true },
   { icon: 'delete', label: 'Löschen' },
 ];
 

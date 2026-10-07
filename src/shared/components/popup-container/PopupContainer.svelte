@@ -26,7 +26,7 @@ let {
   popupClass = '',
   preferedVerticalAlignment = 'top',
   preferedHorizontalAlignment = 'left',
-  positionOffset = { x: 0, y: 0 },
+  positionOffset = { x: 0, y: 4 },
   children,
 }: Props = $props();
 
@@ -82,6 +82,8 @@ function resetStyle() {
 }
 </script>
 
+<!-- Positioning and layering only; the content brings its own surface
+     (usually PopupSurface). -->
 <div class="popup-element-wrapper" style="position: absolute" bind:this={popupElementWrapper}>
   <div style="display: none" class="popup {popupClass}" bind:this={popupElement}>
     {@render children?.()}
@@ -91,13 +93,5 @@ function resetStyle() {
 <style>
 .popup {
   position: absolute;
-  max-height: 400px;
-  overflow-x: hidden;
-  overflow-y: auto;
-  padding: 4px;
-  border: 1px solid var(--color-surface-border);
-  border-radius: 6px;
-  background-color: var(--color-surface);
-  box-shadow: var(--shadow-lg);
 }
 </style>
