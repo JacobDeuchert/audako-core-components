@@ -23,17 +23,10 @@ interface Props {
 
 let { entityType = undefined, multiple = false, filter = undefined }: Props = $props();
 
-
 const isValidEntityType = $derived(Object.values(EntityType).includes(entityType as EntityType));
 
-function onSelectedEntities(entities: unknown) {
-  $host().dispatchEvent(
-    new CustomEvent('selected', {
-      detail: entities,
-      bubbles: true,
-      composed: true,
-    })
-  );
+function forward(name: string, detail: unknown) {
+  $host().dispatchEvent(new CustomEvent(name, { detail, bubbles: true, composed: true }));
 }
 </script>
 
@@ -43,7 +36,8 @@ function onSelectedEntities(entities: unknown) {
       {entityType}
       selectMultiple={multiple}
       additionalFilter={filter ?? {}}
-      onselectedEntities={onSelectedEntities}
+      onselectedEntities={(entities) => forward('selected', entities)}
+      onclose={() => forward('close', null)}
     />
   {/if}
 </div>

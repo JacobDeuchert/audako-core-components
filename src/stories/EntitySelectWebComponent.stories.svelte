@@ -15,6 +15,9 @@ $: if (entitySelect) {
   entitySelect.addEventListener('selected', (event) => {
     console.log(event);
   });
+  entitySelect.addEventListener('close', (event) => {
+    console.log(event);
+  });
 }
 </script>
 
