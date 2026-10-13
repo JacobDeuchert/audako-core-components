@@ -112,24 +112,26 @@ picker.addEventListener('customcolorschanged', (e) => profile.saveCustomColors(e
 picker.addEventListener('recentcolorschanged', (e) => profile.saveRecentColors(e.detail));
 ```
 
-| Property            | Attribute           | Default               | Description                                               |
-| ------------------- | ------------------- | --------------------- | --------------------------------------------------------- |
-| `value`             | `value`             | `null`                | `#rrggbb`; anything else shows as no colour               |
-| `palette`           | `palette`           | `defaultColorPalette` | `{ label, colors: (string \| { color, label? })[] }[]`    |
-| `customColors`      | `customcolors`      | `[]`                  | the user's own colours                                    |
-| `customColorsLimit` | `customcolorslimit` | `12`                  | slots for own colours; `0` hides the block and its action |
-| `recentColors`      | `recentcolors`      | `[]`                  | recent picks, newest first                                |
-| `recentColorsLimit` | `recentcolorslimit` | `6`                   | recent picks kept; `0` turns them off                     |
-| `allowClear`        | `allowclear`        | `false`               | offer "Keine Farbe"                                       |
-| `disabled`          | `disabled`          | `false`               |                                                           |
-| `compact`           | `compact`           | `false`               | 30px trigger for dense rows                               |
-| `label`             | `label`             | `Farbe auswählen`     | popup title                                               |
+| Property              | Attribute             | Default               | Description                                               |
+| --------------------- | --------------------- | --------------------- | --------------------------------------------------------- |
+| `value`               | `value`               | `null`                | `#rrggbb`; anything else shows as no colour               |
+| `palette`             | `palette`             | `defaultColorPalette` | `{ label, colors: (string \| { color, label? })[] }[]`    |
+| `customColors`        | `customcolors`        | `[]`                  | the user's own colours                                    |
+| `customColorsLimit`   | `customcolorslimit`   | `12`                  | slots for own colours; `0` hides the block and its action |
+| `recentColors`        | `recentcolors`        | `[]`                  | recent picks, newest first                                |
+| `recentColorsLimit`   | `recentcolorslimit`   | `6`                   | recent picks kept; `0` turns them off                     |
+| `allowClear`          | `allowclear`          | `false`               | offer "Keine Farbe"                                       |
+| `disabled`            | `disabled`            | `false`               |                                                           |
+| `compact`             | `compact`             | `false`               | 30px trigger for dense rows                               |
+| `applyOnOutsideClick` | `applyonoutsideclick` | `false`               | a click outside applies the mixed colour                  |
+| `label`               | `label`               | `Farbe auswählen`     | popup title                                               |
 
 `valuepreview` reports the mixed colour on every change while the popup is
 open, so a host can show it on the styled element before it is applied. It is
 not a value change: nothing is stored until `valuechanged`. If the popup closes
-without applying (Abbrechen, Escape, a click outside), `valuepreview` fires once
-more with the unchanged value to undo the preview.
+without applying (Abbrechen, the close button, Escape, a click outside),
+`valuepreview` fires once more with the unchanged value to undo the preview.
+With `applyonoutsideclick`, a click outside applies the mixed colour instead.
 
 Array attributes take JSON; set them as properties where you can. The element
 also keeps the changes it reported, so it works without the host writing them

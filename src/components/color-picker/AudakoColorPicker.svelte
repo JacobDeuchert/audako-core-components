@@ -17,6 +17,7 @@
       allowClear: { attribute: 'allowclear', type: 'Boolean' },
       disabled: { attribute: 'disabled', type: 'Boolean' },
       compact: { attribute: 'compact', type: 'Boolean' },
+      applyOnOutsideClick: { attribute: 'applyonoutsideclick', type: 'Boolean' },
       label: { attribute: 'label', type: 'String' },
     },
   }}
@@ -37,6 +38,7 @@ interface Props {
   allowClear?: boolean;
   disabled?: boolean;
   compact?: boolean;
+  applyOnOutsideClick?: boolean;
   /** Popup title; `title` itself would also put a native tooltip on the element. */
   label?: string;
 }
@@ -52,6 +54,7 @@ let {
   allowClear = false,
   disabled = false,
   compact = false,
+  applyOnOutsideClick = false,
   label = undefined,
 }: Props = $props();
 
@@ -70,6 +73,7 @@ function forward(name: string, detail: unknown) {
   {allowClear}
   {disabled}
   {compact}
+  {applyOnOutsideClick}
   title={label || undefined}
   onvalueChange={(color) => forward('valuechanged', color)}
   onvaluePreview={(color) => forward('valuepreview', color)}

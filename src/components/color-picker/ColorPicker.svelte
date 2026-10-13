@@ -23,6 +23,8 @@ interface Props {
   disabled?: boolean;
   /** Smaller trigger for dense rows. */
   compact?: boolean;
+  /** A click outside the popup applies the mixed colour instead of discarding it. */
+  applyOnOutsideClick?: boolean;
   title?: string;
   onvalueChange?: (color: string | null) => void;
   /**
@@ -44,6 +46,7 @@ let {
   allowClear = false,
   disabled = false,
   compact = false,
+  applyOnOutsideClick = false,
   title = 'Farbe auswählen',
   onvalueChange,
   onvaluePreview,
@@ -66,6 +69,10 @@ let trigger: HTMLButtonElement = $state(null);
 let popupContainer: PopupContainer;
 /** A preview was reported in this opening and has been neither applied nor undone. */
 let previewing = false;
+/** The colour of the last preview. */
+let previewed: string | null = null;
+/** Abbrechen, the close button or Escape closed the popup, which always discards the mixed colour. */
+let cancelled = false;
 
 async function openPicker(): Promise<void> {
   if (disabled || open) {
@@ -83,24 +90,49 @@ function closePicker(): void {
   popupContainer?.closePopup();
 }
 
-/** However the popup closed — a button in it, Escape or a click outside. */
+function cancel(): void {
+  cancelled = true;
+  closePicker();
+}
+
+// Escape is handled here rather than by the popup, which can't tell it from a click outside.
+function onKeydown(event: KeyboardEvent): void {
+  if (open && event.key === 'Escape') {
+    cancel();
+  }
+}
+
+/**
+ * However the popup closed — a button in it, Escape or a click outside. With `applyOnOutsideClick`, a click
+ * outside keeps the mixed colour as if it was applied; otherwise closing without applying undoes the preview.
+ */
 function popupClosed(): void {
   open = false;
   if (previewing) {
     previewing = false;
-    onvaluePreview?.(current);
+    if (cancelled || !applyOnOutsideClick || sameColor(previewed, current)) {
+      onvaluePreview?.(current);
+    } else {
+      pick(previewed);
+    }
   }
+  cancelled = false;
   trigger?.focus({ preventScroll: true });
 }
 
-/** Hands the mixed colour to the host and closes; it also becomes the newest recent pick. */
+/** Hands the mixed colour to the host and closes. */
 function apply(color: string): void {
+  pick(color);
+  closePicker();
+}
+
+/** Sets the colour; it also becomes the newest recent pick. */
+function pick(color: string): void {
   if (recentColorsLimit > 0) {
     recents = [color, ...recents.filter((recent) => !sameColor(recent, color))].slice(0, recentColorsLimit);
     onrecentColorsChange?.([...recents]);
   }
   setValue(color);
-  closePicker();
 }
 
 function clear(): void {
@@ -110,6 +142,7 @@ function clear(): void {
 
 function preview(color: string): void {
   previewing = true;
+  previewed = color;
   onvaluePreview?.(color);
 }
 
@@ -145,7 +178,9 @@ function customColorsChanged(colors: string[]): void {
   <span class="material-symbols-rounded chevron">{open ? 'expand_less' : 'expand_more'}</span>
 </button>
 
-<PopupContainer bind:this={popupContainer} anchorElement={trigger} position={{ x: 0, y: 6 }} onclose={popupClosed}>
+<svelte:document onkeydown={onKeydown} />
+
+<PopupContainer bind:this={popupContainer} anchorElement={trigger} position={{ x: 0, y: 6 }} closeOnEscape={false} onclose={popupClosed}>
   {#if open}
     <ColorPickerPanel
       value={current}
@@ -160,7 +195,7 @@ function customColorsChanged(colors: string[]): void {
       onpreview={preview}
       onapply={apply}
       onclear={clear}
-      onclose={closePicker}
+      onclose={cancel}
     />
   {/if}
 </PopupContainer>
