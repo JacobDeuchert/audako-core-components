@@ -80,6 +80,8 @@ audako-popup-layer::part(menu-item):hover {
 | `audako-tenant-select`                                | `title`, `search-field`, `tenant-row`, `icon-button`                                                                                                                                           |
 | `audako-select`                                       | `select`, `checkbox`                                                                                                                                                                           |
 | `audako-popup-layer` (select options, menus)          | `popup`, `option`, `menu-item`, `checkbox`                                                                                                                                                     |
+| `audako-color-picker`                                 | `trigger`, `swatch`                                                                                                                                                                            |
+| `audako-popup-layer` (color picker)                   | `color-picker-popup`, `header`, `title`, `swatch`, `footer`, `button-primary`                                                                                                                  |
 
 States are extra part names, since `::part()` cannot be combined with classes:
 `tree-node-selected`, `row-active`, `row-blocked`, `checkbox-checked`,
@@ -88,3 +90,49 @@ States are extra part names, since `::part()` cannot be combined with classes:
 
 `<audako-menu>` has no shadow root of its own; its popup renders into
 `<audako-popup-layer>`.
+
+## Color picker
+
+`<audako-color-picker>` is the colour picker of the main audako UI: a swatch
+button that opens the palette next to a mixer. It makes no HTTP calls — the
+host passes the palette, the user's own colours and the recent picks in, and
+stores what the events report.
+
+```html
+<audako-color-picker value="#0070c0" allowclear></audako-color-picker>
+```
+
+```js
+const picker = document.querySelector('audako-color-picker');
+picker.customColors = profile.customColors;
+picker.recentColors = profile.recentColors;
+picker.addEventListener('valuechanged', (e) => save(e.detail)); // '#rrggbb' or null
+picker.addEventListener('valuepreview', (e) => element.style.fill = e.detail); // optional live preview
+picker.addEventListener('customcolorschanged', (e) => profile.saveCustomColors(e.detail));
+picker.addEventListener('recentcolorschanged', (e) => profile.saveRecentColors(e.detail));
+```
+
+| Property            | Attribute           | Default               | Description                                               |
+| ------------------- | ------------------- | --------------------- | --------------------------------------------------------- |
+| `value`             | `value`             | `null`                | `#rrggbb`; anything else shows as no colour               |
+| `palette`           | `palette`           | `defaultColorPalette` | `{ label, colors: (string \| { color, label? })[] }[]`    |
+| `customColors`      | `customcolors`      | `[]`                  | the user's own colours                                    |
+| `customColorsLimit` | `customcolorslimit` | `12`                  | slots for own colours; `0` hides the block and its action |
+| `recentColors`      | `recentcolors`      | `[]`                  | recent picks, newest first                                |
+| `recentColorsLimit` | `recentcolorslimit` | `6`                   | recent picks kept; `0` turns them off                     |
+| `allowClear`        | `allowclear`        | `false`               | offer "Keine Farbe"                                       |
+| `disabled`          | `disabled`          | `false`               |                                                           |
+| `compact`           | `compact`           | `false`               | 30px trigger for dense rows                               |
+| `label`             | `label`             | `Farbe auswählen`     | popup title                                               |
+
+`valuepreview` reports the mixed colour on every change while the popup is
+open, so a host can show it on the styled element before it is applied. It is
+not a value change: nothing is stored until `valuechanged`. If the popup closes
+without applying (Abbrechen, Escape, a click outside), `valuepreview` fires once
+more with the unchanged value to undo the preview.
+
+Array attributes take JSON; set them as properties where you can. The element
+also keeps the changes it reported, so it works without the host writing them
+back. All events bubble and are composed. The popup opens fullscreen on
+viewports up to 600px wide. `defaultColorPalette` and the `ColorPaletteGroup`
+type are exported to build on.

@@ -14,6 +14,8 @@ interface Props {
   preferedVerticalAlignment?: 'top' | 'bottom';
   preferedHorizontalAlignment?: 'left' | 'right';
   positionOffset?: { x: number; y: number };
+  // Called however the popup closed: closePopup(), Escape or a click outside.
+  onclose?: () => void;
   children?: Snippet;
 }
 
@@ -27,6 +29,7 @@ let {
   preferedVerticalAlignment = 'top',
   preferedHorizontalAlignment = 'left',
   positionOffset = { x: 0, y: 4 },
+  onclose,
   children,
 }: Props = $props();
 
@@ -68,6 +71,7 @@ export function openPopup() {
   popupRef.afterClosed.then(() => {
     resetStyle();
     popupElementWrapper.appendChild(popupElement);
+    onclose?.();
   });
 }
 
