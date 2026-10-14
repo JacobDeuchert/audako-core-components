@@ -8,21 +8,13 @@ const { Story } = defineMeta({
 });
 </script>
 
-<script>
-let entitySelect;
-
-$: if (entitySelect) {
-  entitySelect.addEventListener('selected', (event) => {
-    console.log(event);
-  });
-  entitySelect.addEventListener('close', (event) => {
-    console.log(event);
-  });
-}
-</script>
-
 <Story name="Default" asChild>
   <div style="height: 500px">
-    <audako-entity-select bind:this={entitySelect} entitytype="Signal" multiple="true"></audako-entity-select>
+    <audako-entity-select
+      entitytype="Signal"
+      multiple="true"
+      onselected={(event) => console.log(event)}
+      onclose={(event) => console.log(event)}
+    ></audako-entity-select>
   </div>
 </Story>

@@ -17,16 +17,15 @@ const options = [
   ...entityTypes.map((entityType) => ({ label: entityType, value: entityType })),
 ];
 
-let value = ['all'];
-let select;
-
-$: if (select) {
-  select.addEventListener('valuechanged', (event) => {
-    value = event.detail;
-  });
-}
+let value = $state(['all']);
 </script>
 
 <Story name="Default" asChild>
-  <audako-select placeholder="Type" multiple options={options} arrayvalue={value} bind:this={select}></audako-select>
+  <audako-select
+    placeholder="Type"
+    multiple
+    {options}
+    arrayvalue={value}
+    onvaluechanged={(event) => (value = event.detail)}
+  ></audako-select>
 </Story>
