@@ -2,6 +2,9 @@
 import Select from '../select/Select.svelte';
 import SelectOption from '../select/SelectOption.svelte';
 import type { PageEvent } from './table.types';
+import { useI18n } from '../../../i18n/i18n.svelte';
+
+const i18n = useI18n();
 
 interface Props {
   // Mutated internally when the user pages, so they must be bindable.
@@ -53,7 +56,7 @@ function publishPageEvent(): void {
 </script>
 
 <div class="paginator" part="paginator">
-  <div>Zeilen</div>
+  <div>{i18n.t('table.rows')}</div>
 
   <div class="page-size">
     <Select

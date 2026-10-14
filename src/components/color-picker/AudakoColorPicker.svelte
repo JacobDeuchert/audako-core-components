@@ -19,6 +19,8 @@
       compact: { attribute: 'compact', type: 'Boolean' },
       applyOnOutsideClick: { attribute: 'applyonoutsideclick', type: 'Boolean' },
       label: { attribute: 'label', type: 'String' },
+      locale: { attribute: 'locale', type: 'String' },
+      translations: { attribute: 'translations', type: 'Object' },
     },
   }}
 />
@@ -27,6 +29,8 @@
 import ColorPicker from './ColorPicker.svelte';
 import type { ColorPaletteGroup } from '../../shared/components/color-picker/color-palette';
 import { withShadowStyles } from '../../styles/shadow-styles';
+import { provideI18n } from '../../i18n/i18n.svelte';
+import type { TranslationOverrides } from '../../i18n/types';
 
 interface Props {
   value?: string | null;
@@ -41,6 +45,10 @@ interface Props {
   applyOnOutsideClick?: boolean;
   /** Popup title; `title` itself would also put a native tooltip on the element. */
   label?: string;
+  /** Overrides the global language for this element. */
+  locale?: string;
+  /** Overrides single messages for this element. */
+  translations?: TranslationOverrides;
 }
 
 // Unset props are passed on as undefined, so ColorPicker falls back to its own defaults.
@@ -56,7 +64,11 @@ let {
   compact = false,
   applyOnOutsideClick = false,
   label = undefined,
+  locale = undefined,
+  translations = undefined,
 }: Props = $props();
+
+provideI18n({ locale: () => locale, translations: () => translations });
 
 function forward(name: string, detail: unknown) {
   $host().dispatchEvent(new CustomEvent(name, { detail, bubbles: true, composed: true }));

@@ -1,6 +1,7 @@
 import { EntityType } from '@audako/core';
 
 import { getEntityMeta } from '../../components/entity-select/entity-select-meta';
+import { getLocale, translate } from '../../i18n/i18n.svelte';
 
 // Menu entries shared by the menu stories, as `{ icon?, label }`. The stories
 // add the `action` themselves; for entries marked `keepOpen` it stops the
@@ -24,5 +25,5 @@ export const accountItems = [
 // Long enough to exceed the popup's 400px maximum height, so the list scrolls.
 export const entityTypeItems = Object.values(EntityType).map((type) => ({
   icon: getEntityMeta(type).icon,
-  label: getEntityMeta(type).singular,
+  label: translate(getLocale(), getEntityMeta(type).nameKey, { count: 1 }),
 }));

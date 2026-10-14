@@ -17,6 +17,7 @@ import { resolveService, tryResolveService } from '../../utils/service-functions
 import ValueView from '../../shared/components/value-view/ValueView.svelte';
 import { createSignalValueViewSettings, type DateValuePair } from '../../shared/components/value-view/value-view.types';
 import { getEntityMeta } from './entity-select-meta';
+import { useI18n } from '../../i18n/i18n.svelte';
 import { formatSignalType } from './signal-format';
 import { EntitySelectGlobalStore, EntitySelectSelectionStore, EntitySelectTypeStore } from './entity-select-stores';
 
@@ -24,6 +25,7 @@ let httpService: EntityHttpService = resolveService(EntityHttpService);
 let nameService: EntityNameService = resolveService(EntityNameService);
 // Optional: hosts that do not provide it simply get an empty Signalwert column.
 let liveValueService: LiveValueService = tryResolveService(LiveValueService);
+const i18n = useI18n();
 
 interface Props {
   entityType: EntityType;
@@ -76,7 +78,7 @@ const sortedEntities = $derived.by(() => {
 
   const factor = sort.direction === 'desc' ? -1 : 1;
   return [...entities].sort(
-    (a, b) => factor * (a.Name?.Value ?? '').localeCompare(b.Name?.Value ?? '', 'de', { sensitivity: 'base' })
+    (a, b) => factor * (a.Name?.Value ?? '').localeCompare(b.Name?.Value ?? '', i18n.locale, { sensitivity: 'base' })
   );
 });
 
@@ -298,11 +300,11 @@ entitiesRequested
           />
         </HeaderCell>
       {/if}
-      <HeaderCell id="Name" sortable>Name</HeaderCell>
-      <HeaderCell container$class="col-group" id="Group">Gruppe</HeaderCell>
+      <HeaderCell id="Name" sortable>{i18n.t('entitySelect.columnName')}</HeaderCell>
+      <HeaderCell container$class="col-group" id="Group">{i18n.t('entitySelect.columnGroup')}</HeaderCell>
       {#if showSignalColumns}
-        <HeaderCell container$class="col-type" id="Type">Typ</HeaderCell>
-        <HeaderCell container$class="col-value" id="Value">Signalwert</HeaderCell>
+        <HeaderCell container$class="col-type" id="Type">{i18n.t('entitySelect.columnType')}</HeaderCell>
+        <HeaderCell container$class="col-value" id="Value">{i18n.t('entitySelect.columnValue')}</HeaderCell>
       {/if}
     </HeaderRow>
 
@@ -335,7 +337,7 @@ entitiesRequested
 
         {#if showSignalColumns}
           <DataCell container$class="col-type col-muted">
-            <span class="truncate">{formatSignalType(entity)}</span>
+            <span class="truncate">{formatSignalType(entity, i18n)}</span>
           </DataCell>
 
           <DataCell container$class="col-value">
@@ -348,9 +350,9 @@ entitiesRequested
     {#if !loading && entities.length === 0}
       <div class="empty">
         <span class="material-symbols-rounded empty-icon">search_off</span>
-        <div class="empty-text">Keine {meta.plural} für diese Filter</div>
+        <div class="empty-text">{i18n.t('entitySelect.empty', { entities: i18n.t(meta.nameKey, { count: 2 }) })}</div>
         {#if filterString}
-          <button type="button" class="reset-filter" onclick={() => resetFilter()}>Filter zurücksetzen</button>
+          <button type="button" class="reset-filter" onclick={() => resetFilter()}>{i18n.t('entitySelect.resetFilter')}</button>
         {/if}
       </div>
     {/if}

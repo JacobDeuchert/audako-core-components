@@ -4,6 +4,7 @@ import { onDestroy, onMount, type Snippet } from 'svelte';
 import type { EntityType } from '@audako/core';
 
 import IconButton from '../../shared/components/icon-button/IconButton.svelte';
+import { useI18n } from '../../i18n/i18n.svelte';
 import { type EntitySelectGlobalState, EntitySelectGlobalStore, EntitySelectTypeStore } from './entity-select-stores';
 
 interface Props {
@@ -15,6 +16,8 @@ interface Props {
 }
 
 let { entityType, totalCount = 0, filterControl }: Props = $props();
+
+const i18n = useI18n();
 
 let typeStore = EntitySelectTypeStore(entityType);
 
@@ -56,10 +59,10 @@ onDestroy(() => {
 </script>
 
 <div class="toolbar" part="toolbar">
-  <div class="total">Einträge gesamt: {totalCount}</div>
+  <div class="total">{i18n.t('entitySelect.total', { count: totalCount })}</div>
 
   <div class="filter" part="search-field">
-    <input placeholder="Filter" bind:this={filterInput} bind:value={filter} />
+    <input placeholder={i18n.t('entitySelect.filterPlaceholder')} bind:this={filterInput} bind:value={filter} />
     <span class="material-symbols-rounded">search</span>
   </div>
 
@@ -69,7 +72,7 @@ onDestroy(() => {
     size={40}
     iconSize={22}
     variant={withSubGroups ? 'primary' : 'neutral'}
-    title={withSubGroups ? 'Untergruppen einbezogen' : 'Nur diese Gruppe'}
+    title={i18n.t(withSubGroups ? 'entitySelect.withSubGroups' : 'entitySelect.withoutSubGroups')}
     icon="account_tree"
     onclick={() => toggleSubGroups()}
   />

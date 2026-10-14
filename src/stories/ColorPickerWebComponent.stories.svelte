@@ -2,7 +2,6 @@
 import { defineMeta } from '@storybook/addon-svelte-csf';
 import { fn, userEvent } from 'storybook/test';
 
-import { defaultColorPalette } from '../shared/components/color-picker/color-palette';
 import ViewportEdges from './helpers/ViewportEdges.svelte';
 
 // Arrays go in as properties (camelCase); as attributes they would have to be
@@ -13,7 +12,6 @@ const { Story } = defineMeta({
   title: 'Color Picker Web Component',
   args: {
     value: '#0070C0',
-    palette: defaultColorPalette,
     customColors: ['#4c6a42', '#e07a5f', '#3d405b'],
     recentColors: ['#0070C0', '#FFC000', '#00B050'],
     allowClear: true,
@@ -28,7 +26,13 @@ const { Story } = defineMeta({
     value: { control: 'color', description: 'Hex colour (`#RRGGBB`), or empty for no colour.' },
     palette: {
       control: 'object',
-      description: 'Groups as `{ label: string; colors: (string | { color: string; label?: string })[] }`.',
+      description:
+        'Groups as `{ label: string; colors: (string | { color: string; label?: string })[] }`. Unset, the default palette follows the language.',
+    },
+    locale: {
+      control: 'select',
+      options: [undefined, 'de', 'en', 'fr'],
+      description: 'Overrides the global language; unsupported ones fall back to English.',
     },
     customColors: { control: 'object', description: "The user's own colours. `customcolorschanged` reports edits." },
     recentColors: { control: 'object', description: 'Newest first. `recentcolorschanged` reports the list after a pick.' },
@@ -62,6 +66,7 @@ let previewed = $state({});
     <audako-color-picker
       value={state.value ?? ''}
       palette={args.palette}
+      locale={args.locale}
       customColors={state.customColors}
       recentColors={state.recentColors}
       allowClear={args.allowClear}

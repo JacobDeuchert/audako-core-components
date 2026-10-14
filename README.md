@@ -10,6 +10,41 @@ Published to the audako Gitea registry. Map the scope in `.npmrc`, then install:
 npm i @audako/core-components
 ```
 
+## Languages
+
+The components ship German and English. The language is resolved per element:
+
+1. the element's `locale` attribute/property
+2. `setLocale()`
+3. `<html lang>` (changes are picked up)
+4. `de`
+
+A language without a bundle (`fr`, `es`, …) falls back to English; a regional
+tag falls back to its base language first (`de-AT` → `de`). Dates, numbers and
+sorting follow the resolved tag.
+
+```js
+import { setLocale, registerTranslations } from '@audako/core-components';
+
+setLocale('en'); // all elements without a locale of their own, re-rendered live
+
+// Add a language or override messages; missing keys fall back to English.
+registerTranslations('fr', { common: { apply: 'Appliquer' } });
+```
+
+Every element with built-in text (`audako-entity-select`, `audako-tenant-select`,
+`audako-color-picker`) also takes:
+
+| Property       | Attribute      | Description                                         |
+| -------------- | -------------- | --------------------------------------------------- |
+| `locale`       | `locale`       | overrides the global language for this element      |
+| `translations` | `translations` | partial `Translations`, overrides single messages   |
+
+The entity select dialog has no element, so `EntitySelectDialogService` takes
+the same as options: `selectEntity(type, filter, { locale, translations })`.
+The message keys are in [`src/i18n/de.ts`](src/i18n/de.ts); `{name}`
+placeholders are filled in, `{ one, other }` entries are picked by count.
+
 ## Theming
 
 The components render into shadow roots, so a host app's stylesheets do not
@@ -115,7 +150,7 @@ picker.addEventListener('recentcolorschanged', (e) => profile.saveRecentColors(e
 | Property              | Attribute             | Default               | Description                                               |
 | --------------------- | --------------------- | --------------------- | --------------------------------------------------------- |
 | `value`               | `value`               | `null`                | `#rrggbb`; anything else shows as no colour               |
-| `palette`             | `palette`             | `defaultColorPalette` | `{ label, colors: (string \| { color, label? })[] }[]`    |
+| `palette`             | `palette`             | default palette       | `{ label, colors: (string \| { color, label? })[] }[]`    |
 | `customColors`        | `customcolors`        | `[]`                  | the user's own colours                                    |
 | `customColorsLimit`   | `customcolorslimit`   | `12`                  | slots for own colours; `0` hides the block and its action |
 | `recentColors`        | `recentcolors`        | `[]`                  | recent picks, newest first                                |
@@ -124,7 +159,7 @@ picker.addEventListener('recentcolorschanged', (e) => profile.saveRecentColors(e
 | `disabled`            | `disabled`            | `false`               |                                                           |
 | `compact`             | `compact`             | `false`               | 30px trigger for dense rows                               |
 | `applyOnOutsideClick` | `applyonoutsideclick` | `false`               | a click outside applies the mixed colour                  |
-| `label`               | `label`               | `Farbe auswählen`     | popup title                                               |
+| `label`               | `label`               | `Farbe auswählen`     | popup title; the default follows the language             |
 
 `valuepreview` reports the mixed colour on every change while the popup is
 open, so a host can show it on the styled element before it is applied. It is
@@ -136,5 +171,7 @@ With `applyonoutsideclick`, a click outside applies the mixed colour instead.
 Array attributes take JSON; set them as properties where you can. The element
 also keeps the changes it reported, so it works without the host writing them
 back. All events bubble and are composed. The popup opens fullscreen on
-viewports up to 600px wide. `defaultColorPalette` and the `ColorPaletteGroup`
-type are exported to build on.
+viewports up to 600px wide. `getDefaultColorPalette(locale?)` and the
+`ColorPaletteGroup` type are exported to build on; without a `palette`, the
+default one's labels follow the language. `defaultColorPalette` is the German
+version, kept for compatibility.

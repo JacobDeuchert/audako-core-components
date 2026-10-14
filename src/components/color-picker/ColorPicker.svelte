@@ -5,11 +5,12 @@ import ColorPickerPanel from '../../shared/components/color-picker/ColorPickerPa
 import { parseHex, sameColor } from '../../shared/components/color-picker/color';
 import {
   type ColorPaletteGroup,
+  createDefaultColorPalette,
   CUSTOM_COLORS_LIMIT,
-  defaultColorPalette,
   RECENT_COLORS_LIMIT,
   sanitizeColors,
 } from '../../shared/components/color-picker/color-palette';
+import { useI18n } from '../../i18n/i18n.svelte';
 
 interface Props {
   value?: string | null;
@@ -38,7 +39,7 @@ interface Props {
 
 let {
   value = null,
-  palette = defaultColorPalette,
+  palette = undefined,
   customColors = [],
   customColorsLimit = CUSTOM_COLORS_LIMIT,
   recentColors = [],
@@ -47,12 +48,17 @@ let {
   disabled = false,
   compact = false,
   applyOnOutsideClick = false,
-  title = 'Farbe auswählen',
+  title = undefined,
   onvalueChange,
   onvaluePreview,
   oncustomColorsChange,
   onrecentColorsChange,
 }: Props = $props();
+
+const i18n = useI18n();
+// Without a palette of its own, the default one follows the language.
+const shownPalette = $derived(palette ?? createDefaultColorPalette(i18n.t));
+const heading = $derived(title || i18n.t('colorPicker.title'));
 
 /** Same breakpoint as the main UI: an anchored popup leaves too little room next to the trigger. */
 const FULLSCREEN_QUERY = '(max-width: 600px)';
@@ -166,8 +172,8 @@ function customColorsChanged(colors: string[]): void {
   class:compact
   part="trigger"
   {disabled}
-  title={current ?? title}
-  aria-label={title}
+  title={current ?? heading}
+  aria-label={heading}
   aria-haspopup="dialog"
   aria-expanded={open}
   onclick={openPicker}
@@ -184,12 +190,12 @@ function customColorsChanged(colors: string[]): void {
   {#if open}
     <ColorPickerPanel
       value={current}
-      {palette}
+      palette={shownPalette}
       customColors={customs}
       {customColorsLimit}
       recentColors={recents}
       {allowClear}
-      {title}
+      title={heading}
       {fullscreen}
       oncustomColorsChange={customColorsChanged}
       onpreview={preview}

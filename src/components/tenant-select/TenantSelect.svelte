@@ -4,6 +4,7 @@ import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 import { onDestroy } from 'svelte';
 
 import IconButton from '../../shared/components/icon-button/IconButton.svelte';
+import { useI18n } from '../../i18n/i18n.svelte';
 import { resolveService } from '../../utils/service-functions';
 import { resolveTenantIcon, sortTenantsByPosition, toMaterialLigature } from './tenant-view-utils';
 
@@ -11,6 +12,7 @@ import { resolveTenantIcon, sortTenantsByPosition, toMaterialLigature } from './
 const SEARCH_DEBOUNCE_MS = 300;
 
 let tenantHttpService = resolveService(TenantHttpService);
+const i18n = useI18n();
 
 interface Props {
   allowBack?: boolean;
@@ -153,8 +155,9 @@ function onChevronClick(event: MouseEvent, tenant: TenantView): void {
   browseTenant(tenant);
 }
 
-function subTenantLabel(count: number): string {
-  return `${count} ${count === 1 ? 'Mandant' : 'Mandanten'}`;
+// The start entry is a placeholder; its name follows the language.
+function pathLabel(tenant: TenantView): string {
+  return tenant.Id === 'start' ? i18n.t('tenantSelect.start') : tenant.Name;
 }
 
 setupBrowser();
@@ -174,13 +177,13 @@ onDestroy(() => {
         <IconButton size={36} iconSize={20} icon="arrow_back" onclick={() => onback?.()} />
       {/if}
 
-      <div class="title" part="title">Mandant auswählen</div>
+      <div class="title" part="title">{i18n.t('tenantSelect.title')}</div>
 
       <div class="search" part="search-field">
         <span class="material-symbols-rounded search-icon">search</span>
-        <input placeholder="Mandant suchen" bind:value={filter} />
+        <input placeholder={i18n.t('tenantSelect.searchPlaceholder')} bind:value={filter} />
         {#if filter}
-          <IconButton size={28} iconSize={18} icon="close" title="Suche leeren" onclick={() => (filter = '')} />
+          <IconButton size={28} iconSize={18} icon="close" title={i18n.t('common.clearSearch')} onclick={() => (filter = '')} />
         {/if}
       </div>
     </div>
@@ -190,15 +193,15 @@ onDestroy(() => {
         {#each tenantPath as tenant, i}
           {#if i < tenantPath.length - 1}
             <button type="button" class="path-link" onclick={() => selectTenantInPath(tenant)}>
-              {tenant.Name}
+              {pathLabel(tenant)}
             </button>
             <span class="material-symbols-rounded dimmed">chevron_right</span>
           {:else}
-            <span class="path-current">{tenant.Name}</span>
+            <span class="path-current">{pathLabel(tenant)}</span>
           {/if}
         {/each}
       {:else}
-        <span class="dimmed">Suchergebnisse</span>
+        <span class="dimmed">{i18n.t('tenantSelect.searchResults')}</span>
       {/if}
     </div>
   </div>
@@ -229,11 +232,11 @@ onDestroy(() => {
         </div>
 
         {#if disabled}
-          <span class="material-symbols-rounded secondary" title="Mandant ist deaktiviert">lock</span>
+          <span class="material-symbols-rounded secondary" title={i18n.t('tenantSelect.disabled')}>lock</span>
         {/if}
 
         {#if subTenants > 0}
-          <span class="sub-tenants secondary">{subTenantLabel(subTenants)}</span>
+          <span class="sub-tenants secondary">{i18n.t('tenantSelect.subTenants', { count: subTenants })}</span>
         {/if}
 
         {#if subTenants > 0 && !disabled}
@@ -241,7 +244,7 @@ onDestroy(() => {
             size={32}
             iconSize={20}
             icon="chevron_right"
-            title="Untermandanten anzeigen"
+            title={i18n.t('tenantSelect.showSubTenants')}
             onclick={(event) => onChevronClick(event, tenant)}
           />
         {/if}
@@ -251,7 +254,7 @@ onDestroy(() => {
     {#if tenants.length === 0}
       <div class="empty">
         <span class="material-symbols-rounded empty-icon">search_off</span>
-        <div class="empty-text">Keine Mandanten gefunden</div>
+        <div class="empty-text">{i18n.t('tenantSelect.empty')}</div>
       </div>
     {/if}
   </div>

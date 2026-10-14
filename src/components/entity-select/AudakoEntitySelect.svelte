@@ -6,6 +6,8 @@
       entityType: { attribute: 'entitytype', type: 'String' },
       multiple: { attribute: 'multiple', type: 'Boolean' },
       filter: { attribute: 'filter', type: 'Object' },
+      locale: { attribute: 'locale', type: 'String' },
+      translations: { attribute: 'translations', type: 'Object' },
     },
   }}
 />
@@ -14,14 +16,22 @@
 import { EntityType } from '@audako/core';
 import EntitySelect from './EntitySelect.svelte';
 import { withShadowStyles } from '../../styles/shadow-styles';
+import { provideI18n } from '../../i18n/i18n.svelte';
+import type { TranslationOverrides } from '../../i18n/types';
 
 interface Props {
   entityType?: EntityType;
   multiple?: boolean;
   filter?: Record<string, any>;
+  /** Overrides the global language for this element. */
+  locale?: string;
+  /** Overrides single messages for this element. */
+  translations?: TranslationOverrides;
 }
 
-let { entityType = undefined, multiple = false, filter = undefined }: Props = $props();
+let { entityType = undefined, multiple = false, filter = undefined, locale = undefined, translations = undefined }: Props = $props();
+
+provideI18n({ locale: () => locale, translations: () => translations });
 
 const isValidEntityType = $derived(Object.values(EntityType).includes(entityType as EntityType));
 

@@ -1,6 +1,7 @@
 <script lang="ts">
 import Led from './Led.svelte';
 import type { DateValuePair, ValueViewSettings } from './value-view.types';
+import { useI18n } from '../../../i18n/i18n.svelte';
 
 interface Props {
   settings?: ValueViewSettings;
@@ -10,6 +11,8 @@ interface Props {
 
 let { settings = null, value = null, ledSize = '14px' }: Props = $props();
 
+const i18n = useI18n();
+
 // Matches the UI's adk-value-view: a value that is neither a number nor 0 is
 // "no value", which the UI flags with a warning icon.
 const hasValue = $derived(value != null && value.value !== null && value.value !== undefined && value.value !== 'null' && value.value !== '');
@@ -17,7 +20,7 @@ const hasValue = $derived(value != null && value.value !== null && value.value !
 const numericValue = $derived(hasValue ? Number(value.value) : NaN);
 
 const timestampTitle = $derived(
-  value?.timestamp ? new Date(value.timestamp).toLocaleString('de-DE', { dateStyle: 'medium', timeStyle: 'medium' }) : null
+  value?.timestamp ? new Date(value.timestamp).toLocaleString(i18n.locale, { dateStyle: 'medium', timeStyle: 'medium' }) : null
 );
 
 const numberText = $derived.by(() => {
@@ -28,7 +31,7 @@ const numberText = $derived.by(() => {
   // Angular's `number: '1.d-d'` pins both ends, so the decimals never vary.
   const decimals = settings?.decimalPlaces ?? 3;
 
-  return numericValue.toLocaleString('de-DE', {
+  return numericValue.toLocaleString(i18n.locale, {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   });
@@ -39,7 +42,7 @@ const ledIsOn = $derived(Number.isFinite(numericValue) && numericValue >= 1);
 
 {#if settings && value}
   {#if !hasValue}
-    <span class="material-symbols-rounded no-value" title="Keine Werte verfügbar">warning</span>
+    <span class="material-symbols-rounded no-value" title={i18n.t('valueView.noValue')}>warning</span>
   {:else if settings.viewType === 'led'}
     <Led
       size={ledSize}

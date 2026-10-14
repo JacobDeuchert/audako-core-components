@@ -1,15 +1,24 @@
 import type { ConfigurationEntity, EntityType } from '@audako/core';
 import { mount, unmount } from 'svelte';
 
+import type { TranslationOverrides } from '../../i18n/types';
 import { createStyledShadowHost } from '../../styles/shadow-styles';
 import EntitySelectDialog from './EntitySelectDialog.svelte';
+
+export interface EntitySelectDialogOptions {
+  /** Overrides the global language for this dialog. */
+  locale?: string;
+  /** Overrides single messages for this dialog. */
+  translations?: TranslationOverrides;
+}
 
 export class EntitySelectDialogService {
   public selectEntity<T extends ConfigurationEntity>(
     entityType: EntityType,
-    additionalFilter: Record<string, any> = null
+    additionalFilter: Record<string, any> = null,
+    options: EntitySelectDialogOptions = {}
   ): Promise<T> {
-    return this._openEntitySelectDialog<T>(entityType, false, additionalFilter).then((entities: T[]) => {
+    return this._openEntitySelectDialog<T>(entityType, false, additionalFilter, options).then((entities: T[]) => {
       if (entities.length === 1) {
         return entities[0];
       }
@@ -19,15 +28,17 @@ export class EntitySelectDialogService {
 
   public selectMultipleEntities<T extends ConfigurationEntity>(
     entityType: EntityType,
-    additionalFilter: Record<string, any> = null
+    additionalFilter: Record<string, any> = null,
+    options: EntitySelectDialogOptions = {}
   ): Promise<T[]> {
-    return this._openEntitySelectDialog<T>(entityType, true, additionalFilter);
+    return this._openEntitySelectDialog<T>(entityType, true, additionalFilter, options);
   }
 
   public _openEntitySelectDialog<T extends ConfigurationEntity>(
     entityType: EntityType,
     selectMultiple: boolean,
-    additionalFilter: Record<string, any>
+    additionalFilter: Record<string, any>,
+    options: EntitySelectDialogOptions = {}
   ): Promise<T[]> {
     return new Promise((resolve) => {
       let settled = false;
@@ -43,6 +54,8 @@ export class EntitySelectDialogService {
           open: false,
           selectMultiple: selectMultiple,
           additionalFilter: additionalFilter,
+          locale: options.locale,
+          translations: options.translations,
           onselectedEntities: (entities: T | T[]) => {
             finish(Array.isArray(entities) ? entities : [entities].filter((entity) => entity != null));
           },

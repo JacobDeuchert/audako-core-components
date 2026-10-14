@@ -4,6 +4,7 @@ import IconButton from '../icon-button/IconButton.svelte';
 import ColorMixer from './ColorMixer.svelte';
 import { parseHex, sameColor } from './color';
 import { type ColorPaletteEntry, type ColorPaletteGroup, CUSTOM_COLORS_LIMIT, paletteEntry } from './color-palette';
+import { useI18n } from '../../../i18n/i18n.svelte';
 
 interface Props {
   /** The colour the picker was opened on; the mixer starts there. */
@@ -31,7 +32,7 @@ let {
   customColorsLimit = CUSTOM_COLORS_LIMIT,
   recentColors = [],
   allowClear = false,
-  title = 'Farbe auswählen',
+  title = undefined,
   fullscreen = false,
   oncustomColorsChange,
   onpreview,
@@ -39,6 +40,9 @@ let {
   onclear,
   onclose,
 }: Props = $props();
+
+const i18n = useI18n();
+const heading = $derived(title || i18n.t('colorPicker.title'));
 
 /** Start value of the mixer when the picker is opened on a field that has no colour yet. */
 const FALLBACK_COLOR = '#4c6a42';
@@ -102,7 +106,7 @@ const groups = $derived.by((): Group[] => {
   if (recentColors.length > 0) {
     result.push({
       key: 'recent',
-      label: 'Zuletzt verwendet',
+      label: i18n.t('colorPicker.recent'),
       counter: '',
       cells: recentColors.map((color) => cell(color, '')),
       custom: false,
@@ -123,7 +127,7 @@ const groups = $derived.by((): Group[] => {
   if (customColorsLimit > 0) {
     result.push({
       key: 'custom',
-      label: replacing ? 'Zu ersetzende Farbe wählen' : 'Benutzerdefiniert',
+      label: i18n.t(replacing ? 'colorPicker.pickReplaceTarget' : 'colorPicker.custom'),
       counter: replacing ? '' : `${customs.length}/${customColorsLimit}`,
       cells: customs.map((color) => cell(color, '')),
       custom: true,
@@ -139,18 +143,18 @@ const groups = $derived.by((): Group[] => {
  */
 const action = $derived.by((): Action => {
   if (replacing) {
-    return { kind: 'picking', label: 'Zu ersetzende Farbe wählen', icon: 'close', danger: false, disabled: false };
+    return { kind: 'picking', label: i18n.t('colorPicker.pickReplaceTarget'), icon: 'close', danger: false, disabled: false };
   }
   if (justSaved) {
-    return { kind: 'saved', label: 'Zu eigenen Farben hinzugefügt', icon: 'check', danger: false, disabled: true };
+    return { kind: 'saved', label: i18n.t('colorPicker.addedToCustom'), icon: 'check', danger: false, disabled: true };
   }
   if (customs.some((color) => sameColor(color, mixed))) {
-    return { kind: 'remove', label: 'Aus eigenen Farben entfernen', icon: 'delete', danger: true, disabled: false };
+    return { kind: 'remove', label: i18n.t('colorPicker.removeFromCustom'), icon: 'delete', danger: true, disabled: false };
   }
   if (customs.length >= customColorsLimit) {
-    return { kind: 'replace', label: 'Eigene Farbe ersetzen', icon: 'swap_horiz', danger: false, disabled: false };
+    return { kind: 'replace', label: i18n.t('colorPicker.replaceCustom'), icon: 'swap_horiz', danger: false, disabled: false };
   }
-  return { kind: 'add', label: 'Zu eigenen Farben hinzufügen', icon: 'add', danger: false, disabled: false };
+  return { kind: 'add', label: i18n.t('colorPicker.addToCustom'), icon: 'add', danger: false, disabled: false };
 });
 
 onMount(() => {
@@ -253,14 +257,14 @@ function clamp(value: number, min: number, max: number): number {
   class:fullscreen
   part="color-picker-popup"
   role="dialog"
-  aria-label={title}
+  aria-label={heading}
   style:transform={offset.x || offset.y ? `translate(${offset.x}px, ${offset.y}px)` : null}
 >
   {#if !fullscreen}
     <!-- Widget-style grip notch: a small tab hanging from the top edge that drags the popup. -->
     <div
       class="notch"
-      title="Verschieben"
+      title={i18n.t('colorPicker.move')}
       role="presentation"
       onpointerdown={startDrag}
       onpointermove={moveDrag}
@@ -275,8 +279,8 @@ function clamp(value: number, min: number, max: number): number {
     <span class="header-icon">
       <span class="material-symbols-rounded">palette</span>
     </span>
-    <div class="title" part="title">{title}</div>
-    <IconButton size="large" iconSize={24} icon="close" title="Schließen" onclick={() => onclose?.()} />
+    <div class="title" part="title">{heading}</div>
+    <IconButton size="large" iconSize={24} icon="close" title={i18n.t('common.close')} onclick={() => onclose?.()} />
   </div>
 
   <!-- One screen: the palette on the left, the mixer on the right, so a palette colour can be
@@ -308,7 +312,7 @@ function clamp(value: number, min: number, max: number): number {
               {/each}
             </div>
           {:else if group.custom}
-            <p class="hint">Noch keine eigenen Farben gespeichert.</p>
+            <p class="hint">{i18n.t('colorPicker.noCustomColors')}</p>
           {/if}
         </section>
       {/each}
@@ -325,7 +329,7 @@ function clamp(value: number, min: number, max: number): number {
           class="custom-action"
           class:danger={action.danger}
           disabled={action.disabled}
-          title={action.kind === 'picking' ? 'Abbrechen' : null}
+          title={action.kind === 'picking' ? i18n.t('common.cancel') : null}
           onclick={runAction}
         >
           <span class="material-symbols-rounded">{action.icon}</span>
@@ -342,10 +346,10 @@ function clamp(value: number, min: number, max: number): number {
     </span>
     <span class="spacer"></span>
     {#if allowClear}
-      <button type="button" class="text-button" onclick={() => onclear?.()}>Keine Farbe</button>
+      <button type="button" class="text-button" onclick={() => onclear?.()}>{i18n.t('colorPicker.noColor')}</button>
     {/if}
-    <button type="button" class="text-button" onclick={() => onclose?.()}>Abbrechen</button>
-    <button type="button" class="apply" part="button-primary" onclick={() => onapply?.(mixed)}>Übernehmen</button>
+    <button type="button" class="text-button" onclick={() => onclose?.()}>{i18n.t('common.cancel')}</button>
+    <button type="button" class="apply" part="button-primary" onclick={() => onapply?.(mixed)}>{i18n.t('common.apply')}</button>
   </div>
 </div>
 

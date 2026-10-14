@@ -4,6 +4,7 @@ import IconButton from '../icon-button/IconButton.svelte';
 import ColorField from './ColorField.svelte';
 import HueSlider from './HueSlider.svelte';
 import { clampChannel, hexToRgb, type Hsv, hsvToRgb, parseHex, type Rgb, rgbToHex, rgbToHsv } from './color';
+import { useI18n } from '../../../i18n/i18n.svelte';
 
 interface Props {
   /** Value the mixer starts on; later changes are ignored (see `applyColor`). */
@@ -15,6 +16,8 @@ interface Props {
 }
 
 let { start = '#ffffff', touchUi = false, oncolorChange }: Props = $props();
+
+const i18n = useI18n();
 
 /**
  * Its state is HSV, not RGB: RGB cannot say which hue a grey was mixed from, so an RGB-backed mixer
@@ -134,7 +137,7 @@ async function pickFromScreen(): Promise<void> {
   <div class="readouts">
     <div class="row row-hex">
       <label class="readout">
-        <span class="readout-label">Hex</span>
+        <span class="readout-label">{i18n.t('colorPicker.hex')}</span>
         <input
           class="readout-input hex"
           spellcheck="false"
@@ -146,7 +149,7 @@ async function pickFromScreen(): Promise<void> {
         />
       </label>
       {#if showEyeDropper}
-        <IconButton icon="colorize" size="large" iconSize={24} title="Farbe vom Bildschirm aufnehmen" onclick={pickFromScreen} />
+        <IconButton icon="colorize" size="large" iconSize={24} title={i18n.t('colorPicker.eyedropper')} onclick={pickFromScreen} />
       {/if}
     </div>
 

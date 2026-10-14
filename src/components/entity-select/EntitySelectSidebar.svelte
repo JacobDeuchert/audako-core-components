@@ -7,9 +7,11 @@ import { resolveService } from '../../utils/service-functions';
 import { EntitySelectSelectionStore, EntitySelectTypeStore } from './entity-select-stores';
 import EntitySelectTreeNode from './EntitySelectTreeNode.svelte';
 import Checkbox from '../../shared/components/checkbox/Checkbox.svelte';
+import { useI18n } from '../../i18n/i18n.svelte';
 
 let httpService: EntityHttpService = resolveService(EntityHttpService);
 let nameService: EntityNameService = resolveService(EntityNameService);
+const i18n = useI18n();
 
 interface Props {
   entityType: EntityType;
@@ -131,19 +133,19 @@ onDestroy(() => {
       <button type="button" class="tenant" onclick={() => onchangeTenant?.()}>
         <span class="material-symbols-rounded tenant-icon">domain</span>
         <div class="tenant-text">
-          <div class="tenant-label">Mandant</div>
+          <div class="tenant-label">{i18n.t('entitySelect.tenant')}</div>
           <div class="tenant-name">{selectedTenant?.Name ?? ''}</div>
         </div>
         <span class="material-symbols-rounded tenant-icon">unfold_more</span>
       </button>
 
-      <button type="button" title="Mandant suchen" class="tenant-search" onclick={() => onchangeTenant?.()}>
+      <button type="button" title={i18n.t('entitySelect.searchTenant')} class="tenant-search" onclick={() => onchangeTenant?.()}>
         <span class="material-symbols-rounded">search</span>
       </button>
     </div>
 
     <div class="search" part="search-field">
-      <input placeholder="Suche" bind:value={search} />
+      <input placeholder={i18n.t('entitySelect.searchPlaceholder')} bind:value={search} />
       <span class="material-symbols-rounded">search</span>
     </div>
   </div>
@@ -159,9 +161,9 @@ onDestroy(() => {
   {#if recentEntries.length > 0}
     <div class="recent">
       <div class="recent-header">
-        <div class="recent-title">Zuletzt ausgewählt</div>
+        <div class="recent-title">{i18n.t('entitySelect.recent')}</div>
         {#if selectMultiple}
-          <button type="button" class="select-all" onclick={() => selectAllRecent()}>alle übernehmen</button>
+          <button type="button" class="select-all" onclick={() => selectAllRecent()}>{i18n.t('entitySelect.applyAllRecent')}</button>
         {/if}
       </div>
 

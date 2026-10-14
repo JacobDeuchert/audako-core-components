@@ -1,17 +1,12 @@
-import { type ConfigurationEntity, type Signal, SignalType } from '@audako/core';
+import { type ConfigurationEntity, type Signal } from '@audako/core';
+import { de } from '../../i18n/de';
+import type { I18n } from '../../i18n/i18n.svelte';
+import type { TranslationKey } from '../../i18n/types';
 
-const signalTypeLabels: Record<SignalType, string> = {
-  [SignalType.AnalogInput]: 'Analog',
-  [SignalType.AnalogInOut]: 'Analog E/A',
-  [SignalType.DigitalInput]: 'Digital',
-  [SignalType.DigitalInOut]: 'Digital E/A',
-  [SignalType.Counter]: 'Zähler',
-  [SignalType.UniversalInput]: 'Universal',
-  [SignalType.UniversalInOut]: 'Universal E/A',
-};
-
-export function formatSignalType(entity: Partial<ConfigurationEntity>): string {
+export function formatSignalType(entity: Partial<ConfigurationEntity>, i18n: I18n): string {
   const type = (entity as Partial<Signal>)?.Type?.Value;
-  return type ? (signalTypeLabels[type] ?? type) : '';
+  if (!type) {
+    return '';
+  }
+  return type in de.signalTypes ? i18n.t(`signalTypes.${type}` as TranslationKey) : type;
 }
-

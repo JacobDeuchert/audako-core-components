@@ -3,6 +3,8 @@ import { ConfigurationEntity, EntityType } from '@audako/core';
 import { fade, scale } from 'svelte/transition';
 
 import EntitySelect from './EntitySelect.svelte';
+import { provideI18n } from '../../i18n/i18n.svelte';
+import type { TranslationOverrides } from '../../i18n/types';
 
 interface Props {
   // Driven by `setOpen` below as well as by the parent, so it must be bindable.
@@ -14,6 +16,10 @@ interface Props {
   // Fired when the dialog closes without a selection (close button, Escape or
   // a click on the backdrop).
   oncancel?: () => void;
+  // Mounted by the dialog service outside any element, so the language is
+  // passed in rather than inherited.
+  locale?: string;
+  translations?: TranslationOverrides;
 }
 
 let {
@@ -23,7 +29,11 @@ let {
   additionalFilter = null,
   onselectedEntities,
   oncancel,
+  locale = undefined,
+  translations = undefined,
 }: Props = $props();
+
+provideI18n({ locale: () => locale, translations: () => translations });
 
 // Imperative handle for consumers that mount this component directly, since
 // Svelte 5 removed the `$set` API used to drive the open/close animation.

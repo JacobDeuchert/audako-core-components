@@ -4,6 +4,7 @@ import { onDestroy } from 'svelte';
 
 import IconButton from '../../shared/components/icon-button/IconButton.svelte';
 import { resolveService } from '../../utils/service-functions';
+import { useI18n } from '../../i18n/i18n.svelte';
 import TenantSelect from '../tenant-select/TenantSelect.svelte';
 import { getEntityMeta } from './entity-select-meta';
 import { EntitySelectGlobalStore, EntitySelectSelectionStore, EntitySelectTypeStore } from './entity-select-stores';
@@ -29,6 +30,7 @@ let {
 
 let httpService: EntityHttpService = resolveService(EntityHttpService);
 let tenantHttpService: TenantHttpService = resolveService(TenantHttpService);
+const i18n = useI18n();
 
 let selectedTenant: TenantView = $state();
 let inTenantSelect: boolean = $state(false);
@@ -112,7 +114,7 @@ onDestroy(() => {
     <div class="header-tile">
       <span class="material-symbols-rounded header-icon">{meta.icon}</span>
     </div>
-    <div class="title" part="title">{meta.singular} auswählen</div>
+    <div class="title" part="title">{i18n.t('entitySelect.title', { entity: i18n.t(meta.nameKey, { count: 1 }) })}</div>
     <IconButton size={36} iconSize={20} icon="close" onclick={() => onclose?.()} />
   </div>
 
@@ -139,12 +141,12 @@ onDestroy(() => {
   {#if selectMultiple}
     <div class="footer" part="footer">
       <div class="selection-count">
-        {selectionCount} Ausgewählt
+        {i18n.t('entitySelect.selectionCount', { count: selectionCount })}
       </div>
 
       <button type="button" class="accept" part="button-primary" onclick={() => acceptSelection()}>
         <span class="material-symbols-rounded">check</span>
-        Übernehmen
+        {i18n.t('common.apply')}
       </button>
     </div>
   {/if}

@@ -1,43 +1,49 @@
 import { EntityType } from '@audako/core';
+import { de } from '../../i18n/de';
+import type { TranslationKey } from '../../i18n/types';
 
 interface EntityMeta {
   // Material Symbols Rounded ligature shown in the dialog header tile.
   icon: string;
-  // German singular used in the dialog title ("<singular> auswählen").
-  singular: string;
-  // German plural used in empty states ("Keine <plural> für diese Filter").
-  plural: string;
+  // Plural message with the type's name, e.g. in the dialog title
+  // (count 1) and in empty states (count 2).
+  nameKey: TranslationKey;
 }
 
-const defaultMeta: EntityMeta = { icon: 'category', singular: 'Eintrag', plural: 'Einträge' };
+const defaultIcon = 'category';
 
-const entityMeta: Partial<Record<EntityType, EntityMeta>> = {
-  [EntityType.Group]: { icon: 'folder', singular: 'Gruppe', plural: 'Gruppen' },
-  [EntityType.Signal]: { icon: 'show_chart', singular: 'Signal', plural: 'Signale' },
-  [EntityType.Formula]: { icon: 'functions', singular: 'Formel', plural: 'Formeln' },
-  [EntityType.Dashboard]: { icon: 'dashboard', singular: 'Dashboard', plural: 'Dashboards' },
-  [EntityType.DataConnection]: { icon: 'data_usage', singular: 'Datenverbindung', plural: 'Datenverbindungen' },
-  [EntityType.DataSource]: { icon: 'storage', singular: 'Datenquelle', plural: 'Datenquellen' },
-  [EntityType.Connector]: { icon: 'cable', singular: 'Konnektor', plural: 'Konnektoren' },
-  [EntityType.EventCondition]: { icon: 'rule', singular: 'Bedingung', plural: 'Bedingungen' },
-  [EntityType.EventDefinition]: { icon: 'notifications', singular: 'Ereignis', plural: 'Ereignisse' },
-  [EntityType.EventCategory]: { icon: 'label', singular: 'Ereigniskategorie', plural: 'Ereigniskategorien' },
-  [EntityType.ProcessImage]: { icon: 'image', singular: 'Prozessbild', plural: 'Prozessbilder' },
-  [EntityType.ReportTemplate]: { icon: 'description', singular: 'Berichtsvorlage', plural: 'Berichtsvorlagen' },
-  [EntityType.Report]: { icon: 'summarize', singular: 'Bericht', plural: 'Berichte' },
-  [EntityType.Document]: { icon: 'draft', singular: 'Dokument', plural: 'Dokumente' },
-  [EntityType.Camera]: { icon: 'photo_camera', singular: 'Kamera', plural: 'Kameras' },
-  [EntityType.SwitchSchedule]: { icon: 'schedule', singular: 'Schaltplan', plural: 'Schaltpläne' },
-  [EntityType.User]: { icon: 'person', singular: 'Benutzer', plural: 'Benutzer' },
-  [EntityType.Role]: { icon: 'admin_panel_settings', singular: 'Rolle', plural: 'Rollen' },
-  [EntityType.Recipient]: { icon: 'contact_mail', singular: 'Empfänger', plural: 'Empfänger' },
-  [EntityType.RecipientGroup]: { icon: 'groups', singular: 'Empfängergruppe', plural: 'Empfängergruppen' },
-  [EntityType.AlarmingPlan]: { icon: 'notification_important', singular: 'Alarmplan', plural: 'Alarmpläne' },
-  [EntityType.MaintenanceService]: { icon: 'build', singular: 'Wartung', plural: 'Wartungen' },
-  [EntityType.TaskDefinition]: { icon: 'task', singular: 'Aufgabe', plural: 'Aufgaben' },
-  [EntityType.RuntimeScript]: { icon: 'code', singular: 'Skript', plural: 'Skripte' },
+const entityIcons: Partial<Record<EntityType, string>> = {
+  [EntityType.Group]: 'folder',
+  [EntityType.Signal]: 'show_chart',
+  [EntityType.Formula]: 'functions',
+  [EntityType.Dashboard]: 'dashboard',
+  [EntityType.DataConnection]: 'data_usage',
+  [EntityType.DataSource]: 'storage',
+  [EntityType.Connector]: 'cable',
+  [EntityType.EventCondition]: 'rule',
+  [EntityType.EventDefinition]: 'notifications',
+  [EntityType.EventCategory]: 'label',
+  [EntityType.ProcessImage]: 'image',
+  [EntityType.ReportTemplate]: 'description',
+  [EntityType.Report]: 'summarize',
+  [EntityType.Document]: 'draft',
+  [EntityType.Camera]: 'photo_camera',
+  [EntityType.SwitchSchedule]: 'schedule',
+  [EntityType.User]: 'person',
+  [EntityType.Role]: 'admin_panel_settings',
+  [EntityType.Recipient]: 'contact_mail',
+  [EntityType.RecipientGroup]: 'groups',
+  [EntityType.AlarmingPlan]: 'notification_important',
+  [EntityType.MaintenanceService]: 'build',
+  [EntityType.TaskDefinition]: 'task',
+  [EntityType.RuntimeScript]: 'code',
 };
 
 export function getEntityMeta(entityType: EntityType): EntityMeta {
-  return entityMeta[entityType] ?? defaultMeta;
+  // The German bundle is complete, so it tells which types have a name.
+  const named = entityType in de.entityTypes;
+  return {
+    icon: entityIcons[entityType] ?? defaultIcon,
+    nameKey: (named ? `entityTypes.${entityType}` : 'entityTypes.default') as TranslationKey,
+  };
 }
