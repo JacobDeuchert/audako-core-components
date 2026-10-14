@@ -7,6 +7,7 @@ import {
   type AsyncValue,
   type HttpConfig,
   LiveValueService,
+  ProcessImageBlockHttpService,
   TenantHttpService,
   UserProfileHttpService,
 } from '@audako/core';
@@ -71,6 +72,7 @@ export function registerCoreServices(ctxOrConfig: ApiContext | HttpConfig, acces
   tryRegisterService(EntitySelectDialogService, new EntitySelectDialogService());
   tryRegisterService(HistoricalValueService, new HistoricalValueService(ctx));
   tryRegisterService(UserProfileHttpService, new UserProfileHttpService(ctx));
+  tryRegisterService(ProcessImageBlockHttpService, new ProcessImageBlockHttpService(ctx));
 }
 
 function _defineCustomElement(tagName: string, component: any, options?: ElementDefinitionOptions) {
