@@ -89,18 +89,17 @@ let mixer: ColorMixer;
 let root: HTMLDivElement;
 let palettePane: HTMLDivElement;
 
+/** The swatch last clicked; it keeps the ring over other swatches of the same colour. */
+let picked = $state<{ group: string; index: number } | null>(null);
+
 /**
  * The palette column: the recent picks on top, one block per palette set, the user's own colours
- * last. Sets share colours (#FF0000 is both a basic and a signal colour), so only the first match
- * wears the ring — two rings would read as two selections.
+ * last. Sets share colours (#FF0000 is both a basic and a signal colour), so only one swatch wears
+ * the ring — two rings would read as two selections: the clicked one while it still holds the mixed
+ * colour, otherwise the first match.
  */
 const groups = $derived.by((): Group[] => {
-  let ringed = false;
-  const cell = (color: string, label: string): Cell => {
-    const selected = !ringed && sameColor(color, mixed);
-    ringed ||= selected;
-    return { color, label, selected };
-  };
+  const cell = (color: string, label: string): Cell => ({ color, label, selected: false });
 
   const result: Group[] = [];
   if (recentColors.length > 0) {
@@ -132,6 +131,15 @@ const groups = $derived.by((): Group[] => {
       cells: customs.map((color) => cell(color, '')),
       custom: true,
     });
+  }
+
+  const clicked = picked && result.find((group) => group.key === picked!.group)?.cells[picked.index];
+  const ringed =
+    clicked && sameColor(clicked.color, mixed)
+      ? clicked
+      : result.flatMap((group) => group.cells).find((candidate) => sameColor(candidate.color, mixed));
+  if (ringed) {
+    ringed.selected = true;
   }
   return result;
 });
@@ -169,6 +177,7 @@ onMount(() => {
 
 /** Palette click: loads the colour into the mixer, or overwrites the slot while replacing. */
 function selectCell(group: Group, index: number, cell: Cell): void {
+  picked = { group: group.key, index };
   if (group.custom && replacing) {
     const next = [...customs];
     next[index] = mixed;
