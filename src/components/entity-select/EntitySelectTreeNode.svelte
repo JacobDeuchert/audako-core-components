@@ -1,6 +1,5 @@
 <script lang="ts">
 import { EntityHttpService, EntityType, Group } from '@audako/core';
-import { distinctUntilKeyChanged, Subject, takeUntil } from 'rxjs';
 import { onDestroy } from 'svelte';
 
 import { resolveService } from '../../utils/service-functions';
@@ -24,8 +23,6 @@ let { group, expanded = $bindable(false), entityType, search = '' }: Props = $pr
 let children: Partial<Group>[] = $state([]);
 let selected: boolean = $state(false);
 
-let unsub: Subject<void> = new Subject();
-
 let typeStore = EntitySelectTypeStore(entityType);
 
 const visibleChildren = $derived(
@@ -34,15 +31,22 @@ const visibleChildren = $derived(
     : children
 );
 
-typeStore
-  .pipe(takeUntil(unsub), distinctUntilKeyChanged<EntityTypeState>('selectedGroup'))
-  .subscribe((state: EntityTypeState) => {
-    selected = state.selectedGroup?.Id === group?.Id;
+// Only a change of the selected group matters; filter or recent-entry updates
+// must not re-expand a node the user collapsed.
+let lastSelectedGroup: Partial<Group>;
 
-    if (group && state.selectedGroup?.Path?.includes(group.Id)) {
-      expanded = true;
-    }
-  });
+let unsubscribeType = typeStore.subscribe((state: EntityTypeState) => {
+  if (lastSelectedGroup !== undefined && state.selectedGroup === lastSelectedGroup) {
+    return;
+  }
+  lastSelectedGroup = state.selectedGroup;
+
+  selected = state.selectedGroup?.Id === group?.Id;
+
+  if (group && state.selectedGroup?.Path?.includes(group.Id)) {
+    expanded = true;
+  }
+});
 
 async function getChildren(): Promise<void> {
   try {
@@ -70,6 +74,10 @@ function selectGroup(): void {
     selectedGroup: group,
   }));
 }
+
+onDestroy(() => {
+  unsubscribeType();
+});
 </script>
 
 <div>

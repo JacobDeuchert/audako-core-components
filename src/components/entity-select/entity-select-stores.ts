@@ -1,11 +1,7 @@
-import { createState, createStore, getRegistry, Store, withProps } from '@ngneat/elf';
-import { localStorageStrategy, persistState } from '@ngneat/elf-persist-state';
 import { ConfigurationEntity, EntityType, Group } from '@audako/core';
-import { writable } from 'svelte/store';
+import { writable, type Writable } from 'svelte/store';
 
-export const entitySelectEntityType = writable<EntityType>(EntityType.Signal);
-
-export interface EntitySelectSelectionState  {
+export interface EntitySelectSelectionState {
   selectedEntities: Partial<ConfigurationEntity>[];
 }
 
@@ -21,41 +17,49 @@ export interface EntityTypeState {
   lastSelectedEntities: string[];
 }
 
-const { config, state } = createState(
-  withProps<EntitySelectGlobalState>({
-    queryWithSubGroups: true,
-    selectedTenant: null,
-    pageSize: 25,
-  })
-);
+// Same key the former Elf persistence used, so saved settings carry over.
+const GLOBAL_STORAGE_KEY = 'entity-select-global';
 
-export const EntitySelectSelectionStore = createStore({name: 'entity-select-selection'}, withProps<EntitySelectSelectionState>({
-  selectedEntities: []
-}));
+function loadGlobalState(): Partial<EntitySelectGlobalState> {
+  try {
+    return JSON.parse(localStorage.getItem(GLOBAL_STORAGE_KEY)) ?? {};
+  } catch {
+    return {};
+  }
+}
 
-export const EntitySelectGlobalStore = new Store({ state, config, name: 'entity-select-global' });
-
-const persisGlobalState = persistState(EntitySelectGlobalStore, {
-  key: 'entity-select-global',
-  storage: localStorageStrategy,
+export const EntitySelectSelectionStore = writable<EntitySelectSelectionState>({
+  selectedEntities: [],
 });
 
-export const EntitySelectTypeStore = (
-  type: EntityType
-): Store<{ state: EntityTypeState; config: undefined; name: 'entity-select-type-store' }> => {
-  const store = getRegistry().get(`entity-select-type-${entitySelectEntityType}`);
+export const EntitySelectGlobalStore = writable<EntitySelectGlobalState>({
+  queryWithSubGroups: true,
+  selectedTenant: null,
+  pageSize: 25,
+  ...loadGlobalState(),
+});
 
-  if (store) {
-    return store;
+EntitySelectGlobalStore.subscribe((state) => {
+  try {
+    localStorage.setItem(GLOBAL_STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    // Storage unavailable (private mode, blocked site data); keep state in memory only.
   }
+});
 
-  const { state, config } = createState(
-    withProps<EntityTypeState>({
+const typeStores = new Map<EntityType, Writable<EntityTypeState>>();
+
+export function EntitySelectTypeStore(type: EntityType): Writable<EntityTypeState> {
+  let store = typeStores.get(type);
+
+  if (!store) {
+    store = writable<EntityTypeState>({
       filter: null,
       selectedGroup: null,
       lastSelectedEntities: [],
-    })
-  );
+    });
+    typeStores.set(type, store);
+  }
 
-  return new Store({ state, config, name: `entity-select-type-${entitySelectEntityType}` });
-};
+  return store;
+}

@@ -2,8 +2,8 @@
 import { ConfigurationEntity, EntityHttpService, EntityNameService, EntityType, Group, LiveValueService } from '@audako/core';
 import type { PaginationResponse } from '@audako/core';
 import { filter, from, Observable, Subject, Subscription, switchMap, takeUntil, tap, throttleTime } from 'rxjs';
-import { combineLatest } from 'rxjs';
 import { onDestroy } from 'svelte';
+import { derived } from 'svelte/store';
 
 import Checkbox from '../../shared/components/checkbox/Checkbox.svelte';
 import DataCell from '../../shared/components/table/DataCell.svelte';
@@ -82,28 +82,26 @@ const sortedEntities = $derived.by(() => {
   );
 });
 
-EntitySelectSelectionStore.pipe(takeUntil(unsub)).subscribe((state) => {
+let unsubscribeSelection = EntitySelectSelectionStore.subscribe((state) => {
   selectedEntities = state.selectedEntities;
 
   setupSelectedPageLookup();
   updateMasterToggleState();
 });
 
-combineLatest([globalStore.asObservable(), typeStore.asObservable()])
-  .pipe(takeUntil(unsub))
-  .subscribe(([globalState, typeState]) => {
-    selectedGroup = typeState.selectedGroup as Group;
-    selectedGroupId = typeState.selectedGroup?.Id;
-    filterString = typeState.filter;
+let unsubscribeQueryState = derived([globalStore, typeStore], (states) => states).subscribe(([globalState, typeState]) => {
+  selectedGroup = typeState.selectedGroup as Group;
+  selectedGroupId = typeState.selectedGroup?.Id;
+  filterString = typeState.filter;
 
-    withSubGroups = globalState.queryWithSubGroups;
-    stateInitialized = true;
+  withSubGroups = globalState.queryWithSubGroups;
+  stateInitialized = true;
 
-    // Filter and scope changes always return to the first page.
-    pageIndex = 0;
-    pageSize = globalState.pageSize ?? 25;
-    entitiesRequested.next();
-  });
+  // Filter and scope changes always return to the first page.
+  pageIndex = 0;
+  pageSize = globalState.pageSize ?? 25;
+  entitiesRequested.next();
+});
 
 function queryEntities(): Observable<PaginationResponse<Partial<ConfigurationEntity>>> {
   const query = {
@@ -257,6 +255,8 @@ $effect(() => {
 });
 
 onDestroy(() => {
+  unsubscribeSelection();
+  unsubscribeQueryState();
   liveValueSubscription?.unsubscribe();
   unsub.next();
   unsub.complete();

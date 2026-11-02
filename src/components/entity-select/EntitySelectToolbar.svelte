@@ -1,6 +1,7 @@
 <script lang="ts">
 import { debounceTime, Subject, takeUntil } from 'rxjs';
 import { onDestroy, onMount, type Snippet } from 'svelte';
+import { get } from 'svelte/store';
 import type { EntityType } from '@audako/core';
 
 import IconButton from '../../shared/components/icon-button/IconButton.svelte';
@@ -22,14 +23,14 @@ const i18n = useI18n();
 let typeStore = EntitySelectTypeStore(entityType);
 
 let withSubGroups = $state(false);
-let filter: string = $state(typeStore.value.filter);
+let filter: string = $state(get(typeStore).filter);
 
 let filterInput: HTMLInputElement;
 
 let unsub = new Subject<void>();
 let filterChanged = new Subject<string>();
 
-EntitySelectGlobalStore.pipe(takeUntil(unsub)).subscribe((state: EntitySelectGlobalState) => {
+let unsubscribeGlobal = EntitySelectGlobalStore.subscribe((state: EntitySelectGlobalState) => {
   withSubGroups = state.queryWithSubGroups;
 });
 
@@ -53,6 +54,7 @@ onMount(() => {
 });
 
 onDestroy(() => {
+  unsubscribeGlobal();
   unsub.next();
   unsub.complete();
 });

@@ -1,7 +1,7 @@
 <script lang="ts">
 import { ConfigurationEntity, EntityHttpService, EntityNameService, EntityType, Group, TenantView } from '@audako/core';
-import { Subject, takeUntil } from 'rxjs';
 import { onDestroy } from 'svelte';
+import { get } from 'svelte/store';
 
 import { resolveService } from '../../utils/service-functions';
 import { EntitySelectSelectionStore, EntitySelectTypeStore } from './entity-select-stores';
@@ -36,15 +36,13 @@ let search: string = $state('');
 let selectedEntities: Partial<ConfigurationEntity>[] = [];
 let selectedEntityLookup: Record<string, boolean> = $state({});
 
-let unsub = new Subject<void>();
-
 let typeStore = EntitySelectTypeStore(entityType);
 
-typeStore.pipe(takeUntil(unsub)).subscribe((state) => {
+let unsubscribeType = typeStore.subscribe((state) => {
   loadRecentEntries(state.lastSelectedEntities ?? []);
 });
 
-EntitySelectSelectionStore.pipe(takeUntil(unsub)).subscribe((state) => {
+let unsubscribeSelection = EntitySelectSelectionStore.subscribe((state) => {
   selectedEntities = state.selectedEntities;
   selectedEntityLookup = {};
 
@@ -57,7 +55,9 @@ async function getRootGroup(id: string): Promise<void> {
   try {
     rootGroup = await httpService.getEntityById<Group>(EntityType.Group, id);
 
-    if (!typeStore.value?.selectedGroup || typeStore.value.selectedGroup.Id != rootGroup.Id) {
+    const selectedGroup = get(typeStore).selectedGroup;
+
+    if (!selectedGroup || selectedGroup.Id != rootGroup.Id) {
       typeStore.update((state) => ({ ...state, selectedGroup: rootGroup }));
     }
   } catch (error) {
@@ -122,8 +122,8 @@ $effect(() => {
 });
 
 onDestroy(() => {
-  unsub.next();
-  unsub.complete();
+  unsubscribeType();
+  unsubscribeSelection();
 });
 </script>
 

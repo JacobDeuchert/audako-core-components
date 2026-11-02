@@ -1,6 +1,7 @@
 <script lang="ts">
 import { ConfigurationEntity, EntityHttpService, EntityType, TenantHttpService, TenantView } from '@audako/core';
 import { onDestroy } from 'svelte';
+import { get } from 'svelte/store';
 
 import IconButton from '../../shared/components/icon-button/IconButton.svelte';
 import { resolveService } from '../../utils/service-functions';
@@ -41,7 +42,7 @@ let selectedEntities: Partial<ConfigurationEntity>[] = [];
 
 const meta = $derived(getEntityMeta(entityType));
 
-let globalSubscription = EntitySelectGlobalStore.subscribe((state) => {
+let unsubscribeGlobal = EntitySelectGlobalStore.subscribe((state) => {
   if (state.selectedTenant) {
     inTenantSelect = false;
     getTenantView(state.selectedTenant);
@@ -54,7 +55,7 @@ let globalSubscription = EntitySelectGlobalStore.subscribe((state) => {
 // start with (and in single mode immediately re-emit) the previous pick.
 EntitySelectSelectionStore.update((state) => ({ ...state, selectedEntities: [] }));
 
-let selectionSubscription = EntitySelectSelectionStore.subscribe((state) => {
+let unsubscribeSelection = EntitySelectSelectionStore.subscribe((state) => {
   selectedEntities = state.selectedEntities ?? [];
   selectionCount = selectedEntities.length;
 
@@ -67,15 +68,13 @@ let selectionSubscription = EntitySelectSelectionStore.subscribe((state) => {
 function setLastSelectedEntities(selected: Partial<ConfigurationEntity>[]) {
   const typeStore = EntitySelectTypeStore(entityType);
 
-  const lastSelected = typeStore.value.lastSelectedEntities;
+  const lastSelected = get(typeStore).lastSelectedEntities;
 
   const notIncludedIds = selected.filter((entity) => !lastSelected.includes(entity.Id)).map((entity) => entity.Id);
 
-  lastSelected.unshift(...notIncludedIds);
-  lastSelected.splice(5);
   typeStore.update((state) => ({
     ...state,
-    lastSelectedEntities: lastSelected,
+    lastSelectedEntities: [...notIncludedIds, ...lastSelected].slice(0, 5),
   }));
 }
 
@@ -104,8 +103,8 @@ function acceptSelection(): void {
 }
 
 onDestroy(() => {
-  globalSubscription.unsubscribe();
-  selectionSubscription.unsubscribe();
+  unsubscribeGlobal();
+  unsubscribeSelection();
 });
 </script>
 
