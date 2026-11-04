@@ -35,7 +35,7 @@
     "vite": "^8.2.2"
   },
   "dependencies": {
-    "@audako/core": "^2.5.2",
+    "@audako/core": "^2.5.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.5.6",
     "tsyringe": "^4.7.0",
